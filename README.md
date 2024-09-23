@@ -6,3 +6,4 @@ Major Project implementation for a turtlebot
 https://discord.gg/9uQkYcss
 
 # Notes
+## BACKWARDS IS FORWARDS
