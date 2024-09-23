@@ -11,5 +11,7 @@ current inventory and control the robot.
 4) `ssh ubuntu@10.42.0.1` in the terminal to take over the terminal of the bot
 5) run `selfTest` to check the turtlebot functionality
 
+For all of the above, any passwords asked is `turtlebot`
+
 # Discord 
 https://discord.gg/9uQkYcss
