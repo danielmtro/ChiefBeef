@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.7'>
-  <model name='Two-Shapes-of--Box'>
+  <model name='Two-Shapes-of-Box'>
     <pose>-1.79954 1.01203 0 0 -0 0</pose>
     <link name='Wall_0'>
       <collision name='Wall_0_Collision'>
