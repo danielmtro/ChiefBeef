@@ -75,8 +75,64 @@ void Map::resize_2D_vector(std::vector<std::vector<int8_t>>& vec, uint32_t width
 
 int main(int argc, char *argv[])
 {
+    // Initialize ROS2
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<Map>());
+
+    // Create ROS2 node
+    auto node = std::make_shared<Map>();
+
+    // Launch a separate thread for ROS2
+    std::thread ros_thread([&]() {
+        rclcpp::spin(node);
+    });
+
+    // Create an SFML window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SuperMarket");
+
+    while (window.isOpen())
+    {
+        // Process SFML events (e.g., close the window)
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        // Clear the window with a black color
+        window.clear(sf::Color::Black);
+
+        // Update window using ROS2 data
+        // For example, let's draw a simple grid based on the occupancy grid data
+        if (node->width_ > 0 && node->height_ > 0)
+        {
+            sf::RectangleShape cell(sf::Vector2f(10.0f, 10.0f)); // Each cell is a 5x5 pixel square
+            for (uint32_t y = 0; y < node->height_; ++y)
+            {
+                for (uint32_t x = 0; x < node->width_; ++x)
+                {
+                    int8_t occupancy_value = node->map_data_[y * node->width_ + x];
+                    if (occupancy_value == 0)  // Free space
+                        cell.setFillColor(sf::Color::White);
+                    else if (occupancy_value == 100)  // Occupied space
+                        cell.setFillColor(sf::Color::Red);
+                    else  // Unknown
+                        cell.setFillColor(sf::Color::Black);
+
+                    // Set position and draw the cell
+                    cell.setPosition(x * 5.0f, y * 5.0f);
+                    window.draw(cell);
+                }
+            }
+        }
+
+        // Display the window content
+        window.display();
+    }
+
+    // Clean up ROS2 when SFML window is closed
     rclcpp::shutdown();
+    ros_thread.join();
+
     return 0;
 }

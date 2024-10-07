@@ -17,11 +17,18 @@ Written: Daniel Monteiro
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 
+#include <SFML/Graphics.hpp>
+
 class Map : public rclcpp::Node{
     public:
 
         Map();
         ~Map();
+
+        std::vector<int8_t> map_data_;
+        uint32_t width_;   
+        uint32_t height_;
+        float resolution_;
 
     private:
         
@@ -37,10 +44,7 @@ class Map : public rclcpp::Node{
         rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
 
         // map data information that will be received
-        std::vector<int8_t> map_data_;
-        uint32_t width_;   
-        uint32_t height_;
-        float resolution_;
+        
         std::vector<std::vector<int8_t>> map_;
 
         /**

@@ -15,6 +15,7 @@ find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(visualization_msgs REQUIRED)
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 
 set(dependencies
   "geometry_msgs"
@@ -36,8 +37,10 @@ add_executable(Map src/Map.cpp)
 
 target_compile_definitions(Map PRIVATE MAP_MAIN)
 
-
 ament_target_dependencies(Map ${dependencies})
+
+# link the sfml library stuff
+target_link_libraries(Map sfml-graphics sfml-window sfml-system)
 
 install(TARGETS
   Map
