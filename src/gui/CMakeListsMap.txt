@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.10)
+project(Map)
+
+set(CMAKE_CXX_FLAGS "-Wall") # Show warnings
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY # Destination for generated executable
+${CMAKE_SOURCE_DIR}/build
+)
+
+# Find the SFML package 
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+
+include_directories( # Where are the header files
+"${PROJECT_SOURCE_DIR}/include"
+)
+
+# Create an executable from your source file
+add_executable(Map 
+               src/main.cpp
+               # Add other source files here
+               )
+
+# Link the SFML libraries
+target_link_libraries(Map sfml-graphics sfml-window sfml-system)
