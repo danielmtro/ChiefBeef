@@ -15,3 +15,9 @@ For all of the above, any passwords asked is `turtlebot`
 
 # Discord 
 https://discord.gg/9uQkYcss
+
+
+# Running Gazebo Simulations
+```bash
+colcon build --packages-select turt3_gazebo --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turt3_gazebo launch.launch.py
+```
