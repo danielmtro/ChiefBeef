@@ -11,6 +11,8 @@ Written: Daniel Monteiro
 
 
 #include "Map.hpp"
+#include "GameMap.hpp"
+#include "MainMenu.hpp"
 
 
 Map::Map() : Node("Map_Node")
@@ -19,9 +21,6 @@ Map::Map() : Node("Map_Node")
     rclcpp::QoS qos_settings(rclcpp::KeepLast(1));
     qos_settings.reliability(RMW_QOS_POLICY_RELIABILITY_RELIABLE);
     qos_settings.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
-
-    // initialise the data vector
-    map_ = std::vector<std::vector<int8_t>>();
     
     // create the map subscriber function
     map_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
@@ -51,9 +50,9 @@ void Map::map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
     width_ = msg->info.width;
     height_ = msg->info.height;
     map_data_ = msg->data;
-    
-    // resize the current map size
-    resize_2D_vector(map_, width_, height_);
+
+    // process that we've read the current map
+    new_map_available_ = true;
     
     RCLCPP_INFO(this->get_logger(), "Received occupancy grid with width: %d, height: %d", width_, height_);
 
@@ -73,6 +72,43 @@ void Map::resize_2D_vector(std::vector<std::vector<int8_t>>& vec, uint32_t width
     }
 }
 
+void Map::read_map_data()
+{
+    new_map_available_ = false;
+}
+
+/*
+
+Getters available below
+
+*/
+
+bool Map::get_map_available() const
+{
+    return new_map_available_;
+}
+
+
+uint32_t Map::get_width() const
+{
+    return width_;
+}
+
+uint32_t Map::get_height() const
+{
+    return height_;
+}
+
+float Map::get_resolution() const
+{
+    return resolution_;
+}
+
+std::vector<int8_t> Map::get_map() const
+{
+    return map_data_;
+}
+
 int main(int argc, char *argv[])
 {
     // Initialize ROS2
@@ -86,48 +122,18 @@ int main(int argc, char *argv[])
         rclcpp::spin(node);
     });
 
-    // Create an SFML window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SuperMarket");
+    // create a menu window
+    MainMenu mainMenu(MenuWindow::MENU_WINDOW_NAME, MenuWindow::MENU_WIDTH, MenuWindow::MENU_HEIGHT);
 
-    while (window.isOpen())
-    {
-        // Process SFML events (e.g., close the window)
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+    // stay in the main menu until a selecion is ready
+    mainMenu.RunMenu();
+    int selection = mainMenu.get_menu_selection();
+    std::cout << "Selection was " << selection << std::endl;
 
-        // Clear the window with a black color
-        window.clear(sf::Color::Black);
-
-        // Update window using ROS2 data
-        // For example, let's draw a simple grid based on the occupancy grid data
-        if (node->width_ > 0 && node->height_ > 0)
-        {
-            sf::RectangleShape cell(sf::Vector2f(10.0f, 10.0f)); // Each cell is a 5x5 pixel square
-            for (uint32_t y = 0; y < node->height_; ++y)
-            {
-                for (uint32_t x = 0; x < node->width_; ++x)
-                {
-                    int8_t occupancy_value = node->map_data_[y * node->width_ + x];
-                    if (occupancy_value == 0)  // Free space
-                        cell.setFillColor(sf::Color::White);
-                    else if (occupancy_value == 100)  // Occupied space
-                        cell.setFillColor(sf::Color::Red);
-                    else  // Unknown
-                        cell.setFillColor(sf::Color::Black);
-
-                    // Set position and draw the cell
-                    cell.setPosition(x * 5.0f, y * 5.0f);
-                    window.draw(cell);
-                }
-            }
-        }
-
-        // Display the window content
-        window.display();
+    if(selection == 0) {
+        // create a gamemap window based on the ROS2 node    
+        GameMap gmap(GmapWindow::MAP_NAME, GmapWindow::MAP_WIDTH, GmapWindow::MAP_HEIGHT, node);
+        gmap.RunMap();
     }
 
     // Clean up ROS2 when SFML window is closed

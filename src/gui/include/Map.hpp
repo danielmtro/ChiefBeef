@@ -16,8 +16,9 @@ Written: Daniel Monteiro
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
-
 #include <SFML/Graphics.hpp>
+
+#include "constants.hpp"
 
 class Map : public rclcpp::Node{
     public:
@@ -25,10 +26,16 @@ class Map : public rclcpp::Node{
         Map();
         ~Map();
 
-        std::vector<int8_t> map_data_;
-        uint32_t width_;   
-        uint32_t height_;
-        float resolution_;
+        // Sets new_map_available_ to be false
+        void read_map_data();
+        bool get_map_available() const; 
+
+        // getters
+        uint32_t get_width() const;
+        uint32_t get_height() const;
+        float get_resolution() const;
+        std::vector<int8_t> get_map() const;
+
 
     private:
         
@@ -43,9 +50,15 @@ class Map : public rclcpp::Node{
         // subscriber for the current map that has been created
         rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
 
-        // map data information that will be received
-        
-        std::vector<std::vector<int8_t>> map_;
+        // Variables to store inputs received from msg
+        std::vector<int8_t> map_data_;
+        uint32_t width_;   
+        uint32_t height_;
+        float resolution_;
+
+        // boolean to determine if new map data is ready for reading
+        bool new_map_available_;
+
 
         /**
         * @brief Helper function that resizes a 2D standard vector of ints

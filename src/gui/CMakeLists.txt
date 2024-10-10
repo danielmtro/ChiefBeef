@@ -28,12 +28,21 @@ set(dependencies
 
 set(source_
     "src/Map.cpp"
+    "src/GameMap.cpp"
+    "src/Credits.cpp"
+    "src/MainMenu.cpp"
+    "src/Window.cpp"
     )
 
 # Include directories
 include_directories(include)
 
-add_executable(Map src/Map.cpp)
+add_executable(Map
+               src/Window.cpp
+               src/Map.cpp 
+               src/GameMap.cpp
+               src/Credits.cpp 
+               src/MainMenu.cpp)
 
 target_compile_definitions(Map PRIVATE MAP_MAIN)
 
@@ -45,6 +54,11 @@ target_link_libraries(Map sfml-graphics sfml-window sfml-system)
 install(TARGETS
   Map
   DESTINATION lib/${PROJECT_NAME})
+
+# Install Fonts directory
+install(DIRECTORY Fonts/
+  DESTINATION share/${PROJECT_NAME}/Fonts
+)
 
 # Handle testing and linting
 if(BUILD_TESTING)
