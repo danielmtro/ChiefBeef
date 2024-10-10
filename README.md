@@ -21,3 +21,17 @@ https://discord.gg/9uQkYcss
 ```bash
 colcon build --packages-select turt3_gazebo --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turt3_gazebo launch.launch.py
 ```
+
+# Running RVIZ
+```bash
+ros2 launch turtlebot3_bringup rviz2.launch.py
+```
+
+# Creating the SLAM
+```bash
+// In one terminal
+ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
+
+// In the other terminal
+ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
+```
