@@ -66,6 +66,7 @@ install(DIRECTORY launch models rviz urdf worlds
 
 install(DIRECTORY include/
   DESTINATION include/
+  OPTIONAL
 )
 
 
