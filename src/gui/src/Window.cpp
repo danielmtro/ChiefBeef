@@ -28,6 +28,7 @@ void Window::activate_window()
 void Window::close_window()
 {
     window_active_ = false;
+    background_music.stop();
 }
 
 bool Window::is_window_active() const

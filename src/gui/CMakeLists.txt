@@ -51,7 +51,7 @@ target_compile_definitions(Map PRIVATE MAP_MAIN)
 ament_target_dependencies(Map ${dependencies})
 
 # link the sfml library stuff
-target_link_libraries(Map sfml-graphics sfml-window sfml-system)
+target_link_libraries(Map sfml-graphics sfml-window sfml-audio sfml-system)
 
 install(TARGETS
   Map
@@ -65,6 +65,11 @@ install(DIRECTORY Fonts/
 # Install Textures directory
 install(DIRECTORY Textures/
   DESTINATION share/${PROJECT_NAME}/Textures
+)
+
+# Install Music directory
+install(DIRECTORY Music/
+  DESTINATION share/${PROJECT_NAME}/Music
 )
 
 # Handle testing and linting

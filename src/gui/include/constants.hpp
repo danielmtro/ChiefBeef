@@ -22,7 +22,14 @@ namespace MenuWindow
 
     constexpr int CHARACTER_SIZE = 70;
     constexpr float TROLLEY_SPEED = 100.0f;
-    constexpr int TROLLEY_START = 700;
+    constexpr float VERTICAL_SPEED = 0.2;
+    constexpr float RNG_SCALING = 0.1;
+    constexpr float TROLLEY_RELOAD_TIME = 100;
+
+    constexpr int TROLLEY_START_Y = 503;
+    constexpr int TROLLEY_START_X = 825;
+    constexpr float ROAD_Y_LOCATION = 560;
+    
 }
 
 #endif

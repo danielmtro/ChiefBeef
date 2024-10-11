@@ -11,6 +11,7 @@ Written: Daniel Monteiro
 #define _WINDOW_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 
 class Window 
@@ -48,6 +49,8 @@ class Window
         sf::RectangleShape background;
         sf::Texture texture;
 
+        // variables to play the background music
+        sf::Music background_music;
 };
 
 #endif

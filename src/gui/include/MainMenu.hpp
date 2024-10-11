@@ -9,6 +9,7 @@ Written: Daniel Monteiro
 #define _MAINMENU_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <string>
 
@@ -37,6 +38,7 @@ class MainMenu : private Window{
 
     private: 
 
+        // the text based variables
         int selection_;
         int current_selection_;
         sf::Text menu[MenuWindow::MENU_OPTIONS];
@@ -45,7 +47,6 @@ class MainMenu : private Window{
 
         // member variables to move around animated trolley
         Trolley trolley_animation;
-
 };
 
 #endif

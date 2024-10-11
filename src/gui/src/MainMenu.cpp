@@ -54,6 +54,15 @@ MainMenu::MainMenu(const std::string& name, int width, int height)
 
     // initialise the trolley animation
     trolley_animation.initialise(width, height);
+    trolley_animation.set_position(MenuWindow::TROLLEY_START_X, MenuWindow::TROLLEY_START_Y);
+
+    // background music variables
+    std::string music_filename = "/Music/MainMenuMusic.ogg";
+    std::string music_path = ament_index_cpp::get_package_share_directory("gui") + music_filename;
+    if (!background_music.openFromFile(music_path)) {
+        std::cerr << "Error loading music file!" << std::endl;
+        return;
+    }
 
     // set variables to output the final and temporary menu choices
     selection_ = 0; 
@@ -119,6 +128,10 @@ void MainMenu::RunMenu()
     // Track time for movement
     sf::Clock clock;
 
+    // start playing the background music
+    background_music.setLoop(true); // Music will loop until stopped
+    background_music.play();        // Start playing music
+
     // keep polling as long as we want
     while (window.isOpen())
     {
@@ -152,7 +165,6 @@ void MainMenu::RunMenu()
                     break;
                 }
 
-
                 // return key used to exit the menu as well once a selection is made
                 if (event.key.code == sf::Keyboard::Return)
                 {
@@ -162,10 +174,17 @@ void MainMenu::RunMenu()
                     close_window();
                 }
             }
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            {
+                sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+                std::cout << "Mouse Click Deteced." << std::endl;
+                std::cout << "Clicked on " << mouse_pos.x << ", " << mouse_pos.y << std::endl;
+            }
         }
 
         trolley_animation.update_position(deltaTime);
-
+        
         // clear the current window
         window.clear();
         window.draw(background);
@@ -176,8 +195,8 @@ void MainMenu::RunMenu()
             window.draw(menu[i]);
         }
 
-        sf::Sprite& sprite = trolley_animation.get_sprite();
-        window.draw(sprite);
+        // sf::Sprite& sprite = trolley_animation.get_sprite();
+        window.draw(*trolley_animation.get_sprite());
 
         // Display the updated frame
         window.display();

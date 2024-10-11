@@ -10,6 +10,7 @@ Written: Daniel Monteiro
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <string>
 #include <iostream>
+#include <random>
 
 #include "constants.hpp"
 
@@ -26,7 +27,7 @@ class Animation
         * with the current animation object
         *
         */
-        sf::Sprite& get_sprite();
+        sf::Sprite* get_sprite();
 
         /**
         * @brief this function should initialise the texture associated
@@ -51,10 +52,16 @@ class Animation
 
     protected:
 
+        // rng generation variables
+        std::mt19937 gen;
+        std::uniform_real_distribution<> distr;
+
+        // animation variables
         sf::Sprite sprite;
         sf::Texture sprite_texture;
         float animation_speed;
 
+        // window the animation is placed on
         int window_width_;
         int window_height_;
 
@@ -73,6 +80,8 @@ class Trolley : public Animation
         * @param deltaTime is the time difference between each frame  on the screen
         */
         void update_position(sf::Time deltaTime);
+
+        void set_position(float x, float y);
 
     public:
         void initialise(int width, int height);

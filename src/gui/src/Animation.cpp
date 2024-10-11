@@ -9,6 +9,7 @@ Written: Daniel Monteiro
 #include "Animation.hpp"
 
 Animation::Animation()
+    : gen(std::random_device()()), distr(-1, 1)
 {
     std::cout << "Creating an animation" << std::endl;
     return;
@@ -19,9 +20,9 @@ Animation::~Animation()
     return;
 }
 
-sf::Sprite& Animation::get_sprite()
+sf::Sprite* Animation::get_sprite()
 {
-    return sprite;
+    return &sprite;
 }
 
 Trolley::Trolley()
@@ -56,19 +57,34 @@ void Trolley::initialise(int width, int height)
 
     // Set the initial position (starting off-screen on the left)
     // -sprite.getGlobalBounds().width
-    sprite.setPosition(300, MenuWindow::TROLLEY_START);
+    sprite.setPosition(-sprite.getGlobalBounds().width, MenuWindow::TROLLEY_START_Y);
+}
+
+void Trolley::set_position(float x, float y)
+{
+    sprite.setPosition(x, y);
 }
 
 void Trolley::update_position(sf::Time deltaTime)
 {
     // set the trolley position on the frame
-    float trolleyX = sprite.getPosition().x + animation_speed * deltaTime.asSeconds();
-    // std::cout << "Trolley pos " << trolleyX << std::endl;
+    float trolleyX;
+    float trolleyY;
 
-    // If the trolley has moved off-screen to the right, reset its position to the left
-    if (trolleyX > window_width_) {
-        trolleyX = -sprite.getGlobalBounds().width;  // Start off-screen on the left
+    // make it always move towards the left
+    trolleyX = sprite.getPosition().x -1* animation_speed * deltaTime.asSeconds()\
+    + distr(gen) * MenuWindow::RNG_SCALING;
+
+    // control the trolley moving downwards
+    float current_y = sprite.getPosition().y;
+    trolleyY = current_y+MenuWindow::VERTICAL_SPEED* animation_speed * deltaTime.asSeconds()\
+    + distr(gen) * MenuWindow::RNG_SCALING;
+
+    // If the trolley has moved off-screen to the left, reset its position to the start
+    if (trolleyX < 0 || trolleyY > window_height_ + abs(distr(gen)) * MenuWindow::TROLLEY_RELOAD_TIME) {
+        trolleyX = MenuWindow::TROLLEY_START_X;
+        trolleyY = MenuWindow::TROLLEY_START_Y;
     }
 
-    sprite.setPosition(trolleyX, sprite.getPosition().y);  // Update position
+    sprite.setPosition(trolleyX, trolleyY);  // Update position
 }
