@@ -14,6 +14,7 @@ Written: Daniel Monteiro
 
 #include <iostream>
 #include "Window.hpp"
+#include "Animation.hpp"
 #include "constants.hpp"
 
 class MainMenu : private Window{
@@ -38,10 +39,12 @@ class MainMenu : private Window{
 
         int selection_;
         int current_selection_;
-
-        sf::Font font;
         sf::Text menu[MenuWindow::MENU_OPTIONS];
+        sf::Color FontColour;
+        sf::Color SelectedFontColour;
 
+        // member variables to move around animated trolley
+        Trolley trolley_animation;
 
 };
 

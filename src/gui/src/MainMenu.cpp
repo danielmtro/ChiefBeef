@@ -11,33 +11,52 @@ MainMenu::MainMenu(const std::string& name, int width, int height)
     : Window(name, width, height)
 {
 
+    FontColour = sf::Color::White;
+    SelectedFontColour = sf::Color::Magenta;
+
     std::string font_path = ament_index_cpp::get_package_share_directory("gui") + "/Fonts/comic_sans_1.ttf";
     std::cout << "Font path " << font_path << std::endl;
     if (!font.loadFromFile(font_path))
         std::cout << "Font file not found: " << font_path << std::endl;
 
 
-    // set the play button
+    // set the shopping time button
     menu[0].setFont(font);
     menu[0].setString("Shopping Time");
     menu[0].setCharacterSize(MenuWindow::CHARACTER_SIZE);
-    menu[0].setPosition(400, 200);
-    menu[0].setFillColor(sf::Color::White);
+    menu[0].setPosition(400, 250);
+    menu[0].setFillColor(FontColour);
 
-    // set the play button
+    // set the meet the team button
     menu[1].setFont(font);
     menu[1].setString("Meet The Team");
     menu[1].setCharacterSize(MenuWindow::CHARACTER_SIZE);
-    menu[1].setPosition(400, 300);
+    menu[1].setPosition(400, 350);
+    menu[1].setFillColor(FontColour);
 
     // set the Exit button
     menu[2].setFont(font);
     menu[2].setString("Exit");
     menu[2].setCharacterSize(MenuWindow::CHARACTER_SIZE);
-    menu[2].setPosition(400, 400);
+    menu[2].setPosition(400, 450);
+    menu[2].setFillColor(FontColour);
 
+    // set the background for the main menu
+    std::string background_location = "/Textures/Menu_Background.jpeg";
+    std::string texture_path = ament_index_cpp::get_package_share_directory("gui") + background_location;
+    std::cout << "Texture path " << texture_path << std::endl;
 
-    selection_ = 0; // this means that no selection has been made
+    // load the texture  
+    background.setSize(sf::Vector2f(window_width_, window_height_));
+    if(!texture.loadFromFile(texture_path))
+        std::cout << "Failed to load background at " << texture_path << std::endl;
+    background.setTexture(&texture);
+
+    // initialise the trolley animation
+    trolley_animation.initialise(width, height);
+
+    // set variables to output the final and temporary menu choices
+    selection_ = 0; 
     current_selection_ = -1;
     return;
 }
@@ -51,7 +70,7 @@ MainMenu::~MainMenu()
 void MainMenu::up_command()
 {   
     // set the current value back to normal
-    menu[current_selection_].setFillColor(sf::Color::White);
+    menu[current_selection_].setFillColor(FontColour);
 
 
     if(current_selection_ == 0 || current_selection_ == -1)
@@ -60,7 +79,7 @@ void MainMenu::up_command()
         current_selection_--;
 
     // set the current selection to be as such
-    menu[current_selection_].setFillColor(sf::Color::Magenta);
+    menu[current_selection_].setFillColor(SelectedFontColour);
 
     return;
 }
@@ -69,7 +88,7 @@ void MainMenu::down_command()
 {
     
     // set the current value back to normal
-    menu[current_selection_].setFillColor(sf::Color::White);
+    menu[current_selection_].setFillColor(FontColour);
 
 
     if(current_selection_ == MenuWindow::MENU_OPTIONS - 1 || current_selection_ == -1)
@@ -78,7 +97,7 @@ void MainMenu::down_command()
         current_selection_++;
 
     // set the current selection to be as such
-    menu[current_selection_].setFillColor(sf::Color::Magenta);
+    menu[current_selection_].setFillColor(SelectedFontColour);
 
     return;
 }
@@ -89,7 +108,6 @@ int MainMenu::get_menu_selection()
     return selection_;
 }
 
-
 void MainMenu::RunMenu()
 {
 
@@ -98,9 +116,15 @@ void MainMenu::RunMenu()
     sf::RenderWindow window(sf::VideoMode(window_width_, window_height_), window_name_);
     activate_window();
 
+    // Track time for movement
+    sf::Clock clock;
+
     // keep polling as long as we want
     while (window.isOpen())
     {
+        
+        // Restart the clock every frame
+        sf::Time deltaTime = clock.restart();
 
         // Process SFML events (e.g., close the window)
         sf::Event event;
@@ -113,7 +137,6 @@ void MainMenu::RunMenu()
                 window.close();
                 close_window();
             }
-
             // process arrow commands
             if (event.type == sf::Event::KeyReleased)
             {
@@ -141,14 +164,20 @@ void MainMenu::RunMenu()
             }
         }
 
+        trolley_animation.update_position(deltaTime);
+
         // clear the current window
         window.clear();
+        window.draw(background);
 
         // Add all the menu options of text to the window
         for (int i = 0; i < MenuWindow::MENU_OPTIONS; ++i)
         {
             window.draw(menu[i]);
         }
+
+        sf::Sprite& sprite = trolley_animation.get_sprite();
+        window.draw(sprite);
 
         // Display the updated frame
         window.display();

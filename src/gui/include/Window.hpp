@@ -43,6 +43,10 @@ class Window
         int window_height_;
         bool window_active_;
 
+        // general member variables of windows
+        sf::Font font;
+        sf::RectangleShape background;
+        sf::Texture texture;
 
 };
 

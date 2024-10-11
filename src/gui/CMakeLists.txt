@@ -32,6 +32,7 @@ set(source_
     "src/Credits.cpp"
     "src/MainMenu.cpp"
     "src/Window.cpp"
+    "src/Animation.cpp"
     )
 
 # Include directories
@@ -42,7 +43,8 @@ add_executable(Map
                src/Map.cpp 
                src/GameMap.cpp
                src/Credits.cpp 
-               src/MainMenu.cpp)
+               src/MainMenu.cpp
+               src/Animation.cpp)
 
 target_compile_definitions(Map PRIVATE MAP_MAIN)
 
@@ -58,6 +60,11 @@ install(TARGETS
 # Install Fonts directory
 install(DIRECTORY Fonts/
   DESTINATION share/${PROJECT_NAME}/Fonts
+)
+
+# Install Textures directory
+install(DIRECTORY Textures/
+  DESTINATION share/${PROJECT_NAME}/Textures
 )
 
 # Handle testing and linting
