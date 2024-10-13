@@ -11,8 +11,9 @@ Written: Daniel Monteiro
 
 
 #include "Map.hpp"
-#include "GameMap.hpp"
 #include "MainMenu.hpp"
+#include "Credits.hpp"
+#include "GameMap.hpp"
 
 
 Map::Map() : Node("Map_Node")
@@ -126,14 +127,24 @@ int main(int argc, char *argv[])
     MainMenu mainMenu(MenuWindow::MENU_WINDOW_NAME, MenuWindow::MENU_WIDTH, MenuWindow::MENU_HEIGHT);
 
     // stay in the main menu until a selecion is ready
-    mainMenu.RunMenu();
-    int selection = mainMenu.get_menu_selection();
-    std::cout << "Selection was " << selection << std::endl;
+    int selection = 0;
 
-    if(selection == 0) {
-        // create a gamemap window based on the ROS2 node    
-        GameMap gmap(GmapWindow::MAP_NAME, GmapWindow::MAP_WIDTH, GmapWindow::MAP_HEIGHT, node);
-        gmap.RunMap();
+    while(selection != EXIT)
+    {
+        mainMenu.RunMenu();
+        selection = mainMenu.get_menu_selection();
+        std::cout << "Selection was " << selection << std::endl;
+
+        if(selection == SHOPPING_TIME) {
+            // create a gamemap window based on the ROS2 node    
+            GameMap gmap(GmapWindow::MAP_NAME, GmapWindow::MAP_WIDTH, GmapWindow::MAP_HEIGHT, node);
+            gmap.RunMap();
+        }
+        else if(selection == MEET_THE_TEAM)
+        {
+            Credits credits(CreditsWindow::MAP_NAME, CreditsWindow::MAP_WIDTH, CreditsWindow::MAP_HEIGHT);
+            credits.RunCredits();
+        }
     }
 
     // Clean up ROS2 when SFML window is closed

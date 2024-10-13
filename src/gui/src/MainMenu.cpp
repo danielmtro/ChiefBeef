@@ -78,8 +78,9 @@ MainMenu::~MainMenu()
 
 void MainMenu::up_command()
 {   
-    // set the current value back to normal
-    menu[current_selection_].setFillColor(FontColour);
+    // set the all values back to normal
+    for(int selection = 0; selection < MenuWindow::MENU_OPTIONS; ++selection)
+        menu[selection].setFillColor(FontColour);
 
 
     if(current_selection_ == 0 || current_selection_ == -1)
@@ -96,8 +97,9 @@ void MainMenu::up_command()
 void MainMenu::down_command()
 {
     
-    // set the current value back to normal
-    menu[current_selection_].setFillColor(FontColour);
+    // set the all values back to normal
+    for(int selection = 0; selection < MenuWindow::MENU_OPTIONS; ++selection)
+        menu[selection].setFillColor(FontColour);
 
 
     if(current_selection_ == MenuWindow::MENU_OPTIONS - 1 || current_selection_ == -1)
@@ -119,6 +121,13 @@ int MainMenu::get_menu_selection()
 
 void MainMenu::RunMenu()
 {
+    // reset selection variables
+    selection_ = 0; 
+    current_selection_ = -1;
+
+    // set the all colour text values back to normal if reopening
+    for(int selection = 0; selection < MenuWindow::MENU_OPTIONS; ++selection)
+        menu[selection].setFillColor(FontColour);
 
     // Create an SFML window
     std::cout << "Starting to run the menu" << std::endl;
@@ -129,8 +138,8 @@ void MainMenu::RunMenu()
     sf::Clock clock;
 
     // start playing the background music
-    background_music.setLoop(true); // Music will loop until stopped
-    background_music.play();        // Start playing music
+    background_music.setLoop(true);
+    background_music.play();
 
     // keep polling as long as we want
     while (window.isOpen())

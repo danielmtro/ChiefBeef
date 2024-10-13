@@ -18,7 +18,7 @@ Written: Daniel Monteiro
 #include "Animation.hpp"
 #include "constants.hpp"
 
-class MainMenu : private Window{
+class MainMenu : public Window{
     
     public: 
 

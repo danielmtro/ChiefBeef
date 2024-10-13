@@ -6,6 +6,9 @@ parent class and all children of the animation class
 Written: Daniel Monteiro
 */
 
+#ifndef _ANIMATION_HPP
+#define _ANIMATION_HPP
+
 #include <SFML/Graphics.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <string>
@@ -86,3 +89,5 @@ class Trolley : public Animation
     public:
         void initialise(int width, int height);
 };
+
+#endif

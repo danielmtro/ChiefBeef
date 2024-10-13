@@ -5,6 +5,14 @@
 
 // Namespace for defining the dimensions of the map that is spawned
 // for the actual turtlebot
+
+enum MeunItems
+{
+    SHOPPING_TIME = 0,
+    MEET_THE_TEAM,
+    EXIT
+};
+
 namespace GmapWindow
 {
     constexpr int MAP_WIDTH = 1200;
@@ -29,7 +37,14 @@ namespace MenuWindow
     constexpr int TROLLEY_START_Y = 503;
     constexpr int TROLLEY_START_X = 825;
     constexpr float ROAD_Y_LOCATION = 560;
-    
+}
+
+namespace CreditsWindow
+{
+    constexpr int MAP_WIDTH = 1200;
+    constexpr int MAP_HEIGHT = 600;
+    const std::string MAP_NAME = "Meet The Team";
+    constexpr int NUM_GROUP_MEMBERS = 6;
 }
 
 #endif
