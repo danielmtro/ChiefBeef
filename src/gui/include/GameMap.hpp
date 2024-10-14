@@ -11,8 +11,10 @@ Written: Daniel Monteiro
 #include <memory>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include "Map.hpp"
 #include "Window.hpp"
+#include "Button.hpp"
 
 class GameMap : public Window {
 
@@ -28,11 +30,18 @@ class GameMap : public Window {
         */
         void RunMap();
 
+        /**
+        * @brief this function draws a map on the window
+        *
+        */
+        void DrawMapData(sf::RenderWindow& window);
+
 
     private: 
 
         // The ROS2 node that will read from /map and store relevant map data
         std::shared_ptr<Map> map_;
+        Button* slam_request_button_;
         
 
 };

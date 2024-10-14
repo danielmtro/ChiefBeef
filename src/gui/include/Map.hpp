@@ -16,8 +16,8 @@ Written: Daniel Monteiro
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
+#include <std_msgs/msg/bool.hpp>
 #include <SFML/Graphics.hpp>
-
 #include "constants.hpp"
 
 class Map : public rclcpp::Node{
@@ -36,6 +36,11 @@ class Map : public rclcpp::Node{
         float get_resolution() const;
         std::vector<int8_t> get_map() const;
 
+        /**
+        * @brief this function is called every time a message is received from
+        * /map topic and it stores the map information
+        */
+        void publish_slam_request();
 
     private:
         
@@ -59,7 +64,6 @@ class Map : public rclcpp::Node{
         // boolean to determine if new map data is ready for reading
         bool new_map_available_;
 
-
         /**
         * @brief Helper function that resizes a 2D standard vector of ints
         *
@@ -68,6 +72,9 @@ class Map : public rclcpp::Node{
         * @param height the number of rows int he array
         */
         void resize_2D_vector(std::vector<std::vector<int8_t>>& vec, uint32_t width, uint32_t height);
+
+        // slam publisher
+        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr slam_publisher_;
 };
 
 #endif

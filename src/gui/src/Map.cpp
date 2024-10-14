@@ -33,6 +33,8 @@ Map::Map() : Node("Map_Node")
         std::placeholders::_1)
         );
 
+    // create the slam publisher
+    slam_publisher_ = this->create_publisher<std_msgs::msg::Bool>("slam_request", 10);
 }
 
 Map::~Map()
@@ -71,6 +73,15 @@ void Map::resize_2D_vector(std::vector<std::vector<int8_t>>& vec, uint32_t width
     for (size_t i = 0; i < height; ++i) {
         vec[i].resize(width);
     }
+}
+
+void Map::publish_slam_request()
+{
+    std_msgs::msg::Bool message;
+    message.data = true;
+    slam_publisher_->publish(message);
+    RCLCPP_INFO(this->get_logger(),"Published SLAM request");
+
 }
 
 void Map::read_map_data()
@@ -139,6 +150,7 @@ int main(int argc, char *argv[])
             // create a gamemap window based on the ROS2 node    
             GameMap gmap(GmapWindow::MAP_NAME, GmapWindow::MAP_WIDTH, GmapWindow::MAP_HEIGHT, node);
             gmap.RunMap();
+
         }
         else if(selection == MEET_THE_TEAM)
         {

@@ -20,6 +20,15 @@ namespace GmapWindow
     constexpr int MAP_WIDTH = 1200;
     constexpr int MAP_HEIGHT = 600;
     const std::string MAP_NAME = "Supermarket Map";
+
+    constexpr int SBUTTON_X = 50;
+    constexpr int SBUTTON_Y = 450;
+    constexpr int SBUTTON_W = 150;
+    constexpr int SBUTTON_H = 100;
+    constexpr int SBUTTON_CHAR = 30;
+
+    const std::string SBUTTON_WORD = "Stocktake";
+
 }
 
 

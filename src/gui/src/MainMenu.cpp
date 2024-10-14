@@ -174,6 +174,15 @@ void MainMenu::RunMenu()
                     break;
                 }
 
+                if (event.key.code == sf::Keyboard::Escape)
+                {
+                    // get out of here
+                    selection_ = EXIT;
+                    window.close();
+                    close_window();
+                    break;
+                }
+
                 // return key used to exit the menu as well once a selection is made
                 if (event.key.code == sf::Keyboard::Return)
                 {

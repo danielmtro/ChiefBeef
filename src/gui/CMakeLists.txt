@@ -33,6 +33,7 @@ set(source_
     "src/MainMenu.cpp"
     "src/Window.cpp"
     "src/Animation.cpp"
+    "src/Button.cpp"
     )
 
 # Include directories
@@ -44,7 +45,8 @@ add_executable(Map
                src/GameMap.cpp
                src/Credits.cpp 
                src/MainMenu.cpp
-               src/Animation.cpp)
+               src/Animation.cpp
+               src/Button.cpp)
 
 target_compile_definitions(Map PRIVATE MAP_MAIN)
 
