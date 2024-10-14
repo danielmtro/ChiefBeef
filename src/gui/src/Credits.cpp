@@ -68,25 +68,54 @@ Credits::Credits(const std::string& name, int width, int height)
         faces[i].setTexture(face_textures[i]);
     }
 
+    rotation_direction_ = 1;
+
     // set the positions
-    int x_separation = 300;
-    int y_separation = 300;
-    int base_x = 150;
-    int base_y = 50;
 
-    faces[0].setPosition(base_x, base_y);
-    faces[1].setPosition(base_x + x_separation, base_y);
-    faces[2].setPosition(base_x + 2 * x_separation, base_y);
+    faces[0].setPosition(CreditsWindow::BASE_X, CreditsWindow::BASE_Y);
+    faces[1].setPosition(CreditsWindow::BASE_X + CreditsWindow::X_SEP, CreditsWindow::BASE_Y);
+    faces[2].setPosition(CreditsWindow::BASE_X + 2 * CreditsWindow::X_SEP, CreditsWindow::BASE_Y);
 
-    faces[3].setPosition(base_x, base_y + y_separation);
-    faces[4].setPosition(base_x + x_separation, base_y + y_separation);
-    faces[5].setPosition(base_x + 2 * x_separation, base_y + y_separation);
+    faces[3].setPosition(CreditsWindow::BASE_X, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
+    faces[4].setPosition(CreditsWindow::BASE_X + CreditsWindow::X_SEP, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
+    faces[5].setPosition(CreditsWindow::BASE_X + 2 * CreditsWindow::X_SEP, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
 
 }
 
 Credits::~Credits()
 {
     std::cout << "Credits Closed" << std::endl;
+}
+
+void Credits::RotateSprites(sf::Time deltaTime)
+{
+    float rot_limit = 0.3;
+
+    float current_rotation = faces[0].getRotation();
+    // std::cout << "RD" << rotation_direction_ << " rot: " << current_rotation << std::endl;
+
+    // check if its rotating forward
+    if(rotation_direction_ == 1)
+    {
+        if(current_rotation > CreditsWindow::ROT_LIMIT && current_rotation < DEG_PER_ROT/2)
+        {
+            rotation_direction_ = -1;
+        }
+    }
+    else{
+        if(current_rotation > DEG_PER_ROT/2 && current_rotation < 360 - CreditsWindow::ROT_LIMIT)
+        {
+            rotation_direction_ = 1;
+        }
+    }
+    
+
+    float rot_amount = rotation_direction_ * CreditsWindow::ROTATION_SPEED * deltaTime.asSeconds();
+
+    for(int i = 0; i < CreditsWindow::NUM_GROUP_MEMBERS; ++i)
+    {
+        faces[i].rotate(rot_amount);
+    }
 }
 
 void Credits::RunCredits()
@@ -144,6 +173,9 @@ void Credits::RunCredits()
         // clear the current window
         window.clear();
         window.draw(background);
+
+        // rotate the sprites
+        RotateSprites(deltaTime);
 
         for(int i = 0; i < CreditsWindow::NUM_GROUP_MEMBERS; ++i)
         {

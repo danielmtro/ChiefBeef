@@ -35,6 +35,9 @@ class Credits : public Window {
 
         std::vector<sf::Sprite> faces;
         std::vector<sf::Texture> face_textures;
+
+        void RotateSprites(sf::Time deltaTime);
+        int rotation_direction_;
 };
 
 #endif
