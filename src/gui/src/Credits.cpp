@@ -3,6 +3,7 @@ Credits.hpp Implementation
 
 This is the implementation for the Credits Page
 Written: Daniel Monteiro
+Date: 12/10/2024
 */
 
 #include "Credits.hpp"

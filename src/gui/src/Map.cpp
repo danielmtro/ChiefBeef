@@ -7,6 +7,7 @@ map and see the robot.
 Subscribes to the /map topic that is provided by SLAM
 
 Written: Daniel Monteiro
+Date: 12/10/2024
 */
 
 

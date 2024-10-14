@@ -3,6 +3,7 @@ Window.cpp Implementation
 
 This is the implementation for the parent Window Class
 Written: Daniel Monteiro
+Date: 12/10/2024
 */
 
 #include "Window.hpp"

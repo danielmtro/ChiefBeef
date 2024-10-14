@@ -8,7 +8,7 @@ sudo apt-get install libsfml-dev
 
 ## build instructions
 
-colcon build --symlink-install --packages-select GUI && source install/setup.bash 
+colcon build --symlink-install --packages-select gui && source install/setup.bash 
 
 ## Running Instructions
 

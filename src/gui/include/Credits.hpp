@@ -3,6 +3,7 @@ Credits.hpp INTERFACE
 
 This is the interface for the Credits
 Written: Daniel Monteiro
+Date: 12/10/2024
 */
 
 #ifndef _CREDITS_HPP
@@ -33,10 +34,15 @@ class Credits : public Window {
 
     private:
 
+        /**
+        * @brief this function rotates the faces in the credits scene
+        * 
+        * @param deltaTime is the time difference between each frame  on the screen
+        */
+        void RotateSprites(sf::Time deltaTime);
+        
         std::vector<sf::Sprite> faces;
         std::vector<sf::Texture> face_textures;
-
-        void RotateSprites(sf::Time deltaTime);
         int rotation_direction_;
 };
 

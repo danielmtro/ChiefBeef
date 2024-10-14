@@ -5,6 +5,7 @@ THis is the parent class interface for
 all windows.
 
 Written: Daniel Monteiro
+Date: 12/10/2024
 */
 
 #ifndef _WINDOW_HPP
