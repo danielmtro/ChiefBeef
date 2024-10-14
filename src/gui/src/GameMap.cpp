@@ -18,7 +18,7 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
     slam_request_button_ = new Button(
         GmapWindow::SBUTTON_X, GmapWindow::SBUTTON_Y,
         GmapWindow::SBUTTON_W, GmapWindow::SBUTTON_H,
-        sf::Color(255, 158, 102),
+        sf::Color(255, 158, 102),   // fun colour
         GmapWindow::SBUTTON_WORD,
         font
     );
