@@ -1,11 +1,6 @@
-"""
-
-Launches the world file...
-James Hocking, 2024
-
-"""
 
 import os
+import time  # Import time for sleep functionality
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -49,9 +44,9 @@ def generate_launch_description():
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items()
     )
-
-    world = WorldFile()
-
+    # Create an instance of WorldFile
+    world_file = WorldFile()
+    
     # Launch configuration for robot spawn
     x_pose = LaunchConfiguration('x_pose', default="0.00")
     y_pose = LaunchConfiguration('y_pose', default="0.00")
@@ -63,16 +58,17 @@ def generate_launch_description():
         launch_arguments={
             'x_pose': x_pose,
             'y_pose': y_pose,
-            'Y': world.robot_yaw,
+            'Y': world_file.robot_yaw,
         }.items()
     )
 
-    # get the walls
+    # Get the walls
     maze_model_file = os.path.join(
         get_package_share_directory('turt3_gazebo'),
-        'worlds', world.maze_name, 'model.sdf'
+        'worlds', world_file.maze_name, 'model.sdf'
     )
 
+    # Spawn walls command
     spawn_walls_cmd = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -80,7 +76,7 @@ def generate_launch_description():
         arguments=[
             '-entity', 'walls',
             '-file', maze_model_file,
-            '-x', world.walls_pos[0], '-y', world.walls_pos[1], '-z', world.walls_pos[2]
+            '-x', world_file.walls_pos[0], '-y', world_file.walls_pos[1], '-z', world_file.walls_pos[2]
         ],
         output='screen'
     )
@@ -94,33 +90,15 @@ def generate_launch_description():
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_walls_cmd)
     ld.add_action(spawn_turtlebot_cmd)
+
+    # Add a delay to ensure services are available
+    time.sleep(2)  # You can adjust this delay if necessary
+
     return ld
-
-""" 
-EDIT THE FOLLOWING TO CHANGE THE POSITION OF THE MAZE WITHIN THE WORLD.
-PLEASE DONT PUSH THESE CHANGES UNLESS THEY ARE GOOD. 
-(Eg if you are testing at different spots feel free to change but 
-dont push your changes.)
-"""
-world_data = {
-    "Double-Box": {
-        "walls_pos":["-1", "-1", "0"],
-        "robot_yaw": "-3.141"
-    },
-    "Simple-Box" : {
-        "walls_pos":["2", "-1", "0"],
-        "robot_yaw": "0"
-    }, 
-    "Two-Shapes-of-Box": {
-        "walls_pos":["-1", "2", "0"],
-        "robot_yaw": "0"
-    }
-}
-
 
 class WorldFile:
     def __init__(self):
-        # create the input string
+        # Create the input string
         input_string = "What Maze do you want? Input a number:\n\n"
         for i, option in enumerate(world_data.keys()):
             input_string += f"{i+1}. : {option}\n"
@@ -128,16 +106,30 @@ class WorldFile:
 
         self.maze_id = int(input(input_string)) - 1
 
-        # keep asking till one that is allowed is given
-        while self.maze_id < 0 or self.maze_id > len(world_data.keys()):
+        # Keep asking till one that is allowed is given
+        while self.maze_id < 0 or self.maze_id >= len(world_data.keys()):  # Changed condition to include last index
             print("Bad id, try again:\n")
             self.maze_id = int(input()) - 1
 
-        # get the rest of the worlds attributes
+        # Get the rest of the world's attributes
         self.maze_name = list(world_data.keys())[self.maze_id]
         data_dict = world_data[self.maze_name]
 
         self.walls_pos = data_dict["walls_pos"]
         self.robot_yaw = data_dict["robot_yaw"]
 
-
+# Maze data
+world_data = {
+    "Double-Box": {
+        "walls_pos": ["-1", "-1", "0"],
+        "robot_yaw": "-3.141"
+    },
+    "Simple-Box": {
+        "walls_pos": ["2", "-1", "0"],
+        "robot_yaw": "0"
+    },
+    "Two-Shapes-of-Box": {
+        "walls_pos": ["-1", "2", "0"],
+        "robot_yaw": "0"
+    }
+}
