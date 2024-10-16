@@ -20,7 +20,7 @@ https://discord.gg/9uQkYcss
 # Running Gazebo Simulations
 ```bash
 colcon build --packages-select turt3_gazebo --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turt3_gazebo launch.launch.py
-```
+
 
 # Running RVIZ
 ```bash
@@ -40,5 +40,3 @@ ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
 This is what we are trying to get running by tomorrow. The 
 command to run this is 
 ```bash
-
-```

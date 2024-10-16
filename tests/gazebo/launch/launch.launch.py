@@ -1,3 +1,4 @@
+
 import os
 import time  # Import time for sleep functionality
 from launch import LaunchDescription
@@ -43,10 +44,9 @@ def generate_launch_description():
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items()
     )
-
     # Create an instance of WorldFile
     world_file = WorldFile()
-
+    
     # Launch configuration for robot spawn
     x_pose = LaunchConfiguration('x_pose', default="0.00")
     y_pose = LaunchConfiguration('y_pose', default="0.00")
