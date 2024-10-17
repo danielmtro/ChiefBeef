@@ -44,7 +44,6 @@ class GameMap : public Window {
         std::shared_ptr<Map> map_;
         Button* slam_request_button_;
         
-
 };
 
 #endif

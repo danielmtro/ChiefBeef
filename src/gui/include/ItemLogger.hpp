@@ -8,6 +8,10 @@ Written: Daniel Monteiro
 Date: 17/10/2024
 */
 
+#ifndef _ITEM_LOGGER_HPP
+#define _ITEM_LOGGER_HPP
+
+
 #include <iostream>
 #include <unordered_map>
 #include <string>
@@ -84,3 +88,5 @@ class ItemLogger
         // the total number of items
         int num_items_;
 };
+
+#endif

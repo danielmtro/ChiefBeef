@@ -18,7 +18,9 @@ Date: 12/10/2024
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <SFML/Graphics.hpp>
+#include "ItemLogger.hpp"
 #include "constants.hpp"
 
 class Map : public rclcpp::Node{
@@ -43,6 +45,9 @@ class Map : public rclcpp::Node{
         */
         void publish_slam_request();
 
+        // item logger should be accessible to everything
+        ItemLogger item_logger;
+
     private:
         
         /**
@@ -52,6 +57,14 @@ class Map : public rclcpp::Node{
         * @param msg is an 32 bit integer which represents the current state 
         */
         void map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
+
+        /**
+        * @brief this function is called every time a message is received from
+        * /map topic and it stores the map information
+        *
+        * @param msg is string message that corresponds to an april tag 
+        */
+        void item_callback(const std_msgs::msg::String::SharedPtr msg);
 
         // subscriber for the current map that has been created
         rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
@@ -76,6 +89,11 @@ class Map : public rclcpp::Node{
 
         // slam publisher
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr slam_publisher_;
+
+        // items subscriber
+        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr item_subscriber_;
+        
+
 };
 
 #endif

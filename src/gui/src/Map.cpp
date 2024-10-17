@@ -34,6 +34,14 @@ Map::Map() : Node("Map_Node")
         std::placeholders::_1)
         );
 
+    item_subscriber_ = this->create_subscription<std_msgs::msg::String>(
+        "items",
+        qos_settings,
+        std::bind(                  
+        &Map::item_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1));
+
     // create the slam publisher
     slam_publisher_ = this->create_publisher<std_msgs::msg::Bool>("slam_request", 10);
 }
@@ -42,6 +50,13 @@ Map::~Map()
 {
     RCLCPP_INFO(this->get_logger(), "Map Node has been terminated");
 } 
+
+void Map::item_callback(const std_msgs::msg::String::SharedPtr msg)
+{
+    // add the string to the item logger
+    RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
+    item_logger.add_item(msg->data.c_str());   
+}
 
 /*
 Map callback receives a map message, stores the relative information 
