@@ -66,4 +66,11 @@ namespace CreditsWindow
     constexpr int ROT_LIMIT = 2;
 }
 
+namespace Buttons
+{
+    constexpr int CHARSIZE = 30;
+    constexpr int SCALED_CHARSIZE = 32;
+    constexpr int HOVER_SCALING = 10;
+}
+
 #endif

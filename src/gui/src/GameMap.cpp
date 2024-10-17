@@ -78,6 +78,8 @@ void GameMap::RunMap()
     slam_request_button_->draw(window);
     window.display();
 
+    sf::Vector2i mouse_pos;
+
     while (window.isOpen())
     {
         // Process SFML events (e.g., close the window)
@@ -102,21 +104,29 @@ void GameMap::RunMap()
                 }
             }
 
+            // check if we are clicking on something
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
-                sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+                mouse_pos = sf::Mouse::getPosition(window);
                 std::cout << "Mouse Click Deteced." << std::endl;
                 std::cout << "Clicked on " << mouse_pos.x << ", " << mouse_pos.y << std::endl;
-                if(slam_request_button_->buttonClicked(mouse_pos))
+                
+                // test if we are hovering over the right button and the button is active
+                if(slam_request_button_->buttonHover(mouse_pos) && slam_request_button_->is_active())
                 {
                     map_->publish_slam_request();
+                    slam_request_button_->deactivate_button();
                 }
             }
         }
 
+        // update the state of the button
+        mouse_pos = sf::Mouse::getPosition(window);
+        slam_request_button_->buttonHover(mouse_pos);
+
         // only rebuild screen if a new map has been processed
-        if(!(map_->get_map_available()))
-            continue;
+        // if(!(map_->get_map_available()))
+        //     continue;
 
         // Clear the window with a black color
         window.clear(sf::Color::Black);
