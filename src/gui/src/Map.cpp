@@ -53,9 +53,9 @@ Map::~Map()
 
 void Map::item_callback(const std_msgs::msg::String::SharedPtr msg)
 {
-    // add the string to the item logger
+    // add the current item to the item logger
     RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
-    item_logger.add_item(msg->data.c_str());   
+    item_logger.add_item(msg->data.c_str());    
 }
 
 /*

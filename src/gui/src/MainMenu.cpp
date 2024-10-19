@@ -53,10 +53,6 @@ MainMenu::MainMenu(const std::string& name, int width, int height)
         std::cout << "Failed to load background at " << texture_path << std::endl;
     background.setTexture(&texture);
 
-    // initialise the trolley animation
-    trolley_animation.initialise(width, height);
-    trolley_animation.set_position(MenuWindow::TROLLEY_START_X, MenuWindow::TROLLEY_START_Y);
-
     // background music variables
     std::string music_filename = "/Music/MainMenuMusic.ogg";
     std::string music_path = ament_index_cpp::get_package_share_directory("gui") + music_filename;
@@ -134,6 +130,11 @@ void MainMenu::RunMenu()
     std::cout << "Starting to run the menu" << std::endl;
     sf::RenderWindow window(sf::VideoMode(window_width_, window_height_), window_name_);
     activate_window();
+
+    // initialise the trolley animation
+    trolley_animation.initialise(window);
+    trolley_animation.set_position(MenuWindow::TROLLEY_START_X, MenuWindow::TROLLEY_START_Y);
+
 
     // Track time for movement
     sf::Clock clock;

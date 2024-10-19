@@ -56,7 +56,7 @@ int ItemLogger::get_code(std::string key)
 int ItemLogger::get_num_items(std::string key)
 {
     if(item_map_code_.find(key) == item_map_code_.end())
-        std::cerr << "The key " << key << " hasn't been logged yet!\n";
+        return 0;
 
     return item_map_count_[key];
 }
