@@ -16,6 +16,7 @@ Date: 12/10/2024
 #include "Map.hpp"
 #include "Window.hpp"
 #include "Button.hpp"
+#include "Animation.hpp"
 
 class GameMap : public Window {
 
@@ -43,8 +44,20 @@ class GameMap : public Window {
         // The ROS2 node that will read from /map and store relevant map data
         std::shared_ptr<Map> map_;
         Button* slam_request_button_;
+        std::vector<std::shared_ptr<Icon>> items_in_store_;
+        std::vector<std::shared_ptr<sf::Text>> number_of_items_;
         
 
+        /**
+        * @brief this function initialises the positions of each
+        * item in the store, the numbers and the bounding box 
+        *
+        */
+        void initialise_item_menu(sf::RenderWindow& window);
+
+        sf::RectangleShape bounding_box_;
+
+        
 };
 
 #endif

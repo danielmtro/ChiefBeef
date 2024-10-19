@@ -4,7 +4,7 @@ Animation.hpp Interface
 This is the Interface for the Animation
 parent class and all children of the animation class
 Written: Daniel Monteiro
-Date: 12/10/2024
+Date: 18/10/2024
 */
 
 #ifndef _ANIMATION_HPP
@@ -35,17 +35,14 @@ class Animation
 
         /**
         * @brief this function should initialise the texture associated
-        * with the sprite. Must be implemented by all derived classes. This
-        * function should do the following:
+        * with the sprite. This function should do the following:
         * 
         * 1. Load a texture from a file
         * 2. Set the texture to the sprite
-        * 3. Set the sprites initial position
         * 
-        * @param width the width of the screen that the animation will be on
-        * @param height the height of the screen that the animation will be on
+        * @param window the window that the sprite will be displayed on
         */
-        virtual void initialise(int width, int height) = 0;
+        virtual void initialise(sf::RenderWindow& window) = 0;
 
         /**
         * @brief updates the position of a sprite on the screen
@@ -53,6 +50,14 @@ class Animation
         * @param deltaTime is the time difference between each frame  on the screen
         */
         virtual void update_position(sf::Time deltaTime) = 0;
+
+        /**
+        * @brief sets the position of a sprite on the screen
+        * 
+        * @param x horiontal position on screen
+        * @param y vertical position on screen
+        */
+        void set_position(float x, float y);
 
     protected:
 
@@ -63,11 +68,20 @@ class Animation
         // animation variables
         sf::Sprite sprite;
         sf::Texture sprite_texture;
-        float animation_speed;
+        float animation_speed_;
 
         // window the animation is placed on
         int window_width_;
         int window_height_;
+
+        /**
+        * @brief intialises the texture for a given sprite
+        * 
+        * @param sref reference to the sprite to load for
+        * @param tref reference to the texture to load for
+        * @param fname the filename of the texture to load
+        */
+        void initialise_texture(sf::Sprite& sref, sf::Texture& tref, std::string& fname);
 
 };
 
@@ -85,10 +99,60 @@ class Trolley : public Animation
         */
         void update_position(sf::Time deltaTime);
 
-        void set_position(float x, float y);
+        void initialise(sf::RenderWindow& window);
 
+    protected:
+        
+};
+
+
+/*
+This is the class for little animated sprites that will act as the loggers
+for the items that are recorded. Items will jiggle every few seconds
+*/
+class Icon : public Animation
+{
     public:
-        void initialise(int width, int height);
+
+        /**
+        * @brief Initialises a menu icon
+        * 
+        * @param texture_path is the filename of the texture to  be 
+        * loaded for this animation (can be a jpg, png, jpeg)
+        */
+        Icon();
+        ~Icon();
+
+        // initialises icon with default image of an apple
+        void initialise(sf::RenderWindow& window);
+    
+        /**
+        * @brief this function should initialise the texture associated
+        * with the sprite. This function should do the following:
+        * 
+        * 1. Load a texture from a file
+        * 2. Set the texture to the sprite
+        * 
+        * @param window the window that the sprite will be displayed on
+        * @param fname specifies the filename of the sprite texture
+        */
+        void initialise(sf::RenderWindow& window, std::string fname);
+
+
+        /**
+        * @brief updates the position of a sprite on the screen
+        * 
+        * @param deltaTime is the time difference between each frame  on the screen
+        */
+        void update_position(sf::Time deltaTime);
+
+        bool do_i_jiggle_;
+        float time_since_last_jiggle_;
+        float time_jiggled_;
+
+        // rotation direction 1 for forwards -1 for reverse
+        int rotation_direction_;
+
 };
 
 #endif

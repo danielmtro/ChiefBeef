@@ -7,7 +7,7 @@ map and see the robot.
 Subscribes to the /map topic that is provided by SLAM
 
 Written: Daniel Monteiro
-Date: 12/10/2024
+Date: 18/10/2024
 */
 
 
@@ -34,14 +34,38 @@ Map::Map() : Node("Map_Node")
         std::placeholders::_1)
         );
 
+    // create a logger to store recorded items
+    item_logger_ = std::make_shared<ItemLogger>();
+
+    item_subscriber_ = this->create_subscription<std_msgs::msg::String>(
+        "items",
+        qos_settings,
+        std::bind(                  
+        &Map::item_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1));
+
     // create the slam publisher
     slam_publisher_ = this->create_publisher<std_msgs::msg::Bool>("slam_request", 10);
+
 }
 
 Map::~Map()
 {
     RCLCPP_INFO(this->get_logger(), "Map Node has been terminated");
 } 
+
+std::shared_ptr<ItemLogger> Map::get_item_logger()
+{
+    return item_logger_;
+}
+
+void Map::item_callback(const std_msgs::msg::String::SharedPtr msg)
+{
+    // add the current item to the item logger
+    RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
+    item_logger_->add_item(msg->data.c_str());    
+}
 
 /*
 Map callback receives a map message, stores the relative information 

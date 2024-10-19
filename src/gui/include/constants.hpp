@@ -18,17 +18,27 @@ enum MeunItems
 namespace GmapWindow
 {
     constexpr int MAP_WIDTH = 1200;
-    constexpr int MAP_HEIGHT = 600;
+    constexpr int MAP_HEIGHT = 800;
     const std::string MAP_NAME = "Supermarket Map";
 
     constexpr int SBUTTON_X = 50;
-    constexpr int SBUTTON_Y = 450;
+    constexpr int SBUTTON_Y = MAP_HEIGHT - 150;
     constexpr int SBUTTON_W = 150;
     constexpr int SBUTTON_H = 100;
     constexpr int SBUTTON_CHAR = 30;
 
     const std::string SBUTTON_WORD = "Stocktake";
 
+    // constants to control the icons in the gamewindow
+    constexpr int ICON_ROTATION_SPEED = 40;
+    constexpr int ROT_LIMIT = 5;
+    constexpr float TIME_BETWEEN_JIGGLES = 2;
+    constexpr float TIME_JIGGLING = 1.5;
+    constexpr int NUM_ITEMS = 2;
+    constexpr int ICON_Y = 100;
+    constexpr int ICON_X = MAP_WIDTH - 200;
+    constexpr int ICON_SEP = 65;
+    constexpr int NUM_ICON_CHARSIZE = 30;
 }
 
 
@@ -64,6 +74,13 @@ namespace CreditsWindow
     constexpr int BASE_X = 150;
     constexpr int BASE_Y = 50;
     constexpr int ROT_LIMIT = 2;
+}
+
+namespace Buttons
+{
+    constexpr int CHARSIZE = 30;
+    constexpr int SCALED_CHARSIZE = 32;
+    constexpr int HOVER_SCALING = 10;
 }
 
 #endif
