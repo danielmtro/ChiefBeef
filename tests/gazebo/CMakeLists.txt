@@ -38,6 +38,7 @@ link_directories(
 include_directories(
   include
   ${GAZEBO_INCLUDE_DIRS}
+  OPTIONAL
 )
 
 set(dependencies

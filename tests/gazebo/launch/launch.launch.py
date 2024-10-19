@@ -10,6 +10,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     launch_file_dir = os.path.join(get_package_share_directory('turt3_gazebo'), 'launch')
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
+    pkg_april_tags = get_package_share_directory('apriltag_ros')
 
     # Use simulation time
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
@@ -58,7 +59,7 @@ def generate_launch_description():
         launch_arguments={
             'x_pose': x_pose,
             'y_pose': y_pose,
-            'Y': world_file.robot_yaw,
+            'robot_yaw': world_file.robot_yaw,
         }.items()
     )
 
@@ -66,6 +67,12 @@ def generate_launch_description():
     maze_model_file = os.path.join(
         get_package_share_directory('turt3_gazebo'),
         'worlds', world_file.maze_name, 'model.sdf'
+    )
+
+    tag_detector_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_april_tags, 'launch', 'tag_16h5_all.launch.py')
+        )
     )
 
     # Spawn walls command
@@ -90,6 +97,7 @@ def generate_launch_description():
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_walls_cmd)
     ld.add_action(spawn_turtlebot_cmd)
+    ld.add_action(tag_detector_cmd)
 
     # Add a delay to ensure services are available
     time.sleep(2)  # You can adjust this delay if necessary
@@ -131,5 +139,9 @@ world_data = {
     "Two-Shapes-of-Box": {
         "walls_pos": ["-1", "2", "0"],
         "robot_yaw": "0"
+    },
+    "Double-Box-New-Tags": {
+        "walls_pos": ["-0.5", "1.5", "0.3"],
+        "robot_yaw": "1.5707963268"
     }
 }
