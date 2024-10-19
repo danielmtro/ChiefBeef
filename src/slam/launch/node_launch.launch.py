@@ -12,7 +12,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
-
+from launch_ros.actions import Node
 
 def generate_launch_description():
     tutorial_dir = FindPackageShare('tutorial_pkg')
@@ -35,13 +35,6 @@ def generate_launch_description():
         'use_sim_time', default_value='false', description='Use simulation (Gazebo) clock if true'
     )
 
-    slam_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([tutorial_dir, 'launch', 'slam.launch.py'])
-        ),
-        launch_arguments={'use_sim_time': use_sim_time}.items(),
-    )
-
     nav2_bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([nav2_bringup_dir, 'launch', 'navigation_launch.py'])
@@ -50,6 +43,13 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'params_file': params_file,
         }.items(),
+    )
+
+    slam_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([tutorial_dir, 'launch', 'slam.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items(),
     )
 
     explore_lite_launch = IncludeLaunchDescription(
@@ -65,6 +65,6 @@ def generate_launch_description():
             declare_use_sim_time_cmd,
             slam_launch,
             nav2_bringup_launch,
-            explore_lite_launch,
+            explore_lite_launch
         ]
     )
