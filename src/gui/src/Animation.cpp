@@ -4,7 +4,7 @@ Animation.hpp Implementation
 This is the Implementation for the Animation
 parent class and all children of the animation class
 Written: Daniel Monteiro
-Date: 12/10/2024
+Date: 18/10/2024
 */
 
 #include "Animation.hpp"

@@ -4,7 +4,7 @@ Animation.hpp Interface
 This is the Interface for the Animation
 parent class and all children of the animation class
 Written: Daniel Monteiro
-Date: 12/10/2024
+Date: 18/10/2024
 */
 
 #ifndef _ANIMATION_HPP
