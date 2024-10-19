@@ -34,6 +34,9 @@ Map::Map() : Node("Map_Node")
         std::placeholders::_1)
         );
 
+    // create a logger to store recorded items
+    item_logger_ = std::make_shared<ItemLogger>();
+
     item_subscriber_ = this->create_subscription<std_msgs::msg::String>(
         "items",
         qos_settings,
@@ -44,6 +47,7 @@ Map::Map() : Node("Map_Node")
 
     // create the slam publisher
     slam_publisher_ = this->create_publisher<std_msgs::msg::Bool>("slam_request", 10);
+
 }
 
 Map::~Map()
@@ -51,11 +55,16 @@ Map::~Map()
     RCLCPP_INFO(this->get_logger(), "Map Node has been terminated");
 } 
 
+std::shared_ptr<ItemLogger> Map::get_item_logger()
+{
+    return item_logger_;
+}
+
 void Map::item_callback(const std_msgs::msg::String::SharedPtr msg)
 {
     // add the current item to the item logger
     RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
-    item_logger.add_item(msg->data.c_str());    
+    item_logger_->add_item(msg->data.c_str());    
 }
 
 /*

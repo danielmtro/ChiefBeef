@@ -186,8 +186,12 @@ void GameMap::RunMap()
         // draw on the store items
         for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
         {
+            // make the item icons jiggle
             items_in_store_[i]->update_position(deltaTime);
 
+            // update the number of items
+            number_of_items_[i]->setString(std::to_string(map_->get_item_logger()->get_num_items(i)));
+    
             window.draw(*items_in_store_[i]->get_sprite());
             window.draw(*number_of_items_[i]);
         }

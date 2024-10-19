@@ -46,9 +46,11 @@ class Map : public rclcpp::Node{
         void publish_slam_request();
 
         // item logger should be accessible to everything
-        ItemLogger item_logger;
+        std::shared_ptr<ItemLogger>  get_item_logger();
 
     private:
+
+        std::shared_ptr<ItemLogger> item_logger_;
         
         /**
         * @brief this function is called every time a message is received from

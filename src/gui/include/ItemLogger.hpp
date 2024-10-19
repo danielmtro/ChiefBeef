@@ -45,7 +45,7 @@ class ItemLogger
         int get_num_items(std::string key);
 
         /**
-        * @brief overloaded function of above. Get's the item
+        * @brief overloaded function of get_num_items(std::string key). Get's the item
         * based off the encoded integer instead of the string
         * 
         * @param code the integer encoding of an item
