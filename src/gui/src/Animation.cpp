@@ -183,3 +183,10 @@ void Icon::initialise(sf::RenderWindow& window, std::string fname)
     sf::Vector2f center(sprite_texture.getSize().x / 2.0f, sprite_texture.getSize().y / 2.0f);
     sprite.setOrigin(center);
 }
+
+void CharacterIcon::update_position(sf::Time deltaTime, Map::Pose pose)
+{
+    float x = pose.x;
+    float y = pose.y;
+    float yaw = pose.yaw;
+}

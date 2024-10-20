@@ -17,6 +17,7 @@ Date: 18/10/2024
 #include <random>
 
 #include "constants.hpp"
+#include "Map.hpp"
 
 class Animation
 {
@@ -138,7 +139,6 @@ class Icon : public Animation
         */
         void initialise(sf::RenderWindow& window, std::string fname);
 
-
         /**
         * @brief updates the position of a sprite on the screen
         * 
@@ -146,12 +146,36 @@ class Icon : public Animation
         */
         void update_position(sf::Time deltaTime);
 
+    protected:
+
         bool do_i_jiggle_;
         float time_since_last_jiggle_;
         float time_jiggled_;
 
         // rotation direction 1 for forwards -1 for reverse
         int rotation_direction_;
+
+};
+
+/*
+Class for the character icon that will move around the map
+*/
+class CharacterIcon : public Icon
+{
+
+    public:
+        
+        /**
+        * @brief updates the position of a sprite on the screen
+        * reads from 
+        * 
+        * @param deltaTime is the time difference between each frame  on the screen
+        * @param pose is the current pose of the turtlebot that should be passed in to this
+        * 
+        */
+        void update_position(sf::Time deltaTime, Map::Pose pose);
+
+    protected:
 
 };
 

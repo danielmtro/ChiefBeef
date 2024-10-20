@@ -117,33 +117,27 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
 
     int x_offset = (effective_x_width - width * sf_x)/2 + (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W);
     int y_offset = (window_height - height * sf_y)/2;
-
-
-    sf::RectangleShape cell(sf::Vector2f(sf_x, sf_y)); // Each cell is a 5x5 pixel square
+    
+    // create cells and display them on the window
+    sf::RectangleShape cell(sf::Vector2f(sf_x, sf_y));
     for (int y = 0; y < height; ++y)
     {
         for (int x = 0; x < width; ++x)
         {
-
             int cval = image.at<uchar>(y, x);
-
             // if there is a certain square at this position then plot it
             if(cval == WHITE_UINT)
             {
+                // brownish colour
                 cell.setFillColor(sf::Color(102, 51, 0));
     
                 // Set position and draw the cell
                 cell.setPosition((x * sf_x + x_offset), (y * sf_y + y_offset));
                 window.draw(cell);
             }
-            
         }
-
     }
-    
-
 }
-
 
 void GameMap::initialise_item_menu(sf::RenderWindow& window)
 {
@@ -205,6 +199,7 @@ void GameMap::RunMap()
     slam_request_button_->draw(window);
     window.display();
 
+    // create mouse position
     sf::Vector2i mouse_pos;
 
     // Track time for movement
