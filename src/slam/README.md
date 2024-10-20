@@ -11,17 +11,17 @@ The SLAM code will hold three main components:
    ```
 2) Open RVIZ, nav and slam_toolbox - all in different terminals
    ```bash
-   ros2 launch turtlebot3_bringup rviz2.launch.py 
+   ros2 launch turtlebot3_bringup rviz2.launch.py use_sim_time:=false
    ```
    ```bash
-   ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
+   ros2 launch nav2_bringup navigation_launch.py use_sim_time:=false
    ```
    ```bash
-   ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
+   ros2 launch slam_toolbox online_async_launch.py use_sim_time:=false
    ```
 3) Run the explore.cpp file to move the turtlebot around
    ```bash
-   ros2 launch explore_lite explore.launch.py
+   ros2 launch explore_lite explore.launch.py use_sim_time:=false
    ```
 4) Open RVIZ and go to:  Add > By Topic > Map > /map
      This opens the mapping function in RVIZ so that you can see it being built                 
@@ -30,3 +30,11 @@ The SLAM code will hold three main components:
 ```bash
 colcon build --packages-select tutorial_pkg
 ```
+
+
+
+Adjust lethal radius in the the nav2 params
+https://docs.nav2.org/configuration/packages/costmap-plugins/inflation.html
+Needs to be done in the params.yaml file so it doesn't have to be in the source code
+
+params file located in `/home/adamriesel/ChiefBeef/src/explore`
