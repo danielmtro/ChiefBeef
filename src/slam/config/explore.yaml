@@ -10,4 +10,4 @@ explore_node:
     orientation_scale: 0.5
     gain_scale: 1.0
     transform_tolerance: 0.1
-    min_frontier_size: 0.6
+    min_frontier_size: 0.2
