@@ -16,6 +16,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+find_package(OpenCV REQUIRED)
 
 set(dependencies
   "geometry_msgs"
@@ -38,7 +39,8 @@ set(source_
     )
 
 # Include directories
-include_directories(include)
+include_directories(include
+                    ${OpenCV_INCLUDE_DIRS})
 
 add_executable(Map
                src/Window.cpp
@@ -55,7 +57,7 @@ target_compile_definitions(Map PRIVATE MAP_MAIN)
 ament_target_dependencies(Map ${dependencies})
 
 # link the sfml library stuff
-target_link_libraries(Map sfml-graphics sfml-window sfml-audio sfml-system)
+target_link_libraries(Map sfml-graphics sfml-window sfml-audio sfml-system ${OpenCV_LIBS})
 
 install(TARGETS
   Map

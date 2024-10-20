@@ -11,12 +11,15 @@ Date: 12/10/2024
 
 #include <memory>
 #include <iostream>
+#include <vector>
+#include <opencv2/opencv.hpp>
 #include <SFML/Graphics.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include "Map.hpp"
 #include "Window.hpp"
 #include "Button.hpp"
 #include "Animation.hpp"
+
 
 class GameMap : public Window {
 

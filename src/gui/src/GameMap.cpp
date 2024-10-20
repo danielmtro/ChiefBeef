@@ -53,34 +53,56 @@ GameMap::~GameMap()
 
 void GameMap::DrawMapData(sf::RenderWindow& window)
 {
-    // Update window using ROS2 data
-    // For example, let's draw a simple grid based on the occupancy grid data
-        
+
     std::vector<int8_t> map_data = map_->get_map();
 
     uint32_t width = map_->get_width();
     uint32_t height = map_->get_height();
-    if (width > 0 && height > 0)
-        {
-            sf::RectangleShape cell(sf::Vector2f(10.0f, 10.0f)); // Each cell is a 5x5 pixel square
-            for (uint32_t y = 0; y < height; ++y)
-            {
-                for (uint32_t x = 0; x < width; ++x)
-                {
-                    int8_t occupancy_value = map_data[y * width + x];
-                    if (occupancy_value == 0)  // Free space
-                        cell.setFillColor(sf::Color::White);
-                    else if (occupancy_value == 100)  // Occupied space
-                        cell.setFillColor(sf::Color::Red);
-                    else  // Unknown
-                        cell.setFillColor(sf::Color::Black);
 
-                    // Set position and draw the cell
-                    cell.setPosition(x * 5.0f, y * 5.0f);
-                    window.draw(cell);
-                }
-            }
+    if( (!width) || (!height))
+        return;
+
+    // convert to opencv matrix
+    cv::Mat image(height, width, CV_8UC1);
+
+    // Populate the matrix with pixel values (convert to 0 or 255)
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            int value = map_data[i * width + j];
+            image.at<uchar>(i, j) = (value == 100) ? 255 : 0;
         }
+    }
+
+    // Apply morphological operations (Erosion and Dilation)
+    cv::Mat cleanedImage;
+    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+    cv::morphologyEx(image, cleanedImage, cv::MORPH_OPEN, element);
+
+    // Apply a Median Filter to remove noise
+    cv::Mat finalImage;
+    cv::medianBlur(image, finalImage, 3);
+
+
+    sf::RectangleShape cell(sf::Vector2f(10.0f, 10.0f)); // Each cell is a 5x5 pixel square
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+
+            int cell_val = finalImage.at<uchar>(y, x);
+            int occupancy_value = (cell_val == -1) ? 0 : cell_val;
+            // std::cout << occupancy_value << " ";
+
+            cell.setFillColor(sf::Color(occupancy_value, occupancy_value, occupancy_value));
+    
+            // Set position and draw the cell
+            cell.setPosition(x * 5.0f, y * 5.0f);
+            window.draw(cell);
+        }
+
+        // std::cout << "\n";
+    }
+    
 
 }
 
