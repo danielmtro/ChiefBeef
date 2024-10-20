@@ -60,7 +60,9 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
 
         number_of_items_.push_back(item_num);
     }
-    
+
+    // position of the actual trolley
+    trolley_ = std::make_shared<CharacterIcon>();
 
     std::cout << "Game Map Created" << std::endl;
 }
@@ -93,6 +95,7 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
             image.at<uchar>(i, j) = (value == 100) ? 255 : 0;
         }
     }
+
     // Apply a Median Filter to remove noise
     cv::Mat finalImage;
     cv::medianBlur(image, finalImage, 3);
@@ -137,9 +140,12 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
             }
         }
     }
+
+    map_width_ = width;
+    map_height_ = height;
 }
 
-void GameMap::initialise_item_menu(sf::RenderWindow& window)
+void GameMap::initialise(sf::RenderWindow& window)
 {
 
     // create a rectangle around the objects
@@ -157,6 +163,11 @@ void GameMap::initialise_item_menu(sf::RenderWindow& window)
     
     number_of_items_[0]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
     number_of_items_[1]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
+
+    // initialise the actual character
+    trolley_->initialise(window, "/shopping_cart_small.png");
+    
+
 }
 
 void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
@@ -182,6 +193,15 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
         window.draw(*number_of_items_[i]);
     }
 
+
+    // update the position of the character
+    Map::Pose pose = map_->get_current_pose();
+    trolley_->update_position(map_->get_current_pose());
+
+    // only draw the trolley on if there is a map to draw it on with
+    if(map_width_ > 0 && map_height_ > 0)
+        window.draw(*trolley_->get_sprite());
+
     window.draw(bounding_box_);
 }
 
@@ -191,8 +211,8 @@ void GameMap::RunMap()
     sf::RenderWindow window(sf::VideoMode(window_width_, window_height_), window_name_);
     activate_window();
 
-    // initalise the upper menu of items in the store
-    initialise_item_menu(window);
+    // initalise everything in the store
+    initialise(window);
     
     // draw on the buttons to start off
     window.clear();

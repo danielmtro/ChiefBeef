@@ -89,7 +89,7 @@ void Map::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 }
 
 Map::Pose Map::get_current_pose() const
-{
+{ 
     return current_pose_;
 }
 

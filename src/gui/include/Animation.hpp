@@ -169,13 +169,10 @@ class CharacterIcon : public Icon
         * @brief updates the position of a sprite on the screen
         * reads from 
         * 
-        * @param deltaTime is the time difference between each frame  on the screen
         * @param pose is the current pose of the turtlebot that should be passed in to this
         * 
         */
-        void update_position(sf::Time deltaTime, Map::Pose pose);
-
-    protected:
+        void update_position(Map::Pose pose);
 
 };
 

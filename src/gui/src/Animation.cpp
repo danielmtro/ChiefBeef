@@ -184,9 +184,19 @@ void Icon::initialise(sf::RenderWindow& window, std::string fname)
     sprite.setOrigin(center);
 }
 
-void CharacterIcon::update_position(sf::Time deltaTime, Map::Pose pose)
+void CharacterIcon::update_position(Map::Pose pose)
 {
     float x = pose.x;
     float y = pose.y;
     float yaw = pose.yaw;
+
+    // default variables if we don't have a valid pose
+    if(x == 0 && y == 0)
+    {
+        x = window_width_/2;
+        y = window_height_/2;
+    }
+    sprite.setPosition(x, y);
+    sprite.setRotation(yaw * RAD_TO_DEG);
+
 }

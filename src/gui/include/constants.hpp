@@ -2,10 +2,12 @@
 #define _CONSTANTS_HPP
 
 #include <iostream>
+#include <cmath>
 
 // Namespace for defining the dimensions of the map that is spawned
 // for the actual turtlebot
 
+constexpr float RAD_TO_DEG = 180/M_PI;
 constexpr int DEG_PER_ROT = 360;
 constexpr int WHITE_UINT = 255;
 

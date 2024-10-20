@@ -58,7 +58,7 @@ class GameMap : public Window {
         * item in the store, the numbers and the bounding box 
         *
         */
-        void initialise_item_menu(sf::RenderWindow& window);
+        void initialise(sf::RenderWindow& window);
 
         /**
         * @brief this function draws everything that should appear on a frame.
@@ -69,6 +69,13 @@ class GameMap : public Window {
         void draw_frame(sf::RenderWindow& window, sf::Time deltaTime);
 
         sf::RectangleShape bounding_box_;
+
+        // icon for the robot's position
+        std::shared_ptr<CharacterIcon> trolley_;
+
+        // map read variables
+        uint32_t map_width_;
+        uint32_t map_height_;
 
         
 };
