@@ -60,6 +60,14 @@ class GameMap : public Window {
         */
         void initialise_item_menu(sf::RenderWindow& window);
 
+        /**
+        * @brief this function draws everything that should appear on a frame.
+        * Also updates positions of sprites before drawing
+        * 
+        * @param deltaTime time between frames
+        */
+        void draw_frame(sf::RenderWindow& window, sf::Time deltaTime);
+
         sf::RectangleShape bounding_box_;
 
         

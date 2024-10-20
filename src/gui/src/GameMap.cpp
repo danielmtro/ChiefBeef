@@ -165,6 +165,32 @@ void GameMap::initialise_item_menu(sf::RenderWindow& window)
     number_of_items_[1]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
 }
 
+void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
+{
+    window.draw(background);
+
+    // draw on the map
+    DrawMapData(window);
+
+    slam_request_button_->draw(window);
+    home_button_->draw(window);
+
+    // draw on the store items
+    for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
+    {
+        // make the item icons jiggle
+        items_in_store_[i]->update_position(deltaTime);
+
+        // update the number of items
+        number_of_items_[i]->setString(std::to_string(map_->get_item_logger()->get_num_items(i)));
+
+        window.draw(*items_in_store_[i]->get_sprite());
+        window.draw(*number_of_items_[i]);
+    }
+
+    window.draw(bounding_box_);
+}
+
 void GameMap::RunMap()
 {
     // Create an SFML window
@@ -245,28 +271,8 @@ void GameMap::RunMap()
         // once we read the map, let the map know 
         map_->read_map_data();
 
-        window.draw(background);
+        draw_frame(window, deltaTime);
 
-        // draw on the map
-        DrawMapData(window);
-
-        slam_request_button_->draw(window);
-        home_button_->draw(window);
-
-        // draw on the store items
-        for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
-        {
-            // make the item icons jiggle
-            items_in_store_[i]->update_position(deltaTime);
-
-            // update the number of items
-            number_of_items_[i]->setString(std::to_string(map_->get_item_logger()->get_num_items(i)));
-    
-            window.draw(*items_in_store_[i]->get_sprite());
-            window.draw(*number_of_items_[i]);
-        }
-
-        window.draw(bounding_box_);
         // Display the window content
         window.display();
     }
