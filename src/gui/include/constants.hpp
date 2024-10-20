@@ -21,13 +21,22 @@ namespace GmapWindow
     constexpr int MAP_HEIGHT = 800;
     const std::string MAP_NAME = "Supermarket Map";
 
+    // the slam button constants
     constexpr int SBUTTON_X = 50;
     constexpr int SBUTTON_Y = MAP_HEIGHT - 150;
     constexpr int SBUTTON_W = 150;
     constexpr int SBUTTON_H = 100;
     constexpr int SBUTTON_CHAR = 30;
 
+    // the home button constants
+    constexpr int HBUTTON_X = MAP_WIDTH - 200;
+    constexpr int HBUTTON_Y = MAP_HEIGHT - 150;;
+    constexpr int HBUTTON_W = 150;
+    constexpr int HBUTTON_H = 100;
+    constexpr int HBUTTON_CHAR = 30;
+
     const std::string SBUTTON_WORD = "Stocktake";
+    const std::string HBUTTON_WORD = "Home";
 
     // constants to control the icons in the gamewindow
     constexpr int ICON_ROTATION_SPEED = 40;
@@ -36,7 +45,7 @@ namespace GmapWindow
     constexpr float TIME_JIGGLING = 1.5;
     constexpr int NUM_ITEMS = 2;
     constexpr int ICON_Y = 100;
-    constexpr int ICON_X = MAP_WIDTH - 200;
+    constexpr int ICON_X = HBUTTON_X + 40;
     constexpr int ICON_SEP = 65;
     constexpr int NUM_ICON_CHARSIZE = 30;
 }

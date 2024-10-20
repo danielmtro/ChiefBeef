@@ -158,6 +158,7 @@ void MainMenu::RunMenu()
             // if we close the window then close everything
             if (event.type == sf::Event::Closed)
             {
+                selection_ = EXIT;
                 window.close();
                 close_window();
             }

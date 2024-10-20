@@ -47,6 +47,8 @@ class GameMap : public Window {
         // The ROS2 node that will read from /map and store relevant map data
         std::shared_ptr<Map> map_;
         Button* slam_request_button_;
+        Button* home_button_;
+
         std::vector<std::shared_ptr<Icon>> items_in_store_;
         std::vector<std::shared_ptr<sf::Text>> number_of_items_;
         

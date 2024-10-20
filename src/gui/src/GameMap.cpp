@@ -25,6 +25,15 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
         font
     );
 
+    // create the request button
+    home_button_ = new Button(
+        GmapWindow::HBUTTON_X, GmapWindow::HBUTTON_Y,
+        GmapWindow::HBUTTON_W, GmapWindow::HBUTTON_H,
+        sf::Color(0, 128, 255),   // fun colour
+        GmapWindow::HBUTTON_WORD,
+        font
+    );
+
     // create icon objects to store 
     for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
     {
@@ -48,6 +57,7 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
 GameMap::~GameMap()
 {
     delete slam_request_button_;
+    delete home_button_;
     std::cout << "Game Map no longer running" << std::endl;
 }
 
@@ -72,35 +82,48 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
             image.at<uchar>(i, j) = (value == 100) ? 255 : 0;
         }
     }
-
-    // Apply morphological operations (Erosion and Dilation)
-    cv::Mat cleanedImage;
-    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
-    cv::morphologyEx(image, cleanedImage, cv::MORPH_OPEN, element);
-
     // Apply a Median Filter to remove noise
     cv::Mat finalImage;
     cv::medianBlur(image, finalImage, 3);
 
+    // code to center the map in the middle of the window
+    int window_width = window.getSize().x;
+    int window_height = window.getSize().y;
 
-    sf::RectangleShape cell(sf::Vector2f(10.0f, 10.0f)); // Each cell is a 5x5 pixel square
+    // we presume that the window is larger than the map size
+    if(window_width < width || window_height < height)
+        std::cerr << "Small window or Large Map not supported" << std::endl;
+
+    // define scaling factors and offsets for placing window
+    // adjust x scaling to not interfere with button positions
+    int effective_x_width = (window_width - 2 * (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W));
+    int sf_x = effective_x_width/width;
+    int sf_y = window_height/height;
+
+    // take the minimum scaling and set it to both
+    sf_x = (sf_x < sf_y) ? sf_x : sf_y;
+    sf_y = sf_x;
+
+    int x_offset = (effective_x_width - width * sf_x)/2 + (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W);
+    int y_offset = (window_height - height * sf_y)/2;
+
+
+    sf::RectangleShape cell(sf::Vector2f(sf_x, sf_y)); // Each cell is a 5x5 pixel square
     for (int y = 0; y < height; ++y)
     {
         for (int x = 0; x < width; ++x)
         {
 
-            int cell_val = finalImage.at<uchar>(y, x);
+            int cell_val = image.at<uchar>(y, x);
             int occupancy_value = (cell_val == -1) ? 0 : cell_val;
-            // std::cout << occupancy_value << " ";
 
             cell.setFillColor(sf::Color(occupancy_value, occupancy_value, occupancy_value));
     
             // Set position and draw the cell
-            cell.setPosition(x * 5.0f, y * 5.0f);
+            cell.setPosition((x * sf_x + x_offset), (y * sf_y + y_offset));
             window.draw(cell);
         }
 
-        // std::cout << "\n";
     }
     
 
@@ -187,12 +210,19 @@ void GameMap::RunMap()
                     map_->publish_slam_request();
                     slam_request_button_->deactivate_button();
                 }
+                else if(home_button_->buttonHover(mouse_pos))
+                {
+                    window.close();
+                    close_window();
+                }
             }
         }
 
-        // update the state of the button
+        // update the state of the slam request button
         mouse_pos = sf::Mouse::getPosition(window);
         slam_request_button_->buttonHover(mouse_pos);
+        home_button_->buttonHover(mouse_pos);
+
 
         // Clear the window with a black color
         window.clear(sf::Color::Black);
@@ -204,6 +234,7 @@ void GameMap::RunMap()
         DrawMapData(window);
 
         slam_request_button_->draw(window);
+        home_button_->draw(window);
 
         // draw on the store items
         for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
