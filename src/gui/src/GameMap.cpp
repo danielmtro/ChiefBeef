@@ -12,6 +12,17 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
     : Window(name, width, height), map_(MapPtr)
 {   
 
+    // set the background for the main menu
+    std::string background_location = "/Textures/concrete_background.png";
+    std::string texture_path = ament_index_cpp::get_package_share_directory("gui") + background_location;
+    std::cout << "Background path for Game Map " << texture_path << std::endl;
+
+    // load the texture  
+    background.setSize(sf::Vector2f(window_width_, window_height_));
+    if(!texture.loadFromFile(texture_path))
+        std::cout << "Failed to load background at " << texture_path << std::endl;
+    background.setTexture(&texture);
+
     // load in the font for the button
     std::string font_path = ament_index_cpp::get_package_share_directory("gui") + "/Fonts/comic_sans_1.ttf";
     font.loadFromFile(font_path);
@@ -45,7 +56,7 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
         item_num->setFont(font);
         item_num->setString("0");
         item_num->setCharacterSize(GmapWindow::NUM_ICON_CHARSIZE);
-        item_num->setFillColor(sf::Color::Cyan);
+        item_num->setFillColor(sf::Color::Blue);
 
         number_of_items_.push_back(item_num);
     }
@@ -114,14 +125,18 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
         for (int x = 0; x < width; ++x)
         {
 
-            int cell_val = image.at<uchar>(y, x);
-            int occupancy_value = (cell_val == -1) ? 0 : cell_val;
+            int cval = image.at<uchar>(y, x);
 
-            cell.setFillColor(sf::Color(occupancy_value, occupancy_value, occupancy_value));
+            // if there is a certain square at this position then plot it
+            if(cval == WHITE_UINT)
+            {
+                cell.setFillColor(sf::Color(102, 51, 0));
     
-            // Set position and draw the cell
-            cell.setPosition((x * sf_x + x_offset), (y * sf_y + y_offset));
-            window.draw(cell);
+                // Set position and draw the cell
+                cell.setPosition((x * sf_x + x_offset), (y * sf_y + y_offset));
+                window.draw(cell);
+            }
+            
         }
 
     }
@@ -229,6 +244,8 @@ void GameMap::RunMap()
 
         // once we read the map, let the map know 
         map_->read_map_data();
+
+        window.draw(background);
 
         // draw on the map
         DrawMapData(window);

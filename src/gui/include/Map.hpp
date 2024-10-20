@@ -17,6 +17,9 @@ Date: 12/10/2024
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <SFML/Graphics.hpp>
@@ -25,6 +28,12 @@ Date: 12/10/2024
 
 class Map : public rclcpp::Node{
     public:
+
+        //  Struct to hold info about the robots
+        struct Pose {
+            double x, y, z;           // Position
+            double roll, pitch, yaw;   // Orientation (RPY angles)
+        };
 
         Map();
         ~Map();
@@ -48,6 +57,9 @@ class Map : public rclcpp::Node{
         // item logger should be accessible to everything
         std::shared_ptr<ItemLogger>  get_item_logger();
 
+        // current pose retrieval
+        Pose get_current_pose() const;
+
     private:
 
         std::shared_ptr<ItemLogger> item_logger_;
@@ -67,6 +79,13 @@ class Map : public rclcpp::Node{
         * @param msg is string message that corresponds to an april tag 
         */
         void item_callback(const std_msgs::msg::String::SharedPtr msg);
+
+        /**
+        * @brief function takes in the robots odometry and stores the pose
+        *
+        * @param msg a nav_msgs::msg::Odometry::SharedPtr that corresponds to a quaternion (4 dimensional)
+        */        
+        void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
 
         // subscriber for the current map that has been created
         rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
@@ -94,7 +113,11 @@ class Map : public rclcpp::Node{
 
         // items subscriber
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr item_subscriber_;
+
+        // odometry subscriber
+        rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
         
+        Pose current_pose_;
 
 };
 

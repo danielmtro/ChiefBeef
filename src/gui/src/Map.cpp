@@ -24,6 +24,16 @@ Map::Map() : Node("Map_Node")
     qos_settings.reliability(RMW_QOS_POLICY_RELIABILITY_RELIABLE);
     qos_settings.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
     
+    // Initialise odometry
+    odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+        "odom", /* subscribe to topic /scan */ \
+        rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
+        std::bind(                  
+        &Map::odom_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1)
+        );
+
     // create the map subscriber function
     map_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
         "map",
@@ -54,6 +64,35 @@ Map::~Map()
 {
     RCLCPP_INFO(this->get_logger(), "Map Node has been terminated");
 } 
+
+
+void Map::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
+{
+  // break the message down into a quaternion
+  tf2::Quaternion q(
+    msg->pose.pose.orientation.x,
+    msg->pose.pose.orientation.y,
+    msg->pose.pose.orientation.z,
+    msg->pose.pose.orientation.w);
+
+  // do the math operation to convert the pose into a 3x3 matrix
+  // for the orientation
+  tf2::Matrix3x3 m(q);
+
+  // extract the angles from the data
+  m.getRPY(current_pose_.roll, current_pose_.pitch, current_pose_.yaw);
+
+  current_pose_.x = msg->pose.pose.position.x;
+  current_pose_.y = msg->pose.pose.position.y;
+  current_pose_.z = msg->pose.pose.position.z;
+
+}
+
+Map::Pose Map::get_current_pose() const
+{
+    return current_pose_;
+}
+
 
 std::shared_ptr<ItemLogger> Map::get_item_logger()
 {

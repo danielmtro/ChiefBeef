@@ -7,6 +7,7 @@
 // for the actual turtlebot
 
 constexpr int DEG_PER_ROT = 360;
+constexpr int WHITE_UINT = 255;
 
 enum MeunItems
 {
