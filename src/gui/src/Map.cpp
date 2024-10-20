@@ -117,7 +117,7 @@ void Map::map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
     width_ = msg->info.width;
     height_ = msg->info.height;
     map_data_ = msg->data;
-
+    std::cout << msg->info.origin.position.x << msg->info.origin.position.y << std::endl;
     // process that we've read the current map
     new_map_available_ = true;
     

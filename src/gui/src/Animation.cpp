@@ -184,7 +184,10 @@ void Icon::initialise(sf::RenderWindow& window, std::string fname)
     sprite.setOrigin(center);
 }
 
-void CharacterIcon::update_position(Map::Pose pose)
+void CharacterIcon::update_position(Map::Pose pose,
+                                    float scaling_factor,
+                                    int x_offset,
+                                    int y_offset)
 {
     float x = pose.x;
     float y = pose.y;
@@ -196,7 +199,9 @@ void CharacterIcon::update_position(Map::Pose pose)
         x = window_width_/2;
         y = window_height_/2;
     }
-    sprite.setPosition(x, y);
+    
+    sprite.setScale(scaling_factor/4, scaling_factor/4);
+    sprite.setPosition(x*scaling_factor + x_offset, y*scaling_factor + y_offset);
     sprite.setRotation(yaw * RAD_TO_DEG);
 
 }

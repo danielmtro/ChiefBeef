@@ -117,9 +117,10 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
     // take the minimum scaling and set it to both
     sf_x = (sf_x < sf_y) ? sf_x : sf_y;
     sf_y = sf_x;
+    scaling_factor_ = sf_x;
 
-    int x_offset = (effective_x_width - width * sf_x)/2 + (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W);
-    int y_offset = (window_height - height * sf_y)/2;
+    x_offset_ = (effective_x_width - width * sf_x)/2 + (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W);
+    y_offset_ = (window_height - height * sf_y)/2;
     
     // create cells and display them on the window
     sf::RectangleShape cell(sf::Vector2f(sf_x, sf_y));
@@ -135,7 +136,7 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
                 cell.setFillColor(sf::Color(102, 51, 0));
     
                 // Set position and draw the cell
-                cell.setPosition((x * sf_x + x_offset), (y * sf_y + y_offset));
+                cell.setPosition((x * sf_x + x_offset_), (y * sf_y + y_offset_));
                 window.draw(cell);
             }
         }
@@ -166,7 +167,6 @@ void GameMap::initialise(sf::RenderWindow& window)
 
     // initialise the actual character
     trolley_->initialise(window, "/shopping_cart_small.png");
-    
 
 }
 
@@ -193,12 +193,11 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
         window.draw(*number_of_items_[i]);
     }
 
-
-    // update the position of the character
+    // update the position of the character based on the current odom
     Map::Pose pose = map_->get_current_pose();
-    trolley_->update_position(map_->get_current_pose());
+    trolley_->update_position(map_->get_current_pose(), scaling_factor_, x_offset_, y_offset_);
 
-    // only draw the trolley on if there is a map to draw it on with
+    // only draw the trolley on if there is a map to draw it on
     if(map_width_ > 0 && map_height_ > 0)
         window.draw(*trolley_->get_sprite());
 
@@ -227,7 +226,6 @@ void GameMap::RunMap()
 
     while (window.isOpen())
     {
-
         // Restart the clock every frame
         sf::Time deltaTime = clock.restart();
 
@@ -235,7 +233,6 @@ void GameMap::RunMap()
         sf::Event event;
         while (window.pollEvent(event))
         {   
-
             // close the window if we manually scape the whole thing
             if (event.type == sf::Event::Closed)
             {

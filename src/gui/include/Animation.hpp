@@ -170,9 +170,12 @@ class CharacterIcon : public Icon
         * reads from 
         * 
         * @param pose is the current pose of the turtlebot that should be passed in to this
+        * @param scaling_factor the size scaling based on relative size of window to map
+        * @param x_offset offset to allow for buttons on the side
+        * @param y_offset offset to allow for buttons on top and bottom
         * 
         */
-        void update_position(Map::Pose pose);
+        void update_position(Map::Pose pose, float scaling_factor, int x_offset, int y_offset);
 
 };
 

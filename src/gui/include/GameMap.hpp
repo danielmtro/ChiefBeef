@@ -77,6 +77,10 @@ class GameMap : public Window {
         uint32_t map_width_;
         uint32_t map_height_;
 
+        // scaling factor for map and characters
+        float scaling_factor_;
+        int x_offset_;
+        int y_offset_;
         
 };
 
