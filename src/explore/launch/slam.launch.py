@@ -14,7 +14,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
-        'use_sim_time', default_value='false', description='Use simulation (Gazebo) clock if true'
+        'use_sim_time', default_value='true', description='Use simulation (Gazebo) clock if true'
     )
 
     # Include the SLAM Toolbox launch file

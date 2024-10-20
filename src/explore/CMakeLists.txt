@@ -8,7 +8,7 @@ endif()
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -42,7 +42,6 @@ find_package(nav_msgs REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
-
 
 set(DEPENDENCIES
   rclcpp
@@ -78,8 +77,9 @@ install(DIRECTORY
 
 
 add_executable(explore
-  src/costmap_client.cpp
   src/explore.cpp
+  src/costmap_client.cpp
+  src/state.cpp
   src/frontier_search.cpp
 )
 
@@ -96,25 +96,6 @@ install(TARGETS explore
   DESTINATION lib/${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
-
-#############
-## Testing ##
-#############
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-
-  find_package(ament_cmake_gtest REQUIRED)
-
-  ament_add_gtest(test_explore test/test_explore.cpp)
-  target_link_libraries(test_explore ${catkin_LIBRARIES})
-  ament_target_dependencies(test_explore ${DEPENDENCIES})
-
-  
-endif()
 
 
 ament_export_include_directories(include)

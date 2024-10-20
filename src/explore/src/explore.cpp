@@ -37,6 +37,8 @@
  *********************************************************************/
 
 #include <explore/explore.h>
+#include <explore/state.hpp>
+#include <cstdlib>
 
 #include <thread>
 
@@ -419,14 +421,23 @@ void Explore::resume()
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
-  // ROS1 code
-  /*
-  if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
-                                     ros::console::levels::Debug)) {
-    ros::console::notifyLoggerLevelsChanged();
-  } */
+
+  // Launch ROS 2 state node in a separate thread
+    std::thread ros_launch_thread([]() {
+        std::string command = "ros2 launch explore_lite state.launch.py use_sim_time:=true params_file:=/home/jhocking542/ChiefBeef/src/explore/config/params.yaml";
+        int result = std::system(command.c_str());
+
+        if (result != 0) {
+            std::cerr << "Failed to launch the ROS 2 launch file." << std::endl;
+        } else {
+            std::cout << "Launch file called successfully!" << std::endl;
+        }
+    });
+
   rclcpp::spin(
-      std::make_shared<explore::Explore>());  // std::move(std::make_unique)?
+      std::make_shared<State>()); 
+  
   rclcpp::shutdown();
+
   return 0;
 }
