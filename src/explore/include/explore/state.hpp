@@ -35,16 +35,16 @@ class State : public rclcpp::Node {
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr slam_request_sub_;
 
         /**
-         * @brief This function launches all the nodes neccessary for 
-         * the SLAM to run.
-         */
-        void launch_nodes();
-
-        /**
          * @brief This function is the callback for the subscription. It
          * checkes whether the nodes are already running and if not launches them.
          */
         void subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg);
+
+        /**
+         * @brief This function changes the current state of the robot, whether 
+         * it is navigating, scanning, or being idle.
+         */
+        void state_changer(std::string new_state);
 
         // boolean that keeps track if already ran
         bool has_run_;

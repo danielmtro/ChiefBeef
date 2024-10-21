@@ -418,26 +418,39 @@ void Explore::resume()
 
 }  // namespace explore
 
-int main(int argc, char** argv)
-{
-  rclcpp::init(argc, argv);
+#ifdef EXPLORE_MAIN
+#define EXPLORE_MAIN
 
-  // Launch ROS 2 state node in a separate thread
-    std::thread ros_launch_thread([]() {
-        std::string command = "ros2 launch explore_lite state.launch.py use_sim_time:=true params_file:=/home/jhocking542/ChiefBeef/src/explore/config/params.yaml";
-        int result = std::system(command.c_str());
+int main(int argc, char** argv) {
+    rclcpp::init(argc, argv);
 
-        if (result != 0) {
-            std::cerr << "Failed to launch the ROS 2 launch file." << std::endl;
-        } else {
-            std::cout << "Launch file called successfully!" << std::endl;
-        }
-    });
+    try {
+        std::thread ros_launch_thread([]() {
+          std::string command = "ros2 launch explore_lite state.launch.py use_sim_time:=true params_file:=/home/jhocking542/ChiefBeef/src/explore/config/params.yaml";
+            
+          std::cout << "Attempting to execute command: " << command << std::endl; // Debug message
+          int result = std::system(command.c_str());
 
-  rclcpp::spin(
-      std::make_shared<State>()); 
-  
-  rclcpp::shutdown();
+          if (result != 0) {
+              std::cerr << "Failed to launch the state ROS 2 launch file. Exit code: " << result << std::endl;
+              throw std::runtime_error("State launch file execution failed.");
+          } else {
+              std::cout << "State launch file called successfully!" << std::endl;
+          }
+        });
+      // Spin the ROS node while waiting for operations
+      rclcpp::spin(std::make_shared<State>());
 
-  return 0;
+      // Ensure the thread joins properly
+      ros_launch_thread.join();
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught in main: " << e.what() << std::endl;
+        rclcpp::shutdown();
+        return EXIT_FAILURE;
+    }
+
+    rclcpp::shutdown();
+    return 0;
 }
+
+#endif

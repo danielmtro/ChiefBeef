@@ -83,9 +83,31 @@ add_executable(explore
   src/frontier_search.cpp
 )
 
+add_executable(blank
+  src/explore.cpp
+  src/costmap_client.cpp
+  src/state.cpp
+  src/frontier_search.cpp
+)
+
+target_include_directories(blank PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+# Define STATE_MAIN for the blank target
+target_compile_definitions(blank PRIVATE STATE_MAIN)
+
+target_link_libraries(blank ${rclcpp_LIBRARIES})
+ament_target_dependencies(blank ${DEPENDENCIES})
+
+install(TARGETS blank
+  DESTINATION lib/${PROJECT_NAME})
+
 target_include_directories(explore PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
+
+target_compile_definitions(explore PRIVATE EXPLORE_MAIN)
 
 
 target_link_libraries(explore ${rclcpp_LIBRARIES})
