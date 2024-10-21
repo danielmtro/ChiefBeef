@@ -64,6 +64,15 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
     // position of the actual trolley
     trolley_ = std::make_shared<CharacterIcon>();
 
+
+    // background music variables
+    std::string music_filename = "/Music/MapWindowMusic.ogg";
+    std::string music_path = ament_index_cpp::get_package_share_directory("gui") + music_filename;
+    if (!background_music.openFromFile(music_path)) {
+        std::cerr << "Error loading music file!" << std::endl;
+        return;
+    }
+
     std::cout << "Game Map Created" << std::endl;
 }
 
@@ -228,6 +237,10 @@ void GameMap::RunMap()
 
     // Track time for movement
     sf::Clock clock;
+
+    // start playing the background music
+    background_music.setLoop(true);
+    background_music.play();
 
     while (window.isOpen())
     {
