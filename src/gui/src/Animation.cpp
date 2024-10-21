@@ -190,21 +190,28 @@ void CharacterIcon::update_position(Map::Pose pose,
                                     int y_offset,
                                     Map::MapMetaData map_meta_data)
 {
-    float x = pose.x/map_meta_data.resolution;
-    float y = pose.y/map_meta_data.resolution;
+
+    // start positions
+    float start_x = map_meta_data.width/2.0;
+    float start_y = map_meta_data.height/2.0;
+
+    // positions of the trolley on the unaltered map
+    float x = pose.x/map_meta_data.resolution + start_x; 
+    float y = -pose.y/map_meta_data.resolution + start_y; // reverse y because pixels go pos down
     float yaw = 2*M_PI - pose.yaw;  // correct again
 
     // default variables if we don't have a valid pose
     if(x == 0 && y == 0)
-    {
         return;
-    }
 
     // offsets including the origin in FOR
     float x_off, y_off;
+
+    // add in the offset for the original FOR
     x_off = x_offset + map_meta_data.o_x/map_meta_data.resolution;
     y_off = y_offset + map_meta_data.o_y/map_meta_data.resolution;
-    
+
+    // scale the size of the sprite and set the position and orientation
     sprite.setScale(scaling_factor/5, scaling_factor/5);
     sprite.setPosition(x*scaling_factor + x_off, y*scaling_factor + y_off);
     sprite.setRotation(yaw * RAD_TO_DEG);
