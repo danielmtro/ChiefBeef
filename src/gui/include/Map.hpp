@@ -15,27 +15,46 @@ Date: 12/10/2024
 
 #include <vector>
 #include <memory>
+#include <cmath>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <SFML/Graphics.hpp>
+#include "ItemLogger.hpp"
 #include "constants.hpp"
 
 class Map : public rclcpp::Node{
     public:
+
+        //  Struct to hold info about the robots
+        struct Pose {
+            double x, y, z;           // Position
+            double roll, pitch, yaw;   // Orientation (RPY angles)
+        };
+
+        // struct to hold informatino about the map data
+        struct MapMetaData
+        {
+            float resolution, width, height;
+            float o_x, o_y; // origin
+        };
 
         Map();
         ~Map();
 
         // Sets new_map_available_ to be false
         void read_map_data();
-        bool get_map_available() const; 
 
         // getters
         uint32_t get_width() const;
         uint32_t get_height() const;
         float get_resolution() const;
         std::vector<int8_t> get_map() const;
+        bool get_map_available() const; 
 
         /**
         * @brief this function is called every time a message is received from
@@ -43,7 +62,25 @@ class Map : public rclcpp::Node{
         */
         void publish_slam_request();
 
+        // item logger should be accessible to everything
+        std::shared_ptr<ItemLogger>  get_item_logger();
+
+        // current pose retrieval
+        Pose get_current_pose() const;
+        MapMetaData get_map_meta_data() const;
+        Pose get_map_pose() const;
+
+        /**
+        * @brief transforms the input map data to a new array in the 
+        * original space based on the quaternion that the map is oriented at
+        */
+        void transform_map_orientation();
+
     private:
+
+        MapMetaData map_meta_data_;
+    
+        std::shared_ptr<ItemLogger> item_logger_;
         
         /**
         * @brief this function is called every time a message is received from
@@ -53,11 +90,28 @@ class Map : public rclcpp::Node{
         */
         void map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
+        /**
+        * @brief this function is called every time a message is received from
+        * /map topic and it stores the map information
+        *
+        * @param msg is string message that corresponds to an april tag 
+        */
+        void item_callback(const std_msgs::msg::String::SharedPtr msg);
+
+        /**
+        * @brief function takes in the robots odometry and stores the pose
+        *
+        * @param msg a nav_msgs::msg::Odometry::SharedPtr that corresponds to a quaternion (4 dimensional)
+        */        
+        void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
+
         // subscriber for the current map that has been created
         rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
 
         // Variables to store inputs received from msg
         std::vector<int8_t> map_data_;
+        std::vector<int8_t> transformed_map_;
+
         uint32_t width_;   
         uint32_t height_;
         float resolution_;
@@ -76,6 +130,17 @@ class Map : public rclcpp::Node{
 
         // slam publisher
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr slam_publisher_;
+
+        // items subscriber
+        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr item_subscriber_;
+
+        // odometry subscriber
+        rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+        
+        // tracks the current pose of the robot
+        Pose current_pose_;
+        Pose current_map_pose_;
+
 };
 
 #endif

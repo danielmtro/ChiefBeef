@@ -104,7 +104,7 @@ void Credits::RotateSprites(sf::Time deltaTime)
         }
     }
     else{
-        if(current_rotation > DEG_PER_ROT/2 && current_rotation < 360 - CreditsWindow::ROT_LIMIT)
+        if(current_rotation > DEG_PER_ROT/2 && current_rotation < DEG_PER_ROT - CreditsWindow::ROT_LIMIT)
         {
             rotation_direction_ = 1;
         }
