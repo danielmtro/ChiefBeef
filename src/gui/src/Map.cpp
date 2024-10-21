@@ -24,6 +24,16 @@ Map::Map() : Node("Map_Node")
     qos_settings.reliability(RMW_QOS_POLICY_RELIABILITY_RELIABLE);
     qos_settings.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
     
+    // Initialise odometry
+    odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+        "odom", /* subscribe to topic /scan */ \
+        rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
+        std::bind(                  
+        &Map::odom_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1)
+        );
+
     // create the map subscriber function
     map_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
         "map",
@@ -55,9 +65,31 @@ Map::~Map()
     RCLCPP_INFO(this->get_logger(), "Map Node has been terminated");
 } 
 
-std::shared_ptr<ItemLogger> Map::get_item_logger()
+
+void Map::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
-    return item_logger_;
+  // break the message down into a quaternion
+  tf2::Quaternion q(
+    msg->pose.pose.orientation.x,
+    msg->pose.pose.orientation.y,
+    msg->pose.pose.orientation.z,
+    msg->pose.pose.orientation.w);
+
+  // do the math operation to convert the pose into a 3x3 matrix
+  // for the orientation
+  tf2::Matrix3x3 m(q);
+
+  // extract the angles from the data
+  m.getRPY(current_pose_.roll, current_pose_.pitch, current_pose_.yaw);
+
+  current_pose_.x = msg->pose.pose.position.x;
+  current_pose_.y = msg->pose.pose.position.y;
+  current_pose_.z = msg->pose.pose.position.z;
+
+  RCLCPP_INFO(this->get_logger(), "Turtle: x: %f y: %f yaw: %f", current_pose_.x, 
+                                                                 current_pose_.x,
+                                                                 current_pose_.yaw);
+
 }
 
 void Map::item_callback(const std_msgs::msg::String::SharedPtr msg)
@@ -74,16 +106,74 @@ and continues onwards
 void Map::map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
 {
     // extract relevant data information
-    resolution_ = msg->info.resolution;
-    width_ = msg->info.width;
-    height_ = msg->info.height;
+    map_meta_data_.resolution = msg->info.resolution;
+    map_meta_data_.width = msg->info.width;
+    map_meta_data_.height = msg->info.height;
     map_data_ = msg->data;
 
     // process that we've read the current map
     new_map_available_ = true;
     
-    RCLCPP_INFO(this->get_logger(), "Received occupancy grid with width: %d, height: %d", width_, height_);
+    // process the orientation of the map itself
+    tf2::Quaternion q(
+        msg->info.origin.orientation.x,
+        msg->info.origin.orientation.y,
+        msg->info.origin.orientation.z,
+        msg->info.origin.orientation.w);
 
+
+    current_map_pose_.x = msg->info.origin.orientation.x;
+    current_map_pose_.y = msg->info.origin.orientation.y;
+    current_map_pose_.z= msg->info.origin.orientation.z;
+
+
+    // do the math operation to convert the pose into a 3x3 matrix
+    // for the orientation
+    tf2::Matrix3x3 m(q);
+
+    // extract the angles from the data
+    m.getRPY(current_map_pose_.roll, current_map_pose_.pitch, current_map_pose_.yaw);
+
+    // transform the map based on the quaternion
+    transform_map_orientation();
+
+    // log the changes
+    RCLCPP_INFO(this->get_logger(), "Grid! width: %d, height: %d, res: %f, ox: %f, oy: %f oxw: %f", msg->info.width, 
+                                                                        msg->info.height,
+                                                                        msg->info.resolution,
+                                                                        msg->info.origin.orientation.x,
+                                                                        msg->info.origin.orientation.y,
+                                                                        msg->info.origin.orientation.w);
+
+}
+
+void Map::transform_map_orientation()
+{   
+    // resize the map
+    transformed_map_.resize(map_data_.size());
+
+    // set default values
+    for(int i = 0;i < map_data_.size(); ++i)
+        transformed_map_[i] = UNKNOWN;
+
+    // loop through possible indexes and transform them
+    double yaw = current_map_pose_.yaw;
+    double cos_yaw = std::cos(-1*yaw);  // rotation
+    double sin_yaw = std::sin(-1*yaw);
+
+    // loop through each pixel and set it's transformed value
+    for(int i = 0; i < map_data_.size(); ++i)
+    {
+        // get the x and y
+        int x = i%static_cast<int>(map_meta_data_.width);
+        int y = i/static_cast<int>(map_meta_data_.width);
+
+        // Apply the inverse rotation
+        int new_x = static_cast<int>(x * cos_yaw - y * sin_yaw);
+        int new_y = static_cast<int>(x * sin_yaw + y * cos_yaw);
+
+        transformed_map_[new_y * map_meta_data_.width + new_x] = map_data_[i];
+    }
 }
 
 /*
@@ -120,6 +210,22 @@ Getters available below
 
 */
 
+Map::Pose Map::get_current_pose() const
+{ 
+    return current_pose_;
+}
+
+Map::MapMetaData Map::get_map_meta_data() const
+{
+    return map_meta_data_;
+}
+
+
+std::shared_ptr<ItemLogger> Map::get_item_logger()
+{
+    return item_logger_;
+}
+
 bool Map::get_map_available() const
 {
     return new_map_available_;
@@ -128,17 +234,17 @@ bool Map::get_map_available() const
 
 uint32_t Map::get_width() const
 {
-    return width_;
+    return map_meta_data_.width;
 }
 
 uint32_t Map::get_height() const
 {
-    return height_;
+    return map_meta_data_.height;
 }
 
 float Map::get_resolution() const
 {
-    return resolution_;
+    return map_meta_data_.resolution;
 }
 
 std::vector<int8_t> Map::get_map() const

@@ -12,6 +12,17 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
     : Window(name, width, height), map_(MapPtr)
 {   
 
+    // set the background for the main menu
+    std::string background_location = "/Textures/concrete_background.png";
+    std::string texture_path = ament_index_cpp::get_package_share_directory("gui") + background_location;
+    std::cout << "Background path for Game Map " << texture_path << std::endl;
+
+    // load the texture  
+    background.setSize(sf::Vector2f(window_width_, window_height_));
+    if(!texture.loadFromFile(texture_path))
+        std::cout << "Failed to load background at " << texture_path << std::endl;
+    background.setTexture(&texture);
+
     // load in the font for the button
     std::string font_path = ament_index_cpp::get_package_share_directory("gui") + "/Fonts/comic_sans_1.ttf";
     font.loadFromFile(font_path);
@@ -22,6 +33,15 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
         GmapWindow::SBUTTON_W, GmapWindow::SBUTTON_H,
         sf::Color(255, 158, 102),   // fun colour
         GmapWindow::SBUTTON_WORD,
+        font
+    );
+
+    // create the request button
+    home_button_ = new Button(
+        GmapWindow::HBUTTON_X, GmapWindow::HBUTTON_Y,
+        GmapWindow::HBUTTON_W, GmapWindow::HBUTTON_H,
+        sf::Color(0, 128, 255),   // fun colour
+        GmapWindow::HBUTTON_WORD,
         font
     );
 
@@ -36,11 +56,13 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
         item_num->setFont(font);
         item_num->setString("0");
         item_num->setCharacterSize(GmapWindow::NUM_ICON_CHARSIZE);
-        item_num->setFillColor(sf::Color::Cyan);
+        item_num->setFillColor(sf::Color::Blue);
 
         number_of_items_.push_back(item_num);
     }
-    
+
+    // position of the actual trolley
+    trolley_ = std::make_shared<CharacterIcon>();
 
     std::cout << "Game Map Created" << std::endl;
 }
@@ -48,44 +70,84 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
 GameMap::~GameMap()
 {
     delete slam_request_button_;
+    delete home_button_;
     std::cout << "Game Map no longer running" << std::endl;
 }
 
 void GameMap::DrawMapData(sf::RenderWindow& window)
 {
-    // Update window using ROS2 data
-    // For example, let's draw a simple grid based on the occupancy grid data
-        
+
     std::vector<int8_t> map_data = map_->get_map();
 
     uint32_t width = map_->get_width();
     uint32_t height = map_->get_height();
-    if (width > 0 && height > 0)
-        {
-            sf::RectangleShape cell(sf::Vector2f(10.0f, 10.0f)); // Each cell is a 5x5 pixel square
-            for (uint32_t y = 0; y < height; ++y)
-            {
-                for (uint32_t x = 0; x < width; ++x)
-                {
-                    int8_t occupancy_value = map_data[y * width + x];
-                    if (occupancy_value == 0)  // Free space
-                        cell.setFillColor(sf::Color::White);
-                    else if (occupancy_value == 100)  // Occupied space
-                        cell.setFillColor(sf::Color::Red);
-                    else  // Unknown
-                        cell.setFillColor(sf::Color::Black);
 
-                    // Set position and draw the cell
-                    cell.setPosition(x * 5.0f, y * 5.0f);
-                    window.draw(cell);
-                }
+    if( (!width) || (!height))
+        return;
+
+    // convert to opencv matrix
+    cv::Mat image(height, width, CV_8UC1);
+
+    // Populate the matrix with pixel values (convert to 0 or 255)
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            int value = map_data[i * width + j];
+            image.at<uchar>(i, j) = (value == 100) ? 255 : 0;
+        }
+    }
+
+    // Apply a Median Filter to remove noise
+    cv::Mat finalImage;
+    cv::medianBlur(image, finalImage, 3);
+
+    // code to center the map in the middle of the window
+    int window_width = window.getSize().x;
+    int window_height = window.getSize().y;
+
+    // we presume that the window is larger than the map size
+    if(window_width < width || window_height < height)
+        std::cerr << "Small window or Large Map not supported" << std::endl;
+
+    // define scaling factors and offsets for placing window
+    // adjust x scaling to not interfere with button positions
+    int effective_x_width = (window_width - 2 * (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W));
+    int sf_x = effective_x_width/width;
+    int sf_y = window_height/height;
+
+    // take the minimum scaling and set it to both
+    sf_x = (sf_x < sf_y) ? sf_x : sf_y;
+    sf_y = sf_x;
+    scaling_factor_ = sf_x;
+
+    // find offsets to center the map in the middle of the screen
+    x_offset_ = (effective_x_width - width * sf_x)/2 + (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W);
+    y_offset_ = (window_height - height * sf_y)/2;
+    
+    // create cells and display them on the window
+    sf::RectangleShape cell(sf::Vector2f(sf_x, sf_y));
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            int cval = image.at<uchar>(y, x);
+            // if there is a certain square at this position then plot it
+            if(cval == WHITE_UINT)
+            {
+                // brownish colour
+                cell.setFillColor(sf::Color(102, 51, 0));
+    
+                // Set position and draw the cell
+                cell.setPosition((x * sf_x + x_offset_), (y * sf_y + y_offset_));
+                window.draw(cell);
             }
         }
-
+    }
+    
+    map_width_ = width;
+    map_height_ = height;
 }
 
-
-void GameMap::initialise_item_menu(sf::RenderWindow& window)
+void GameMap::initialise(sf::RenderWindow& window)
 {
 
     // create a rectangle around the objects
@@ -103,6 +165,48 @@ void GameMap::initialise_item_menu(sf::RenderWindow& window)
     
     number_of_items_[0]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
     number_of_items_[1]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
+
+    // initialise the actual character
+    trolley_->initialise(window, "/shopping_cart_small.png");
+
+}
+
+void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
+{
+    window.draw(background);
+
+    // draw on the map
+    DrawMapData(window);
+
+    slam_request_button_->draw(window);
+    home_button_->draw(window);
+
+    // draw on the store items
+    for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
+    {
+        // make the item icons jiggle
+        items_in_store_[i]->update_position(deltaTime);
+
+        // update the number of items
+        number_of_items_[i]->setString(std::to_string(map_->get_item_logger()->get_num_items(i)));
+
+        window.draw(*items_in_store_[i]->get_sprite());
+        window.draw(*number_of_items_[i]);
+    }
+
+    // update the position of the character based on the current odom
+    Map::Pose pose = map_->get_current_pose();
+    trolley_->update_position(map_->get_current_pose(),
+                              scaling_factor_,
+                              x_offset_, 
+                              y_offset_,
+                              map_->get_map_meta_data());
+
+    // only draw the trolley on if there is a map to draw it on
+    if(map_width_ > 0 && map_height_ > 0)
+        window.draw(*trolley_->get_sprite());
+
+    window.draw(bounding_box_);
 }
 
 void GameMap::RunMap()
@@ -111,14 +215,15 @@ void GameMap::RunMap()
     sf::RenderWindow window(sf::VideoMode(window_width_, window_height_), window_name_);
     activate_window();
 
-    // initalise the upper menu of items in the store
-    initialise_item_menu(window);
+    // initalise everything in the store
+    initialise(window);
     
     // draw on the buttons to start off
     window.clear();
     slam_request_button_->draw(window);
     window.display();
 
+    // create mouse position
     sf::Vector2i mouse_pos;
 
     // Track time for movement
@@ -126,7 +231,6 @@ void GameMap::RunMap()
 
     while (window.isOpen())
     {
-
         // Restart the clock every frame
         sf::Time deltaTime = clock.restart();
 
@@ -134,7 +238,6 @@ void GameMap::RunMap()
         sf::Event event;
         while (window.pollEvent(event))
         {   
-
             // close the window if we manually scape the whole thing
             if (event.type == sf::Event::Closed)
             {
@@ -165,12 +268,19 @@ void GameMap::RunMap()
                     map_->publish_slam_request();
                     slam_request_button_->deactivate_button();
                 }
+                else if(home_button_->buttonHover(mouse_pos))
+                {
+                    window.close();
+                    close_window();
+                }
             }
         }
 
-        // update the state of the button
+        // update the state of the slam request button
         mouse_pos = sf::Mouse::getPosition(window);
         slam_request_button_->buttonHover(mouse_pos);
+        home_button_->buttonHover(mouse_pos);
+
 
         // Clear the window with a black color
         window.clear(sf::Color::Black);
@@ -178,25 +288,8 @@ void GameMap::RunMap()
         // once we read the map, let the map know 
         map_->read_map_data();
 
-        // draw on the map
-        DrawMapData(window);
+        draw_frame(window, deltaTime);
 
-        slam_request_button_->draw(window);
-
-        // draw on the store items
-        for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
-        {
-            // make the item icons jiggle
-            items_in_store_[i]->update_position(deltaTime);
-
-            // update the number of items
-            number_of_items_[i]->setString(std::to_string(map_->get_item_logger()->get_num_items(i)));
-    
-            window.draw(*items_in_store_[i]->get_sprite());
-            window.draw(*number_of_items_[i]);
-        }
-
-        window.draw(bounding_box_);
         // Display the window content
         window.display();
     }
