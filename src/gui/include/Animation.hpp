@@ -173,9 +173,14 @@ class CharacterIcon : public Icon
         * @param scaling_factor the size scaling based on relative size of window to map
         * @param x_offset offset to allow for buttons on the side
         * @param y_offset offset to allow for buttons on top and bottom
+        * @param map_meta_data information struct of the map itself
         * 
         */
-        void update_position(Map::Pose pose, float scaling_factor, int x_offset, int y_offset);
+        void update_position(Map::Pose pose,
+                             float scaling_factor, 
+                             int x_offset, 
+                             int y_offset, 
+                             Map::MapMetaData map_meta_data);
 
 };
 

@@ -119,6 +119,7 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
     sf_y = sf_x;
     scaling_factor_ = sf_x;
 
+    // find offsets to center the map in the middle of the screen
     x_offset_ = (effective_x_width - width * sf_x)/2 + (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W);
     y_offset_ = (window_height - height * sf_y)/2;
     
@@ -141,7 +142,7 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
             }
         }
     }
-
+    
     map_width_ = width;
     map_height_ = height;
 }
@@ -195,7 +196,11 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
 
     // update the position of the character based on the current odom
     Map::Pose pose = map_->get_current_pose();
-    trolley_->update_position(map_->get_current_pose(), scaling_factor_, x_offset_, y_offset_);
+    trolley_->update_position(map_->get_current_pose(),
+                              scaling_factor_,
+                              x_offset_, 
+                              y_offset_,
+                              map_->get_map_meta_data());
 
     // only draw the trolley on if there is a map to draw it on
     if(map_width_ > 0 && map_height_ > 0)

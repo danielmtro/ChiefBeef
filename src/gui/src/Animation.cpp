@@ -187,21 +187,26 @@ void Icon::initialise(sf::RenderWindow& window, std::string fname)
 void CharacterIcon::update_position(Map::Pose pose,
                                     float scaling_factor,
                                     int x_offset,
-                                    int y_offset)
+                                    int y_offset,
+                                    Map::MapMetaData map_meta_data)
 {
-    float x = pose.x;
-    float y = pose.y;
-    float yaw = pose.yaw;
+    float x = pose.x/map_meta_data.resolution;
+    float y = pose.y/map_meta_data.resolution;
+    float yaw = 2*M_PI - pose.yaw;  // correct again
 
     // default variables if we don't have a valid pose
     if(x == 0 && y == 0)
     {
-        x = window_width_/2;
-        y = window_height_/2;
+        return;
     }
+
+    // offsets including the origin in FOR
+    float x_off, y_off;
+    x_off = x_offset + map_meta_data.o_x/map_meta_data.resolution;
+    y_off = y_offset + map_meta_data.o_y/map_meta_data.resolution;
     
-    sprite.setScale(scaling_factor/4, scaling_factor/4);
-    sprite.setPosition(x*scaling_factor + x_offset, y*scaling_factor + y_offset);
+    sprite.setScale(scaling_factor/5, scaling_factor/5);
+    sprite.setPosition(x*scaling_factor + x_off, y*scaling_factor + y_off);
     sprite.setRotation(yaw * RAD_TO_DEG);
 
 }

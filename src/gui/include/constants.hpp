@@ -11,6 +11,14 @@ constexpr float RAD_TO_DEG = 180/M_PI;
 constexpr int DEG_PER_ROT = 360;
 constexpr int WHITE_UINT = 255;
 
+
+enum PixelValues
+{
+    UNKNOWN = -1,
+    EMPTY,
+    FULL
+};
+
 enum MeunItems
 {
     SHOPPING_TIME = 0,

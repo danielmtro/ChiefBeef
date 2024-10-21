@@ -15,6 +15,7 @@ Date: 12/10/2024
 
 #include <vector>
 #include <memory>
+#include <cmath>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <nav_msgs/msg/odometry.hpp>
@@ -35,18 +36,25 @@ class Map : public rclcpp::Node{
             double roll, pitch, yaw;   // Orientation (RPY angles)
         };
 
+        // struct to hold informatino about the map data
+        struct MapMetaData
+        {
+            float resolution, width, height;
+            float o_x, o_y; // origin
+        };
+
         Map();
         ~Map();
 
         // Sets new_map_available_ to be false
         void read_map_data();
-        bool get_map_available() const; 
 
         // getters
         uint32_t get_width() const;
         uint32_t get_height() const;
         float get_resolution() const;
         std::vector<int8_t> get_map() const;
+        bool get_map_available() const; 
 
         /**
         * @brief this function is called every time a message is received from
@@ -59,9 +67,19 @@ class Map : public rclcpp::Node{
 
         // current pose retrieval
         Pose get_current_pose() const;
+        MapMetaData get_map_meta_data() const;
+        Pose get_map_pose() const;
+
+        /**
+        * @brief transforms the input map data to a new array in the 
+        * original space based on the quaternion that the map is oriented at
+        */
+        void transform_map_orientation();
 
     private:
 
+        MapMetaData map_meta_data_;
+    
         std::shared_ptr<ItemLogger> item_logger_;
         
         /**
@@ -92,6 +110,8 @@ class Map : public rclcpp::Node{
 
         // Variables to store inputs received from msg
         std::vector<int8_t> map_data_;
+        std::vector<int8_t> transformed_map_;
+
         uint32_t width_;   
         uint32_t height_;
         float resolution_;
@@ -117,7 +137,9 @@ class Map : public rclcpp::Node{
         // odometry subscriber
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
         
+        // tracks the current pose of the robot
         Pose current_pose_;
+        Pose current_map_pose_;
 
 };
 
