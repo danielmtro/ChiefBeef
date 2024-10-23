@@ -37,6 +37,8 @@
  *********************************************************************/
 
 #include <explore/explore.h>
+#include <explore/state.hpp>
+#include <cstdlib>
 
 #include <thread>
 
@@ -67,7 +69,7 @@ Explore::Explore()
   this->declare_parameter<float>("potential_scale", 1e-3);
   this->declare_parameter<float>("orientation_scale", 0.0);
   this->declare_parameter<float>("gain_scale", 1.0);
-  this->declare_parameter<float>("min_frontier_size", 0.5);
+  this->declare_parameter<float>("min_frontier_size", 0.1);
   this->declare_parameter<bool>("return_to_init", false);
 
   this->get_parameter("planner_frequency", planner_frequency_);
@@ -416,17 +418,39 @@ void Explore::resume()
 
 }  // namespace explore
 
-int main(int argc, char** argv)
-{
-  rclcpp::init(argc, argv);
-  // ROS1 code
-  /*
-  if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME,
-                                     ros::console::levels::Debug)) {
-    ros::console::notifyLoggerLevelsChanged();
-  } */
-  rclcpp::spin(
-      std::make_shared<explore::Explore>());  // std::move(std::make_unique)?
-  rclcpp::shutdown();
-  return 0;
+#ifndef EXPLORE_MAIN
+#define EXPLORE_MAIN
+
+int main(int argc, char** argv) {
+    rclcpp::init(argc, argv);
+
+    try {
+        std::thread ros_launch_thread([]() {
+          std::string command = "ros2 launch explore_lite state.launch.py use_sim_time:=false params_file:=/home/jhocking542/ChiefBeef/src/explore/config/params.yaml";
+            
+          std::cout << "Attempting to execute command: " << command << std::endl; // Debug message
+          int result = std::system(command.c_str());
+
+          if (result != 0) {
+              std::cerr << "Failed to launch the state ROS 2 launch file. Exit code: " << result << std::endl;
+              throw std::runtime_error("State launch file execution failed.");
+          } else {
+              std::cout << "State launch file called successfully!" << std::endl;
+          }
+        });
+      // Spin the ROS node while waiting for operations
+      rclcpp::spin(std::make_shared<State>());
+
+      // Ensure the thread joins properly
+      ros_launch_thread.join();
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught in main: " << e.what() << std::endl;
+        rclcpp::shutdown();
+        return EXIT_FAILURE;
+    }
+
+    rclcpp::shutdown();
+    return 0;
 }
+
+#endif

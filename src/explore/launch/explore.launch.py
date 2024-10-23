@@ -11,13 +11,13 @@ from launch.substitutions import LaunchConfiguration
 def generate_launch_description():
     ld = LaunchDescription()
     config = os.path.join(
-        get_package_share_directory("explore_lite"), "config", "params.yaml"
+        get_package_share_directory("explore_lite"), "config", "explore_params.yaml"
     )
     use_sim_time = LaunchConfiguration("use_sim_time")
     namespace = LaunchConfiguration("namespace")
 
     declare_use_sim_time_argument = DeclareLaunchArgument(
-        "use_sim_time", default_value="true", description="Use simulation/Gazebo clock"
+        "use_sim_time", default_value="false", description="Use simulation/Gazebo clock"
     )
     declare_namespace_argument = DeclareLaunchArgument(
         "namespace",
@@ -35,7 +35,7 @@ def generate_launch_description():
         package="explore_lite",
         name="explore_node",
         namespace=namespace,
-        executable="explore",
+        executable="blank",
         parameters=[config, {"use_sim_time": use_sim_time}],
         output="screen",
         remappings=remappings,

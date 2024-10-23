@@ -368,7 +368,7 @@
     </link>
 
     <joint name="base_joint" type="fixed">
-      <parent>base_footprint</parent>
+      <parent>odom</parent>
       <child>base_link</child>
       <pose>0.0 0.0 0.010 0 0 0</pose>
     </joint>

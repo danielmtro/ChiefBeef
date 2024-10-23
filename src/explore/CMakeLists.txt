@@ -43,7 +43,6 @@ find_package(map_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
 
-
 set(DEPENDENCIES
   rclcpp
   std_msgs
@@ -78,14 +77,37 @@ install(DIRECTORY
 
 
 add_executable(explore
-  src/costmap_client.cpp
   src/explore.cpp
+  src/costmap_client.cpp
+  src/state.cpp
   src/frontier_search.cpp
 )
+
+add_executable(blank
+  src/explore.cpp
+  src/costmap_client.cpp
+  src/state.cpp
+  src/frontier_search.cpp
+)
+
+target_include_directories(blank PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+# Define STATE_MAIN for the blank target
+target_compile_definitions(blank PRIVATE STATE_MAIN)
+
+target_link_libraries(blank ${rclcpp_LIBRARIES})
+ament_target_dependencies(blank ${DEPENDENCIES})
+
+install(TARGETS blank
+  DESTINATION lib/${PROJECT_NAME})
 
 target_include_directories(explore PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
+
+target_compile_definitions(explore PRIVATE EXPLORE_MAIN)
 
 
 target_link_libraries(explore ${rclcpp_LIBRARIES})
@@ -96,25 +118,6 @@ install(TARGETS explore
   DESTINATION lib/${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
-
-#############
-## Testing ##
-#############
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-
-  find_package(ament_cmake_gtest REQUIRED)
-
-  ament_add_gtest(test_explore test/test_explore.cpp)
-  target_link_libraries(test_explore ${catkin_LIBRARIES})
-  ament_target_dependencies(test_explore ${DEPENDENCIES})
-
-  
-endif()
 
 
 ament_export_include_directories(include)

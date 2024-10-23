@@ -55,9 +55,9 @@ Costmap2DClient::Costmap2DClient(rclcpp::Node& node, const tf2_ros::Buffer* tf)
   std::string costmap_topic;
   std::string costmap_updates_topic;
 
-  node_.declare_parameter<std::string>("costmap_topic", std::string("costmap"));
+  node_.declare_parameter<std::string>("costmap_topic", std::string("/global_costmap/costmap"));
   node_.declare_parameter<std::string>("costmap_updates_topic",
-                                       std::string("costmap_updates"));
+                                       std::string("/global_costmap/costmap_updates"));
   node_.declare_parameter<std::string>("robot_base_frame", std::string("base_"
                                                                        "link"));
   // transform tolerance is used for all tf transforms here
