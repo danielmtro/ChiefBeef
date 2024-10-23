@@ -6,6 +6,8 @@ from launch_ros.actions import Node
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
@@ -25,6 +27,13 @@ def generate_launch_description():
         description="Namespace for the explore node",
     )
 
+    pkg_april_tags = get_package_share_directory('apriltag_ros')
+    tag_detector_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_april_tags, 'launch', 'tag_16h5_all.launch.py')
+        )
+    )
+
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
     # https://github.com/ros/geometry2/issues/32
@@ -42,5 +51,6 @@ def generate_launch_description():
     )
     ld.add_action(declare_use_sim_time_argument)
     ld.add_action(declare_namespace_argument)
+    ld.add_action(tag_detector_cmd)
     ld.add_action(node)
     return ld
