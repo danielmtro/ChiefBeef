@@ -28,6 +28,8 @@ State::State() : Node("state"), has_run_(false) {
     // Create the publisher for the density of green in the image
     explore_resume_pub_ = this->create_publisher<std_msgs::msg::Bool>("/explore/resume", qos);
 
+    // crea
+
     RCLCPP_INFO(this->get_logger(), "Turtlebot3 State node has been initialised.");
 }
 
@@ -103,16 +105,17 @@ void State::change_explore(std::string to_change) {
 
 // function to rotate the turtlebot
 void State::rotate_robot(){
-    float initial_pose = pose_;
+    return;
+    // float initial_pose = pose_;
 
-    float added_angle = 0;
+    // float added_angle = 0;
 
-    while (added_angle < 360) {
-        
-    }
+    // while (added_angle < 360) {
+
+    // }
 }
 
-# ifdef STATE_MAIN
+# ifndef STATE_MAIN
 # define STATE_MAIN
 int main(int argc, char** argv)
 {
