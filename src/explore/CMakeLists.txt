@@ -42,6 +42,7 @@ find_package(nav_msgs REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
+find_package(apriltag_ros REQUIRED)
 
 set(DEPENDENCIES
   rclcpp
@@ -55,6 +56,7 @@ set(DEPENDENCIES
   map_msgs
   nav2_costmap_2d
   visualization_msgs
+  apriltag_ros
 )
 
 include_directories(

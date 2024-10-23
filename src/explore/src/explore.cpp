@@ -426,7 +426,7 @@ int main(int argc, char** argv) {
 
     try {
         std::thread ros_launch_thread([]() {
-          std::string command = "ros2 launch explore_lite state.launch.py use_sim_time:=false params_file:=/home/jhocking542/ChiefBeef/src/explore/config/params.yaml";
+          std::string command = "ros2 launch explore_lite state.launch.py use_sim_time:=false";
             
           std::cout << "Attempting to execute command: " << command << std::endl; // Debug message
           int result = std::system(command.c_str());
