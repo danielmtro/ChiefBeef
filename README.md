@@ -17,6 +17,22 @@ For all of the above, any passwords asked is `turtlebot`
 https://discord.gg/9uQkYcss
 
 
+# RUNNING THE BOT
+There are 3 Steps for this. Make sure to do it in order!!!!!
+1) Run in the ssh terminal both `bringup` in one terminal and `camera` in another
+2) Once they are setup, run in your local terminal after colcon building and sourcing. Wait for a while 
+until you see blue text saying ...
+```bash
+ros2 run explore_lite explore
+```
+3) Run the GUI using the below. Press the stocktake button to start.
+``` bash
+ros2 run gui Map
+```
+
+
+
+
 # Running Gazebo Simulations
 ```bash
 colcon build --packages-select turt3_gazebo --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turt3_gazebo launch.launch.py
@@ -35,11 +51,6 @@ ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
 // In the other terminal
 ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
 ```
-
-# Creating the Navigation from one launch file !!!!
-This is what we are trying to get running by tomorrow. The 
-command to run this is 
-```bash
 
 # Work for Will & James 23/10
 1) Merge each of our branches into main
