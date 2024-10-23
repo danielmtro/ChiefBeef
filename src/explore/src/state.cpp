@@ -115,7 +115,7 @@ void State::rotate_robot(){
     // }
 }
 
-# ifndef STATE_MAIN
+# ifdef STATE_MAIN
 # define STATE_MAIN
 int main(int argc, char** argv)
 {

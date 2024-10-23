@@ -418,7 +418,7 @@ void Explore::resume()
 
 }  // namespace explore
 
-#ifndef EXPLORE_MAIN
+#ifdef EXPLORE_MAIN
 #define EXPLORE_MAIN
 
 int main(int argc, char** argv) {
