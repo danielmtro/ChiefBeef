@@ -69,7 +69,7 @@ Explore::Explore()
   this->declare_parameter<float>("potential_scale", 1e-3);
   this->declare_parameter<float>("orientation_scale", 0.0);
   this->declare_parameter<float>("gain_scale", 1.0);
-  this->declare_parameter<float>("min_frontier_size", 0.5);
+  this->declare_parameter<float>("min_frontier_size", 0.1);
   this->declare_parameter<bool>("return_to_init", false);
 
   this->get_parameter("planner_frequency", planner_frequency_);
@@ -426,7 +426,7 @@ int main(int argc, char** argv) {
 
     try {
         std::thread ros_launch_thread([]() {
-          std::string command = "ros2 launch explore_lite state.launch.py use_sim_time:=true params_file:=/home/jhocking542/ChiefBeef/src/explore/config/params.yaml";
+          std::string command = "ros2 launch explore_lite state.launch.py use_sim_time:=false params_file:=/home/jhocking542/ChiefBeef/src/explore/config/params.yaml";
             
           std::cout << "Attempting to execute command: " << command << std::endl; // Debug message
           int result = std::system(command.c_str());

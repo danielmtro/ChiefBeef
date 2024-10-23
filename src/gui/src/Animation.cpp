@@ -190,8 +190,12 @@ void CharacterIcon::update_position(Map::Pose pose,
                                     int y_offset,
                                     Map::MapMetaData map_meta_data)
 {
-    float x = pose.x/map_meta_data.resolution;
-    float y = pose.y/map_meta_data.resolution;
+    float effective_x = map_meta_data.width;
+    float effective_y = map_meta_data.height;
+
+
+    float x = pose.x/map_meta_data.resolution + effective_x/2.0;
+    float y = pose.y/map_meta_data.resolution + effective_y/2.0;
     float yaw = 2*M_PI - pose.yaw;  // correct again
 
     // default variables if we don't have a valid pose
@@ -200,13 +204,19 @@ void CharacterIcon::update_position(Map::Pose pose,
         return;
     }
 
-    // offsets including the origin in FOR
+    // offsets including the origin in FOV
     float x_off, y_off;
     x_off = x_offset + map_meta_data.o_x/map_meta_data.resolution;
     y_off = y_offset + map_meta_data.o_y/map_meta_data.resolution;
-    
+
+    float new_x, new_y;
+    new_x = x*scaling_factor + x_off;
+    new_y = y*scaling_factor + y_off;
+    std::cout << "Map ox " << map_meta_data.o_x << " Map oy " << map_meta_data.o_y << std::endl;
+    std::cout << "x " << new_x << " y " << new_y << " o_x " << pose.x << " o_y " << pose.y <<  std::endl;
+
     sprite.setScale(scaling_factor/5, scaling_factor/5);
-    sprite.setPosition(x*scaling_factor + x_off, y*scaling_factor + y_off);
+    sprite.setPosition(new_x, new_y);
     sprite.setRotation(yaw * RAD_TO_DEG);
 
 }
