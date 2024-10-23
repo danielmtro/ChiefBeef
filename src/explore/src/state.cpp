@@ -105,7 +105,7 @@ void State::change_explore(std::string to_change) {
 
 // function to rotate the turtlebot
 void State::rotate_robot(){
-    return
+    return;
     // float initial_pose = pose_;
 
     // float added_angle = 0;

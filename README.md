@@ -31,8 +31,6 @@ ros2 run gui Map
 ```
 
 
-
-
 # Running Gazebo Simulations
 ```bash
 colcon build --packages-select turt3_gazebo --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turt3_gazebo launch.launch.py
@@ -50,21 +48,6 @@ ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
 
 // In the other terminal
 ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
-```
-
-# Work for Will & James 23/10
-1) Merge each of our branches into main
-2) Integrate april tag detection into build
-3) Check launch of SLAM & camera simultaneously
-4) Check SLAM process while running camera
-5) Check camera FOV and april tag on angle detection
-5) Write stock take process
-6) Write lidar scanner for when to stock take
-
-# Creating the Navigation from one launch file !!!!
-This is what we are trying to get running by tomorrow. The 
-command to run this is 
-```bash
 ```
 
 # Work for Will & James 23/10
