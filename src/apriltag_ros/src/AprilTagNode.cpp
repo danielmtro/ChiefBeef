@@ -19,6 +19,8 @@
 #include "tag_functions.hpp"
 #include <apriltag.h>
 
+#include <std_msgs/msg/int32_multi_array.hpp>
+
 
 #define IF(N, V) \
     if(assign_check(parameter, N, V)) continue;
@@ -80,6 +82,7 @@ private:
 
     const image_transport::CameraSubscriber sub_cam;
     const rclcpp::Publisher<apriltag_msgs::msg::AprilTagDetectionArray>::SharedPtr pub_detections;
+    rclcpp::Publisher<std_msgs::msg::Int32MultiArray>::SharedPtr detected_ids;
     tf2_ros::TransformBroadcaster tf_broadcaster;
 
     pose_estimation_f estimate_pose = nullptr;
@@ -111,6 +114,7 @@ AprilTagNode::AprilTagNode(const rclcpp::NodeOptions& options)
     const std::string tag_family = declare_parameter("family", "36h11", descr("tag family", true));
     tag_edge_size = declare_parameter("size", 1.0, descr("default tag size", true));
 
+    detected_ids = this->create_publisher<std_msgs::msg::Int32MultiArray>("id_detections", rclcpp::QoS(1));
     // get tag names, IDs and sizes
     const auto ids = declare_parameter("tag.ids", std::vector<int64_t>{}, descr("tag ids", true));
     const auto frames = declare_parameter("tag.frames", std::vector<std::string>{}, descr("tag frame names per id", true));
@@ -170,16 +174,7 @@ void AprilTagNode::onCamera(const sensor_msgs::msg::Image::ConstSharedPtr& msg_i
 {
     // camera intrinsics for rectified images
     const std::array<double, 4> intrinsics = {msg_ci->p.data()[0], msg_ci->p.data()[5], msg_ci->p.data()[2], msg_ci->p.data()[6]};
-    RCLCPP_INFO(
-        rclcpp::get_logger("image_logger"),
-        "Received image: width=%d, height=%d, encoding=%s, step=%d, timestamp=%u.%u",
-        msg_img->width,
-        msg_img->height,
-        msg_img->encoding.c_str(),
-        msg_img->step,
-        msg_img->header.stamp.sec,
-        msg_img->header.stamp.nanosec
-    );
+
     // convert to 8bit monochrome image
     const cv::Mat img_uint8 = cv_bridge::toCvShare(msg_img, "mono8")->image;
 
@@ -195,6 +190,8 @@ void AprilTagNode::onCamera(const sensor_msgs::msg::Image::ConstSharedPtr& msg_i
 
     apriltag_msgs::msg::AprilTagDetectionArray msg_detections;
     msg_detections.header = msg_img->header;
+
+    std_msgs::msg::Int32MultiArray id_detections;
 
     std::vector<geometry_msgs::msg::TransformStamped> tfs;
 
@@ -224,6 +221,7 @@ void AprilTagNode::onCamera(const sensor_msgs::msg::Image::ConstSharedPtr& msg_i
         std::memcpy(msg_detection.corners.data(), det->p, sizeof(double) * 8);
         std::memcpy(msg_detection.homography.data(), det->H->data, sizeof(double) * 9);
         msg_detections.detections.push_back(msg_detection);
+        id_detections.data.push_back(det->id);
 
         // 3D orientation and position
         geometry_msgs::msg::TransformStamped tf;
@@ -239,6 +237,7 @@ void AprilTagNode::onCamera(const sensor_msgs::msg::Image::ConstSharedPtr& msg_i
     }
 
     pub_detections->publish(msg_detections);
+    detected_ids->publish(id_detections);
     tf_broadcaster.sendTransform(tfs);
 
     apriltag_detections_destroy(detections);

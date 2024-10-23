@@ -48,6 +48,9 @@ if(cv_bridge_VERSION VERSION_GREATER_EQUAL 3.3.0)
     add_compile_definitions(cv_bridge_HPP)
 endif()
 
+include_directories(
+    include
+)
 
 # database of tag functions
 add_library(tags STATIC
