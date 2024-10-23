@@ -86,9 +86,9 @@ void Map::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
   current_pose_.y = msg->pose.pose.position.y;
   current_pose_.z = msg->pose.pose.position.z;
 
-//   RCLCPP_INFO(this->get_logger(), "Turtle: x: %f y: %f yaw: %f", current_pose_.x, 
-//                                                                  current_pose_.x,
-//                                                                  current_pose_.yaw);
+  RCLCPP_INFO(this->get_logger(), "Turtle: x: %f y: %f yaw: %f", current_pose_.x, 
+                                                                 current_pose_.x,
+                                                                 current_pose_.yaw);
 
 }
 
