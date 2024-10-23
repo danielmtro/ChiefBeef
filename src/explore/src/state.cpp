@@ -22,11 +22,24 @@ State::State() : Node("state"), has_run_(false) {
         std::bind(&State::explore_subscriber_callback, this, std::placeholders::_1)
     );
 
+    // subscribe to the topic
+    rotate_request_sub_ = this->create_subscription<std_msgs::msg::Bool>(
+        "/spin_now",
+        rclcpp::SensorDataQoS(), 
+        std::bind(&State::rotate_robot, this, std::placeholders::_1)
+    );
+
     // Create Quality of Service for publisher 
     auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
 
     // Create the publisher for the density of green in the image
     explore_resume_pub_ = this->create_publisher<std_msgs::msg::Bool>("/explore/resume", qos);
+
+    // Create publisher to cmd_vel for 360 degree rotation
+    rotate_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", qos);
+
+    // Create timer
+    timer_ = this->create_wall_timer(std::chrono::milliseconds(100), std::bind(&State::rotate_robot, this));
 
     // crea
 
@@ -105,14 +118,41 @@ void State::change_explore(std::string to_change) {
 
 // function to rotate the turtlebot
 void State::rotate_robot(){
-    return;
-    // float initial_pose = pose_;
 
-    // float added_angle = 0;
+    // find the total time to turn 360 degrees with set ang_vel_
+    turn_time_ = 2 *  M_PI / ang_vel_;
 
-    // while (added_angle < 360) {
+    // get the start time of rotation
+    start_time_ = this->get_clock()->now();
 
-    // }
+    // get odom data of current orientation
+    auto odom_data_ = geometry_msgs::msg::Twist();
+
+
+    while(true){
+
+        // get current time
+        auto current_time_ = this->get_clock()->now();
+
+        // calculate the elapsed time
+        elapsed_time_ = (current_time_ - start_time_).seconds();
+
+        // check if the turn is complete
+        if (elapsed_time_ < turn_time_){
+
+            //set angular velocity to the desired value - keeps it turning
+            odom_data_.angular.z = ang_vel_;
+
+            // publish odom_data_ to "/cmd_vel"
+            rotate_vel_pub_->publish(odom_data_);
+        } else{
+
+            // set anular velocity to zero - stops moving
+            odom_data_.angular.z = 0.0;
+            
+            rotate_vel_pub_->publish(odom_data_);
+        }
+    }
 }
 
 # ifdef STATE_MAIN

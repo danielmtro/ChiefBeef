@@ -15,6 +15,9 @@ Written by James Hocking, 2024
 #include <rclcpp/rclcpp.hpp>
 #include "std_msgs/msg/bool.hpp"
 #include <iostream>
+#include <geometry_msgs/msg/twist.hpp>
+#include <chrono>
+#include <memory>
 
 /*
 State
@@ -34,8 +37,20 @@ class State : public rclcpp::Node {
         // subscriber to the slam_request
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr slam_request_sub_;
 
+        // subscriber to the spin_now
+        rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr rotate_request_sub_;
+
+        // publisher to the "cmd_vel" topic
+        rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr rotate_vel_pub_;
+
         // publisher to the "explore/resume" topic
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr explore_resume_pub_;
+
+        // timer variable
+        rclcpp::TimerBase::SharedPtr timer_;
+
+        // get starting time from clock
+        rclcpp::Time start_time_;
 
         /**
          * @brief This function is the callback for the subscription. It
@@ -71,6 +86,15 @@ class State : public rclcpp::Node {
 
         // current pose of the robot
         float pose_;
+
+        // time required by robot to make a full 360 degree turn
+        double turn_time_;
+
+        // time taken by robot while turning
+        double elapsed_time_;
+
+        // current pose of the robot
+        double ang_vel_ = 0.5;
 };
 
 #endif
