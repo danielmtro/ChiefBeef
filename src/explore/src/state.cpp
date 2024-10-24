@@ -23,10 +23,10 @@ State::State() : Node("state"), has_run_(false) {
     );
 
     // subscribe to the topic
-    rotate_request_sub_ = this->create_subscription<std_msgs::msg::String>(
+    rotate_request_sub_ = this->create_subscription<std_msgs::msg::Bool>(
         "/spin_now",
         rclcpp::SensorDataQoS(), 
-        std::bind(&State::state_changer, this, std::placeholders::_1->data)
+        std::bind(&State::spin_subscriber, this, std::placeholders::_1)
     );
 
     // Create Quality of Service for publisher 
@@ -53,10 +53,20 @@ State::~State(){
 
 // function that is the callback for beginning the exploration
 void State::explore_subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg){
+    RCLCPP_INFO(this->get_logger(), "Oogway is exploring...");
     const auto &data = msg->data;
     if (data && !has_run_){
         has_run_ = true;
         state_changer("START_EXPLORE");
+    }
+}
+
+// function that is the callback for beginning the exploration
+void State::spin_subscriber(const std_msgs::msg::Bool::SharedPtr msg){
+    RCLCPP_INFO(this->get_logger(), "Spinning...");
+    const auto &data = msg->data;
+    if (data){
+        state_changer("START_SCAN");
     }
 }
 
@@ -118,6 +128,8 @@ void State::change_explore(std::string to_change) {
 
 // function to rotate the turtlebot
 void State::rotate_robot(){
+
+    RCLCPP_INFO(this->get_logger(), "Start Spin...");
 
     // find the total time to turn 360 degrees with set ang_vel_
     turn_time_ = 2 *  M_PI / ang_vel_;
