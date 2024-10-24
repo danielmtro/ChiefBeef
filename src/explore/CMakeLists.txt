@@ -79,10 +79,12 @@ install(DIRECTORY
 
 
 add_executable(explore
+  src/dummy.cpp
   src/explore.cpp
   src/costmap_client.cpp
   src/state.cpp
   src/frontier_search.cpp
+  src/dummy.cpp
 )
 
 add_executable(blank
@@ -90,6 +92,11 @@ add_executable(blank
   src/costmap_client.cpp
   src/state.cpp
   src/frontier_search.cpp
+  src/dummy.cpp
+)
+
+add_executable(state
+  src/state.cpp
 )
 
 target_include_directories(blank PUBLIC
@@ -97,7 +104,7 @@ target_include_directories(blank PUBLIC
   $<INSTALL_INTERFACE:include>)
 
 # Define STATE_MAIN for the blank target
-target_compile_definitions(blank PRIVATE STATE_MAIN)
+target_compile_definitions(blank PRIVATE EXPLORE_MAIN)
 
 target_link_libraries(blank ${rclcpp_LIBRARIES})
 ament_target_dependencies(blank ${DEPENDENCIES})
@@ -109,7 +116,7 @@ target_include_directories(explore PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
-target_compile_definitions(explore PRIVATE EXPLORE_MAIN)
+target_compile_definitions(explore PRIVATE MAIN_MAIN)
 
 
 target_link_libraries(explore ${rclcpp_LIBRARIES})
@@ -117,6 +124,19 @@ target_link_libraries(explore ${rclcpp_LIBRARIES})
 ament_target_dependencies(explore ${DEPENDENCIES})
 
 install(TARGETS explore
+  DESTINATION lib/${PROJECT_NAME})
+
+target_include_directories(state PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+# Define STATE_MAIN for the blank target
+target_compile_definitions(state PRIVATE STATE_MAIN)
+
+target_link_libraries(state ${rclcpp_LIBRARIES})
+ament_target_dependencies(state ${DEPENDENCIES})
+
+install(TARGETS state
   DESTINATION lib/${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")

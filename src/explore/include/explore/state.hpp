@@ -34,9 +34,6 @@ class State : public rclcpp::Node {
         // deconstructor for the State class
         ~State();
     private:
-        // subscriber to the slam_request
-        rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr slam_request_sub_;
-
         // subscriber to the spin_now
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr rotate_request_sub_;
 
@@ -51,12 +48,6 @@ class State : public rclcpp::Node {
 
         // get starting time from clock
         rclcpp::Time start_time_;
-
-        /**
-         * @brief This function is the callback for the subscription. It
-         * checkes whether the nodes are already running and if not launches them.
-         */
-        void explore_subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg);
 
         /**
          * @brief This function changes the current state of the robot, whether 
@@ -76,11 +67,6 @@ class State : public rclcpp::Node {
          * use this to spin at random points to view everything.
          */
         void change_explore(std::string to_change);
-
-        /**
-         * @brief This function begins a node that starts the exploration.
-         */
-        void begin_explore();
 
         /**
          * @brief Function to rotate the robot 360 degrees.
