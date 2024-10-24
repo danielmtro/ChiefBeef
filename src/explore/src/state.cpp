@@ -39,7 +39,7 @@ State::State() : Node("state"), has_run_(false) {
     rotate_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", qos);
 
     // Create timer
-    timer_ = this->create_wall_timer(std::chrono::milliseconds(100), std::bind(&State::rotate_robot, this));
+    // timer_ = this->create_wall_timer(std::chrono::milliseconds(100), std::bind(&State::rotate_robot, this));
 
     // crea
 
