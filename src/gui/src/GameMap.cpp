@@ -85,6 +85,7 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
         std::cerr << "Error loading music file!" << std::endl;
         return;
     }
+    background_music.setVolume(50.0f);
 
     std::cout << "Game Map Created" << std::endl;
 }
@@ -95,6 +96,33 @@ GameMap::~GameMap()
     delete home_button_;
     delete next_page_button_;
     std::cout << "Game Map no longer running" << std::endl;
+}
+
+void GameMap::play_button_sound(int button_num_)
+{
+    std::string fname;
+
+    // select which music to load
+    if(button_num_ == 0)
+        fname = "Zeev-stocktake.ogg";
+    else if(button_num_ == 1)
+        fname = "Zeev-goodbye.ogg";
+    else
+        fname = "Zeev-goodbye.ogg";
+
+    // load in the sound that we want
+    std::string path = ament_index_cpp::get_package_share_directory("gui") + "/Music/" + fname;
+    if (!buffer_.loadFromFile(path)) {  // Use .ogg file here
+        std::cerr << "Failed to load sound!" << std::endl;
+        return;
+    }
+    click_sound_.setBuffer(buffer_);
+    click_sound_.setVolume(500.0f);
+
+    // play the sound
+    click_sound_.play();
+
+    return;
 }
 
 void GameMap::DrawMapData(sf::RenderWindow& window)
@@ -326,11 +354,13 @@ void GameMap::RunMap()
                 // test if we are hovering over the right button and the button is active
                 if(slam_request_button_->buttonHover(mouse_pos) && slam_request_button_->is_active())
                 {
+                    play_button_sound(0);
                     map_->publish_slam_request();
                     slam_request_button_->deactivate_button();
                 }
                 else if(home_button_->buttonHover(mouse_pos))
                 {
+                    play_button_sound(1);
                     window.close();
                     close_window();
                 }
