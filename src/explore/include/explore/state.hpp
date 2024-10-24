@@ -38,7 +38,7 @@ class State : public rclcpp::Node {
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr slam_request_sub_;
 
         // subscriber to the spin_now
-        rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr rotate_request_sub_;
+        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr rotate_request_sub_;
 
         // publisher to the "cmd_vel" topic
         rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr rotate_vel_pub_;

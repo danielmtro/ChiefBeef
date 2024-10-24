@@ -23,10 +23,10 @@ State::State() : Node("state"), has_run_(false) {
     );
 
     // subscribe to the topic
-    rotate_request_sub_ = this->create_subscription<std_msgs::msg::Bool>(
+    rotate_request_sub_ = this->create_subscription<std_msgs::msg::String>(
         "/spin_now",
         rclcpp::SensorDataQoS(), 
-        std::bind(&State::rotate_robot, this, std::placeholders::_1)
+        std::bind(&State::state_changer, this, std::placeholders::_1->data)
     );
 
     // Create Quality of Service for publisher 
@@ -67,7 +67,7 @@ void State::state_changer(std::string state){
     } else if (state == "START_SCAN"){
         RCLCPP_INFO(this->get_logger(), "Oogway is scanning for items...");
         change_explore("PAUSE");
-        // start a function call here to spin 360 deg.
+        rotate_robot();
         change_explore("RESUME");
     } else if (state == "FINISH"){
         RCLCPP_INFO(this->get_logger(), "Oogway has finished scanning. Have a nice day!");
