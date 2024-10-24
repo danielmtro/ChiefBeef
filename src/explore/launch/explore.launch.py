@@ -40,7 +40,15 @@ def generate_launch_description():
         output="screen",
         remappings=remappings,
     )
+
+    lidar_node = Node(
+        package='explore_lite',
+        executable='lidar',
+        name='lidar_node'
+    )
+
     ld.add_action(declare_use_sim_time_argument)
     ld.add_action(declare_namespace_argument)
     ld.add_action(node)
+    ld.add_action(lidar_node)
     return ld
