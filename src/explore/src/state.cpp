@@ -9,24 +9,23 @@ Written by James Hocking, 2024
 #include "explore/state.hpp"
 #include "explore/explore.h"
 #include <thread>
+#include <chrono>
 #include <stdexcept>
 
 // constructor for the state class
 State::State() : Node("state"), has_run_(false) {
-    std::cout << "State Node has been created." << std::endl;
-
-    // subscribe to the topic
+    // subscribe to the topic "/slam_request" -> published by the GUI
     slam_request_sub_ = this->create_subscription<std_msgs::msg::Bool>(
         "/slam_request",
         rclcpp::SensorDataQoS(), 
         std::bind(&State::explore_subscriber_callback, this, std::placeholders::_1)
     );
 
-    // subscribe to the topic
+    // subscribe to the topic /spin_now -> published by the Lidar Node
     rotate_request_sub_ = this->create_subscription<std_msgs::msg::Bool>(
         "/spin_now",
         rclcpp::SensorDataQoS(), 
-        std::bind(&State::spin_subscriber, this, std::placeholders::_1)
+        std::bind(&State::spin_subscriber_callback, this, std::placeholders::_1)
     );
 
     // Create Quality of Service for publisher 
@@ -38,11 +37,14 @@ State::State() : Node("state"), has_run_(false) {
     // Create publisher to cmd_vel for 360 degree rotation
     rotate_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", qos);
 
+<<<<<<< HEAD
     // Create timer
     // timer_ = this->create_wall_timer(std::chrono::milliseconds(100), std::bind(&State::rotate_robot, this));
 
     // crea
 
+=======
+>>>>>>> 15254d9 (getting returning to origin working)
     RCLCPP_INFO(this->get_logger(), "Turtlebot3 State node has been initialised.");
 }
 
@@ -53,7 +55,6 @@ State::~State(){
 
 // function that is the callback for beginning the exploration
 void State::explore_subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg){
-    RCLCPP_INFO(this->get_logger(), "Oogway is exploring...");
     const auto &data = msg->data;
     if (data && !has_run_){
         has_run_ = true;
@@ -61,15 +62,15 @@ void State::explore_subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg
     }
 }
 
-// function that is the callback for beginning the exploration
-void State::spin_subscriber(const std_msgs::msg::Bool::SharedPtr msg){
-    RCLCPP_INFO(this->get_logger(), "Spinning...");
+// function that is a callback for beginning a spin
+void State::spin_subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg){
     const auto &data = msg->data;
     if (data){
         state_changer("START_SCAN");
     }
 }
 
+// function to change the state of the state machine
 void State::state_changer(std::string state){
     if (state == "START_EXPLORE"){
         RCLCPP_INFO(this->get_logger(), "Oogway is exploring...");
@@ -77,7 +78,9 @@ void State::state_changer(std::string state){
     } else if (state == "START_SCAN"){
         RCLCPP_INFO(this->get_logger(), "Oogway is scanning for items...");
         change_explore("PAUSE");
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         rotate_robot();
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         change_explore("RESUME");
     } else if (state == "FINISH"){
         RCLCPP_INFO(this->get_logger(), "Oogway has finished scanning. Have a nice day!");
@@ -102,9 +105,6 @@ void State::begin_explore() {
                 std::cout << "Launch file called successfully!" << std::endl;
             }
         });
-
-        // Ensure the thread joins properly
-        ros_launch_thread.join();
     }
     catch (const std::exception& e) {
         std::cerr << "Exception caught in run_nav: " << e.what() << std::endl;
@@ -128,8 +128,6 @@ void State::change_explore(std::string to_change) {
 
 // function to rotate the turtlebot
 void State::rotate_robot(){
-
-    RCLCPP_INFO(this->get_logger(), "Start Spin...");
 
     // find the total time to turn 360 degrees with set ang_vel_
     turn_time_ = 2 *  M_PI / ang_vel_;
@@ -158,11 +156,7 @@ void State::rotate_robot(){
             // publish odom_data_ to "/cmd_vel"
             rotate_vel_pub_->publish(odom_data_);
         } else{
-
-            // set anular velocity to zero - stops moving
-            odom_data_.angular.z = 0.0;
-            
-            rotate_vel_pub_->publish(odom_data_);
+            break;
         }
     }
 }

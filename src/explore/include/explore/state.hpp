@@ -64,7 +64,11 @@ class State : public rclcpp::Node {
          */
         void state_changer(std::string new_state);
 
-        void spin_subscriber(const std_msgs::msg::Bool::SharedPtr msg);
+        /**
+         * @brief This function changes the current state of the robot, to
+         * spin it.
+         */
+        void spin_subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg);
 
         /**
          * 

@@ -65,12 +65,12 @@ Explore::Explore()
   double min_frontier_size;
   this->declare_parameter<float>("planner_frequency", 1.0);
   this->declare_parameter<float>("progress_timeout", 30.0);
-  this->declare_parameter<bool>("visualize", false);
+  this->declare_parameter<bool>("visualize", true);
   this->declare_parameter<float>("potential_scale", 1e-3);
   this->declare_parameter<float>("orientation_scale", 0.0);
   this->declare_parameter<float>("gain_scale", 1.0);
   this->declare_parameter<float>("min_frontier_size", 0.1);
-  this->declare_parameter<bool>("return_to_init", false);
+  this->declare_parameter<bool>("return_to_init", true);
 
   this->get_parameter("planner_frequency", planner_frequency_);
   this->get_parameter("progress_timeout", timeout);
