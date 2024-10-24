@@ -11,11 +11,11 @@ def resize_image(input_path, output_path, new_width, new_height):
         print(f"Image successfully resized to {new_width}x{new_height} and saved to {output_path}")
 
 # File paths and target resolution
-input_image_path = "concrete_background.avif"   # Replace with your input image path
-output_image_path = "orange.png" # Replace with your desired output path
+input_image_path = "eggplant_full_size.jpg"   # Replace with your input image path
+output_image_path = "eggplant.jpg" # Replace with your desired output path
 new_width, new_height = 60, 60
 
 # Resize the imagepython3 
-# resize_image(input_image_path, output_image_path, new_width, new_height)
+resize_image(input_image_path, output_image_path, new_width, new_height)
 with Image.open(input_image_path) as img:
     print(img.width, img.height)

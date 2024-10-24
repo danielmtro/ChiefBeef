@@ -49,8 +49,14 @@ class GameMap : public Window {
         Button* slam_request_button_;
         Button* home_button_;
 
+        //containers
         std::vector<std::shared_ptr<Icon>> items_in_store_;
         std::vector<std::shared_ptr<sf::Text>> number_of_items_;
+        int page_num_; // what sets of icons and text are we showing?
+        Button* next_page_button_;
+
+        // wndow variables
+        float border_width_;
         
 
         /**
