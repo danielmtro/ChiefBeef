@@ -16,12 +16,13 @@ Lidar::Lidar() : Node ("lidar_node")
         );
 
     //resize scan data member variables
-    scan_data_.resize(3);
-    prev_scan_data_.resize(3);   
+    scan_data_.resize(2);
+    prev_scan_data_.resize(2);   
 
 
     // initialise publisher
-    scan_data_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("lidar", 100);
+    scan_data_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("lidar_intensity", 10);
+    stocktake_pub_ = this->create_publisher<std_msgs::msg::Bool>("spin_now", 10);
     // create the timer that will cotrol how often the state gets published
     update_timer_ = this->create_wall_timer(20ms, std::bind(&Lidar::update_scan_data, this));
 
@@ -42,24 +43,51 @@ void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
     //save previous scan data into member variable
     prev_scan_data_ = scan_data_;
 
-    for (int num = 0; num < 3; num++) {
-        if (std::isinf(msg->intensities.at(scan_angle[num]))) {
-        scan_data_[num] = 0;
-        } else {
-        scan_data_[num] = msg->intensities.at(scan_angle[num]);
-        }
+    long int left_sum = 0;
+    long int right_sum = 0;
+
+    // Calculate index range corresponding to the specified angles
+    int left_index_min = static_cast<int>((scan_left[0] - msg->angle_min) / msg->angle_increment);
+    int left_index_max = static_cast<int>((scan_left[1] - msg->angle_min) / msg->angle_increment);
+    int right_index_min = static_cast<int>((scan_right[0] - msg->angle_min) / msg->angle_increment);
+    int right_index_max = static_cast<int>((scan_right[1] - msg->angle_min) / msg->angle_increment);
+
+
+    // Calculate the average intensity
+    for(int i = left_index_min; i < left_index_max; i++) {
+        left_sum += msg->intensities[i];
     }
+    float left_intensity = left_sum / (left_index_max + 1 - left_index_min);
+
+    for(int i = right_index_min; i < right_index_max; i++) {
+        right_sum += msg->intensities[i];
+    }
+    float right_intensity = right_sum / (right_index_max + 1 - right_index_min);
+
+    scan_data_[0] = left_intensity;
+    scan_data_[1] = right_intensity;
+
+    is_intense = false;
+
+    if(left_intensity > 5000 or right_intensity > 5000) {
+        is_intense = true;
+    }
+
 }
 
 
 void Lidar::update_scan_data()
 {   
     // create the message and insert the scan data into it
-    auto message = std_msgs::msg::Float32MultiArray();
-    message.data.insert(message.data.end(), scan_data_.begin(), scan_data_.end());
+    auto intensity_message = std_msgs::msg::Float32MultiArray();
+    intensity_message.data.insert(intensity_message.data.end(), scan_data_.begin(), scan_data_.end());
+
+    std_msgs::msg::Bool spin_message;
+    spin_message.data = is_intense;
 
     // publish the message
-    scan_data_pub_->publish(message);
+    scan_data_pub_->publish(intensity_message);
+    stocktake_pub_->publish(spin_message);
 }
 
 

@@ -10,6 +10,7 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include <std_msgs/msg/bool.hpp>
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/float32_multi_array.hpp"
 
@@ -43,21 +44,22 @@ class Lidar : public rclcpp::Node{
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr lidar_sub_;
         
         // scan_data_publisher
-        rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr scan_data_pub_; 
+        rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr scan_data_pub_;
+        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr stocktake_pub_; 
         rclcpp::TimerBase::SharedPtr update_timer_;
 
         //store the current and previous LiDar scan information
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
+        bool is_intense;
 
-        uint16_t scan_angle[3] = {0,
-                                  90,
-                                  270};
+        const float DEG2RAD = 3.14159265359/180.0;
 
-        // uint16_t scan_angle[LidarAngles::NUM_ANGLES] = {LidarAngles::LEFT_ANGLE,
-        //                                                 LidarAngles::RIGHT_ANGLE,
-        //                                                 LidarAngles::HARD_LEFT_ANGLE,
-        //                                                 LidarAngles::HARD_RIGHT_ANGLE};
+        float scan_left[2] = {88*DEG2RAD, 92*DEG2RAD};
+        float scan_right[2] = {268*DEG2RAD, 272*DEG2RAD};
+
+        float scan_angle[2] = {90*DEG2RAD, 270*DEG2RAD};
+
 
 };
 #endif
