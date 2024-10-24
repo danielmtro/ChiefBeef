@@ -48,12 +48,16 @@ class Lidar : public rclcpp::Node{
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr stocktake_pub_; 
         rclcpp::TimerBase::SharedPtr update_timer_;
 
+        rclcpp::Time prev_stocktake_time_;
+
         //store the current and previous LiDar scan information
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
         bool is_intense;
 
         const float DEG2RAD = 3.14159265359/180.0;
+
+        const float stocktake_frequency = 15.0;
 
         float scan_left[2] = {88*DEG2RAD, 92*DEG2RAD};
         float scan_right[2] = {268*DEG2RAD, 272*DEG2RAD};

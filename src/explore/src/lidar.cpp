@@ -15,6 +15,8 @@ Lidar::Lidar() : Node ("lidar_node")
         std::placeholders::_1)
         );
 
+    prev_stocktake_time_ = this->now();
+
     //resize scan data member variables
     scan_data_.resize(2);
     prev_scan_data_.resize(2);   
@@ -23,7 +25,7 @@ Lidar::Lidar() : Node ("lidar_node")
     // initialise publisher
     scan_data_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("lidar_intensity", 10);
     stocktake_pub_ = this->create_publisher<std_msgs::msg::Bool>("spin_now", 10);
-    // create the timer that will cotrol how often the state gets published
+    // create the timer that will cotrol how often a stock take can be started
     update_timer_ = this->create_wall_timer(20ms, std::bind(&Lidar::update_scan_data, this));
 
     RCLCPP_INFO(this->get_logger(), "Lidar_node has been successfully initialised");
@@ -81,13 +83,26 @@ void Lidar::update_scan_data()
     // create the message and insert the scan data into it
     auto intensity_message = std_msgs::msg::Float32MultiArray();
     intensity_message.data.insert(intensity_message.data.end(), scan_data_.begin(), scan_data_.end());
+    scan_data_pub_->publish(intensity_message);
 
     std_msgs::msg::Bool spin_message;
     spin_message.data = is_intense;
 
-    // publish the message
-    scan_data_pub_->publish(intensity_message);
-    stocktake_pub_->publish(spin_message);
+    // REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS
+    // Setting the lidar to always try push true, stock updates are limited by stocktake_frequency
+    spin_message.data = true;
+    rclcpp::Time time_now = this->now();
+
+    // ALSO READD THIS LATER NEED TO CHECK IF INTENSE FIRST
+    // if ((time_now - prev_stocktake_time_).nanoseconds() / 1e9 > stocktake_frequency && is_intense) {
+    if ((time_now - prev_stocktake_time_).nanoseconds() / 1e9 > stocktake_frequency) {
+        prev_stocktake_time_ = this->now();
+        stocktake_pub_->publish(spin_message);
+    }
+    else {
+        spin_message.data = false;
+        stocktake_pub_->publish(spin_message);
+    }
 }
 
 
