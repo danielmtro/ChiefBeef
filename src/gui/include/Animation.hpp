@@ -146,6 +146,11 @@ class Icon : public Animation
         */
         void update_position(sf::Time deltaTime);
 
+        // booleans to control if the sprite should be active and showing
+        void deactivate();
+        void activate();
+        bool get_active();
+
     protected:
 
         bool do_i_jiggle_;
@@ -154,6 +159,8 @@ class Icon : public Animation
 
         // rotation direction 1 for forwards -1 for reverse
         int rotation_direction_;
+
+        bool active_;
 
 };
 

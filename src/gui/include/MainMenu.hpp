@@ -34,10 +34,22 @@ class MainMenu : public Window{
         void up_command();
         void down_command();
 
-        // gets the current selection for the menu
+        // gets the current selection for the mSHOenu
         int get_menu_selection();
 
     private: 
+
+        // draws everything on the frame
+        void draw_frame(sf::RenderWindow& window);
+
+        // plays the sounds when each option is selected
+        void play_sound_selection();
+
+        // increase text size when we want to select something
+        void increase_text_size();
+        
+        sf::Sound click_sound_;
+        sf::SoundBuffer buffer_;        
 
         // the text based variables
         int selection_;

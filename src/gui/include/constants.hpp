@@ -46,19 +46,31 @@ namespace GmapWindow
     constexpr int HBUTTON_H = 100;
     constexpr int HBUTTON_CHAR = 30;
 
+    // the next page button constants
+    constexpr int NBUTTON_X = MAP_WIDTH - 180;
+    constexpr int NBUTTON_Y = 214;
+    constexpr int NBUTTON_W = 110;
+    constexpr int NBUTTON_H = 60;
+    constexpr int NBUTTON_CHAR = 20;
+
     const std::string SBUTTON_WORD = "Stocktake";
     const std::string HBUTTON_WORD = "Home";
+    const std::string NBUTTON_WORD = "Next";
 
     // constants to control the icons in the gamewindow
     constexpr int ICON_ROTATION_SPEED = 40;
     constexpr int ROT_LIMIT = 5;
     constexpr float TIME_BETWEEN_JIGGLES = 2;
     constexpr float TIME_JIGGLING = 1.5;
-    constexpr int NUM_ITEMS = 2;
     constexpr int ICON_Y = 100;
     constexpr int ICON_X = HBUTTON_X + 40;
     constexpr int ICON_SEP = 65;
     constexpr int NUM_ICON_CHARSIZE = 30;
+
+    // items numeric control
+    constexpr int NUM_ITEMS = 6;
+    constexpr int ITEMS_PER_PAGE = 2;
+    constexpr int NUM_PAGES = NUM_ITEMS/ITEMS_PER_PAGE;
 }
 
 

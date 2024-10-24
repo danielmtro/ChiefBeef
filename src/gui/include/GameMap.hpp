@@ -44,13 +44,22 @@ class GameMap : public Window {
 
     private: 
 
+        // play button sounds
+        void play_button_sound(int button_num_);
+
         // The ROS2 node that will read from /map and store relevant map data
         std::shared_ptr<Map> map_;
         Button* slam_request_button_;
         Button* home_button_;
+        Button* next_page_button_;
 
+        //containers
         std::vector<std::shared_ptr<Icon>> items_in_store_;
         std::vector<std::shared_ptr<sf::Text>> number_of_items_;
+        int page_num_; // what sets of icons and text are we showing?
+        
+        // wndow variables
+        float border_width_;
         
 
         /**
@@ -82,6 +91,9 @@ class GameMap : public Window {
         int x_offset_;
         int y_offset_;
         
+        // button sound variables
+        sf::SoundBuffer buffer_;
+        sf::Sound click_sound_;
 };
 
 #endif

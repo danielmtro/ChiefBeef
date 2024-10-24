@@ -12,6 +12,10 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
     : Window(name, width, height), map_(MapPtr)
 {   
 
+    // set the width of the border to match the buttons that are present
+    border_width_ = GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W;
+    page_num_ = 0;
+
     // set the background for the main menu
     std::string background_location = "/Textures/concrete_background.png";
     std::string texture_path = ament_index_cpp::get_package_share_directory("gui") + background_location;
@@ -45,6 +49,15 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
         font
     );
 
+    // next page button
+    next_page_button_ = new Button(
+        GmapWindow::NBUTTON_X, GmapWindow::NBUTTON_Y,
+        GmapWindow::NBUTTON_W, GmapWindow::NBUTTON_H,
+        sf::Color(153, 51, 255),   // fun colour
+        GmapWindow::NBUTTON_WORD,
+        font
+    );
+
     // create icon objects to store 
     for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
     {
@@ -64,6 +77,16 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
     // position of the actual trolley
     trolley_ = std::make_shared<CharacterIcon>();
 
+
+    // background music variables
+    std::string music_filename = "/Music/MapWindowMusic.ogg";
+    std::string music_path = ament_index_cpp::get_package_share_directory("gui") + music_filename;
+    if (!background_music.openFromFile(music_path)) {
+        std::cerr << "Error loading music file!" << std::endl;
+        return;
+    }
+    background_music.setVolume(50.0f);
+
     std::cout << "Game Map Created" << std::endl;
 }
 
@@ -71,7 +94,35 @@ GameMap::~GameMap()
 {
     delete slam_request_button_;
     delete home_button_;
+    delete next_page_button_;
     std::cout << "Game Map no longer running" << std::endl;
+}
+
+void GameMap::play_button_sound(int button_num_)
+{
+    std::string fname;
+
+    // select which music to load
+    if(button_num_ == 0)
+        fname = "Zeev-stocktake.ogg";
+    else if(button_num_ == 1)
+        fname = "Zeev-goodbye.ogg";
+    else
+        fname = "Zeev-goodbye.ogg";
+
+    // load in the sound that we want
+    std::string path = ament_index_cpp::get_package_share_directory("gui") + "/Music/" + fname;
+    if (!buffer_.loadFromFile(path)) {  // Use .ogg file here
+        std::cerr << "Failed to load sound!" << std::endl;
+        return;
+    }
+    click_sound_.setBuffer(buffer_);
+    click_sound_.setVolume(500.0f);
+
+    // play the sound
+    click_sound_.play();
+
+    return;
 }
 
 void GameMap::DrawMapData(sf::RenderWindow& window)
@@ -110,7 +161,7 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
 
     // define scaling factors and offsets for placing window
     // adjust x scaling to not interfere with button positions
-    int effective_x_width = (window_width - 2 * (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W));
+    int effective_x_width = window_width - 2 * (border_width_);
     int sf_x = effective_x_width/width;
     int sf_y = window_height/height;
 
@@ -120,7 +171,7 @@ void GameMap::DrawMapData(sf::RenderWindow& window)
     scaling_factor_ = sf_x;
 
     // find offsets to center the map in the middle of the screen
-    x_offset_ = (effective_x_width - width * sf_x)/2 + (GmapWindow::SBUTTON_X + GmapWindow::SBUTTON_W);
+    x_offset_ = (effective_x_width - width * sf_x)/2 + border_width_;
     y_offset_ = (window_height - height * sf_y)/2;
     
     // create cells and display them on the window
@@ -151,23 +202,51 @@ void GameMap::initialise(sf::RenderWindow& window)
 {
 
     // create a rectangle around the objects
-    bounding_box_.setSize(sf::Vector2f(160, 155)); // Size matches sprite
+    bounding_box_.setSize(sf::Vector2f(155, 230)); // Size matches sprite
     bounding_box_.setPosition(GmapWindow::ICON_X - 40, GmapWindow::ICON_Y - 40);  
     bounding_box_.setOutlineColor(sf::Color::Blue);  // Set outline color
     bounding_box_.setOutlineThickness(4);  // Set thickness of the outline
     bounding_box_.setFillColor(sf::Color::Transparent);  // Make the inside transparent
 
-    // initialise the icon sprites
+    // slide 1
     items_in_store_[0]->initialise(window, "/apple.png");
     items_in_store_[0]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
+
     items_in_store_[1]->initialise(window, "/orange.png");
     items_in_store_[1]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
+
+    // slide 2
+    items_in_store_[2]->initialise(window, "/peach.png");
+    items_in_store_[2]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
+
+    items_in_store_[3]->initialise(window, "/eggplant.png");
+    items_in_store_[3]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
     
+
+    // slide 3
+    items_in_store_[4]->initialise(window, "/question_mark.png");
+    items_in_store_[4]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
+
+
+    // placeholder on the final slide
+    items_in_store_[5]->initialise(window, "/question_mark.png");
+    items_in_store_[5]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
+    items_in_store_[5]->deactivate();
+
+
+    // set the positins of the item numbers
     number_of_items_[0]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
     number_of_items_[1]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
 
+    number_of_items_[2]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
+    number_of_items_[3]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
+
+    number_of_items_[4]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
+    number_of_items_[5]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
+    
+
     // initialise the actual character
-    trolley_->initialise(window, "/shopping_cart_small.png");
+    trolley_->initialise(window, "/trolley_top_view.png");
 
 }
 
@@ -180,15 +259,21 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
 
     slam_request_button_->draw(window);
     home_button_->draw(window);
+    next_page_button_->draw(window);
 
     // draw on the store items
-    for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
+    int page_num = page_num_%GmapWindow::NUM_PAGES; // reduce the possible pages
+    for(int i = page_num * GmapWindow::ITEMS_PER_PAGE; i < (page_num + 1)* GmapWindow::ITEMS_PER_PAGE; ++i)
     {
         // make the item icons jiggle
         items_in_store_[i]->update_position(deltaTime);
 
-        // update the number of items
+        // update the number of items based on the encoded index
         number_of_items_[i]->setString(std::to_string(map_->get_item_logger()->get_num_items(i)));
+
+        // don't draw inactive icons
+        if(!items_in_store_[i]->get_active())
+            continue;
 
         window.draw(*items_in_store_[i]->get_sprite());
         window.draw(*number_of_items_[i]);
@@ -229,6 +314,10 @@ void GameMap::RunMap()
     // Track time for movement
     sf::Clock clock;
 
+    // start playing the background music
+    background_music.setLoop(true);
+    background_music.play();
+
     while (window.isOpen())
     {
         // Restart the clock every frame
@@ -265,13 +354,19 @@ void GameMap::RunMap()
                 // test if we are hovering over the right button and the button is active
                 if(slam_request_button_->buttonHover(mouse_pos) && slam_request_button_->is_active())
                 {
+                    play_button_sound(0);
                     map_->publish_slam_request();
                     slam_request_button_->deactivate_button();
                 }
                 else if(home_button_->buttonHover(mouse_pos))
                 {
+                    play_button_sound(1);
                     window.close();
                     close_window();
+                }
+                else if(next_page_button_->buttonHover(mouse_pos))
+                {
+                    page_num_++;
                 }
             }
         }
@@ -280,6 +375,7 @@ void GameMap::RunMap()
         mouse_pos = sf::Mouse::getPosition(window);
         slam_request_button_->buttonHover(mouse_pos);
         home_button_->buttonHover(mouse_pos);
+        next_page_button_->buttonHover(mouse_pos);
 
 
         // Clear the window with a black color

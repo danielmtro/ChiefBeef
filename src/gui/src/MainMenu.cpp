@@ -116,6 +116,60 @@ int MainMenu::get_menu_selection()
     return selection_;
 }
 
+void MainMenu::play_sound_selection()
+{   
+
+    std::string fname;
+
+    // select which music to load
+    if(selection_ == SHOPPING_TIME)
+        fname = "Don-shopping_time.ogg";
+    else if(selection_ == MEET_THE_TEAM)
+        fname = "Don-meet_the_team_advanced.ogg";
+    else
+        fname = "Zeev-goodbye.ogg";
+
+    // load in the sound that we want
+    std::string path = ament_index_cpp::get_package_share_directory("gui") + "/Music/" + fname;
+    if (!buffer_.loadFromFile(path)) {  // Use .ogg file here
+        std::cerr << "Failed to load sound!" << std::endl;
+        return;
+    }
+    click_sound_.setBuffer(buffer_);
+    click_sound_.setVolume(150.0f);
+
+    // play the sound
+    click_sound_.play();
+    while(click_sound_.getStatus() == sf::Sound::Playing)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // potentially avoid busy waiting
+    }
+
+    return;
+    
+}
+
+void MainMenu::draw_frame(sf::RenderWindow& window)
+{
+
+    // clear the current window
+    window.clear();
+    window.draw(background);
+
+    // Add all the menu options of text to the window
+    for (int i = 0; i < MenuWindow::MENU_OPTIONS; ++i)
+    {
+        window.draw(menu[i]);
+    }
+    window.draw(*trolley_animation.get_sprite());
+}
+
+void MainMenu::increase_text_size()
+{
+    sf::Text text = menu[selection_];
+    text.setCharacterSize(text.getCharacterSize() + 10);
+}
+
 void MainMenu::RunMenu()
 {
     // reset selection variables
@@ -191,6 +245,11 @@ void MainMenu::RunMenu()
                 {
                     // set the current selection before closing the menu
                     selection_ = current_selection_;
+
+                    // play sound byte
+                    play_sound_selection();
+                    
+                    // close the window
                     window.close();
                     close_window();
                 }
@@ -206,18 +265,7 @@ void MainMenu::RunMenu()
 
         trolley_animation.update_position(deltaTime);
         
-        // clear the current window
-        window.clear();
-        window.draw(background);
-
-        // Add all the menu options of text to the window
-        for (int i = 0; i < MenuWindow::MENU_OPTIONS; ++i)
-        {
-            window.draw(menu[i]);
-        }
-
-        // sf::Sprite& sprite = trolley_animation.get_sprite();
-        window.draw(*trolley_animation.get_sprite());
+        draw_frame(window);
 
         // Display the updated frame
         window.display();
