@@ -57,7 +57,7 @@ class Lidar : public rclcpp::Node{
 
         const float DEG2RAD = 3.14159265359/180.0;
 
-        const float stocktake_frequency = 15.0;
+        const float stocktake_frequency = 25.0;
 
         float scan_left[2] = {85*DEG2RAD, 95*DEG2RAD};
         float scan_right[2] = {265*DEG2RAD, 275*DEG2RAD};
