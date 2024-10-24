@@ -188,12 +188,23 @@ void GameMap::initialise(sf::RenderWindow& window)
     items_in_store_[1]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
 
     // slide 2
-    items_in_store_[2]->initialise(window, "/peach.jpeg");
+    items_in_store_[2]->initialise(window, "/peach.png");
     items_in_store_[2]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
 
-    items_in_store_[3]->initialise(window, "/eggplant.jpg");
+    items_in_store_[3]->initialise(window, "/eggplant.png");
     items_in_store_[3]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
     
+
+    // slide 3
+    items_in_store_[4]->initialise(window, "/question_mark.png");
+    items_in_store_[4]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
+
+
+    // placeholder on the final slide
+    items_in_store_[5]->initialise(window, "/question_mark.png");
+    items_in_store_[5]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
+    items_in_store_[5]->deactivate();
+
 
     // set the positins of the item numbers
     number_of_items_[0]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
@@ -202,8 +213,12 @@ void GameMap::initialise(sf::RenderWindow& window)
     number_of_items_[2]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
     number_of_items_[3]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
 
+    number_of_items_[4]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
+    number_of_items_[5]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
+    
+
     // initialise the actual character
-    trolley_->initialise(window, "/shopping_cart_small.png");
+    trolley_->initialise(window, "/trolley_top_view.png");
 
 }
 
@@ -227,6 +242,10 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
 
         // update the number of items based on the encoded index
         number_of_items_[i]->setString(std::to_string(map_->get_item_logger()->get_num_items(i)));
+
+        // don't draw inactive icons
+        if(!items_in_store_[i]->get_active())
+            continue;
 
         window.draw(*items_in_store_[i]->get_sprite());
         window.draw(*number_of_items_[i]);

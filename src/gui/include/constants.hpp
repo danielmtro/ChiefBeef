@@ -67,9 +67,10 @@ namespace GmapWindow
     constexpr int ICON_SEP = 65;
     constexpr int NUM_ICON_CHARSIZE = 30;
 
-    constexpr int NUM_ITEMS = 5;
+    // items numeric control
+    constexpr int NUM_ITEMS = 6;
     constexpr int ITEMS_PER_PAGE = 2;
-    constexpr int NUM_PAGES = 5/2;
+    constexpr int NUM_PAGES = NUM_ITEMS/ITEMS_PER_PAGE;
 }
 
 

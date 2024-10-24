@@ -96,6 +96,7 @@ void Trolley::update_position(sf::Time deltaTime)
 
 Icon::Icon()
 {
+    active_ = true;
     do_i_jiggle_= false;
     time_since_last_jiggle_ = 0;
     rotation_direction_ = 1;
@@ -105,6 +106,22 @@ Icon::Icon()
 Icon::~Icon()
 {
     std::cout << "Icon no longer active." << std::endl;
+}
+
+void Icon::deactivate()
+{
+    active_ = false;
+}
+
+
+void Icon::activate()
+{
+    active_ = true;
+}
+
+bool Icon::get_active()
+{
+    return active_;
 }
 
 void Icon::update_position(sf::Time deltaTime)
