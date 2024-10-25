@@ -85,6 +85,7 @@ add_executable(explore
   src/state.cpp
   src/frontier_search.cpp
   src/dummy.cpp
+  src/lidar.cpp
 )
 
 add_executable(blank
@@ -98,6 +99,22 @@ add_executable(blank
 add_executable(state
   src/state.cpp
 )
+
+add_executable(lidar
+  src/lidar.cpp
+)
+
+target_include_directories(lidar PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+target_compile_definitions(lidar PRIVATE LIDAR_MAIN)
+target_link_libraries(lidar ${rclcpp_LIBRARIES})
+ament_target_dependencies(lidar ${DEPENDENCIES})
+
+install(TARGETS
+  lidar
+  DESTINATION lib/${PROJECT_NAME})
 
 target_include_directories(blank PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

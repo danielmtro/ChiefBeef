@@ -56,10 +56,17 @@ def generate_launch_description():
         executable="state",
         output="screen",
     )
+    
+    lidar_node = Node(
+        package='explore_lite',
+        executable='lidar',
+        name='lidar_node'
+    )
 
     ld.add_action(declare_use_sim_time_argument)
     ld.add_action(declare_namespace_argument)
     ld.add_action(tag_detector_cmd)
     ld.add_action(node)
     ld.add_action(state_node)
+    ld.add_action(lidar_node)
     return ld
