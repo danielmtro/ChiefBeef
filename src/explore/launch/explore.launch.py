@@ -50,6 +50,13 @@ def generate_launch_description():
         remappings=remappings,
     )
 
+    state_node = Node(
+        package="explore_lite",
+        name="state_node",
+        executable="state",
+        output="screen",
+    )
+    
     lidar_node = Node(
         package='explore_lite',
         executable='lidar',
@@ -60,5 +67,6 @@ def generate_launch_description():
     ld.add_action(declare_namespace_argument)
     ld.add_action(tag_detector_cmd)
     ld.add_action(node)
+    ld.add_action(state_node)
     ld.add_action(lidar_node)
     return ld

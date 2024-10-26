@@ -3,6 +3,8 @@ node_launch.launch.py
 
 This file brings up all the nodes required to explore the maze and map it out
 
+It does JUST nav and slam_toolbox
+
 James Hocking, 2024
 """
 
@@ -31,7 +33,7 @@ def generate_launch_description():
 
     # Adding a delay before launching the SLAM node
     slam_delay = TimerAction(
-        period=5.0,  # Delay in seconds
+        period=2.0,  # Delay in seconds
         actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
@@ -44,7 +46,7 @@ def generate_launch_description():
 
     # Adding a delay before launching the navigation nodes
     nav2_bringup_delay = TimerAction(
-        period=20.0,  # Delay in seconds
+        period=2.0,  # Delay in seconds
         actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
