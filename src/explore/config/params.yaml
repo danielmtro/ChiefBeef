@@ -433,8 +433,8 @@ loopback_simulator:
 explore_node:
   ros__parameters:
     robot_base_frame: base_link
-    costmap_topic: /map
-    costmap_updates_topic: /map_updates
+    costmap_topic: /global_costmap/costmap
+    costmap_updates_topic: /global_costmap/costmap_updates
     visualize: true
     use_sim_time: False
     planner_frequency: 0.15
