@@ -57,10 +57,13 @@ class Lidar : public rclcpp::Node{
 
         const float DEG2RAD = 3.14159265359/180.0;
 
-        const float stocktake_frequency = 25.0;
+        const float stocktake_frequency = 20.0;
 
-        float scan_left[2] = {85*DEG2RAD, 95*DEG2RAD};
-        float scan_right[2] = {265*DEG2RAD, 275*DEG2RAD};
+        const float intensity_threshold = 6500;
+        const float change_threshold = 1.50; // Intensity must be this number x greater to trigger a stock take
+
+        float scan_left[2] = {88*DEG2RAD, 92*DEG2RAD};
+        float scan_right[2] = {268*DEG2RAD, 272*DEG2RAD};
 
         float scan_angle[2] = {90*DEG2RAD, 270*DEG2RAD};
 

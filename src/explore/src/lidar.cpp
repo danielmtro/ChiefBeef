@@ -18,8 +18,8 @@ Lidar::Lidar() : Node ("lidar_node")
     prev_stocktake_time_ = this->now();
 
     //resize scan data member variables
-    scan_data_.resize(2);
-    prev_scan_data_.resize(2);   
+    scan_data_.resize(4);
+    prev_scan_data_.resize(4);   
 
 
     // initialise publisher
@@ -66,12 +66,14 @@ void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
     }
     float right_intensity = right_sum / (right_index_max + 1 - right_index_min);
 
-    scan_data_[0] = left_intensity;
-    scan_data_[1] = right_intensity;
+    scan_data_[0] = prev_scan_data_[2]; // prev left intensity
+    scan_data_[1] = prev_scan_data_[3]; // prev right intensity
+    scan_data_[2] = left_intensity;
+    scan_data_[3] = right_intensity;
 
     is_intense = false;
-
-    if(left_intensity > 5000 or right_intensity > 5000) {
+    RCLCPP_INFO(this->get_logger(), "Left: Prev: %lf Curr: %lf Right: Prev: %lf Curr: %lf", scan_data_[0], scan_data_[2], scan_data_[1], scan_data_[3]);
+    if((scan_data_[2] > scan_data_[0]*change_threshold && left_intensity > intensity_threshold) || (scan_data_[3] > scan_data_[1]*change_threshold && right_intensity > intensity_threshold)) {
         is_intense = true;
     }
 
@@ -90,12 +92,14 @@ void Lidar::update_scan_data()
 
     // REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS
     // Setting the lidar to always try push true, stock updates are limited by stocktake_frequency
-    spin_message.data = true;
+    // spin_message.data = true;
     rclcpp::Time time_now = this->now();
 
-    // ALSO READD THIS LATER NEED TO CHECK IF INTENSE FIRST
     // if ((time_now - prev_stocktake_time_).nanoseconds() / 1e9 > stocktake_frequency && is_intense) {
-    if ((time_now - prev_stocktake_time_).nanoseconds() / 1e9 > stocktake_frequency) {
+
+    // ALSO READD THIS LATER NEED TO CHECK IF INTENSE FIRST
+    // if ((time_now - prev_stocktake_time_).nanoseconds() / 1e9 > stocktake_frequency) {
+    if (is_intense) {
         prev_stocktake_time_ = this->now();
         stocktake_pub_->publish(spin_message);
     }
