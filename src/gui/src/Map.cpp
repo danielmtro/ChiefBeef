@@ -100,7 +100,7 @@ void Map::item_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg)
     for(auto value: msg->data)
     {
         // if we've already processed this item then disregard it
-        if(codes_seen_.find(value) == codes_seen_.end())
+        if(codes_seen_.find(value) != codes_seen_.end())
             continue;
 
         // add the item
@@ -109,9 +109,16 @@ void Map::item_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg)
         // determine the equivalent string based on mapping and add it to the item
         // logger
         if(ID_CODES_TO_ITEM.find(value) != ID_CODES_TO_ITEM.end())
-            item_logger_->add_item(ID_CODES_TO_ITEM.at(value));
+        {
+            item = ID_CODES_TO_ITEM.at(value);
+            std::cout << "Adding one " << item << std::endl;
+            item_logger_->add_item(item);
+        }
         else
+        {
+            std::cout << "Unknown Item! " << std::endl;
             item_logger_->add_item("Unknown");
+        }
 
     }
 
