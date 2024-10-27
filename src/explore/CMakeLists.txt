@@ -56,7 +56,7 @@ set(DEPENDENCIES
   map_msgs
   nav2_costmap_2d
   visualization_msgs
-  #apriltag_ros
+  apriltag_ros
 )
 
 include_directories(
@@ -86,6 +86,7 @@ add_executable(explore
   src/frontier_search.cpp
   src/dummy.cpp
   src/lidar.cpp
+  src/teleop.cpp
 )
 
 add_executable(blank
@@ -94,6 +95,7 @@ add_executable(blank
   src/state.cpp
   src/frontier_search.cpp
   src/dummy.cpp
+  src/teleop.cpp
 )
 
 add_executable(state
@@ -102,6 +104,10 @@ add_executable(state
 
 add_executable(lidar
   src/lidar.cpp
+)
+
+add_executable(teleop
+  src/teleop.cpp
 )
 
 target_include_directories(lidar PUBLIC
