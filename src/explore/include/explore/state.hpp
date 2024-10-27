@@ -86,7 +86,7 @@ class State : public rclcpp::Node {
         double elapsed_time_;
 
         // current pose of the robot
-        double ang_vel_ = 0.5;
+        double ang_vel_ = 0.25;
 };
 
 #endif

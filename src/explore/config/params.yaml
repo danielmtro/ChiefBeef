@@ -13,7 +13,7 @@ amcl:
     global_frame_id: "map"
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
-    laser_max_range: 100.0
+    laser_max_range: 0.2
     laser_min_range: -1.0
     laser_model_type: "likelihood_field"
     max_beams: 60
@@ -191,8 +191,8 @@ local_costmap:
       global_frame: odom
       robot_base_frame: base_link
       rolling_window: true
-      width: 3
-      height: 3
+      width: 1
+      height: 1
       resolution: 0.05
       robot_radius: 0.09
       plugins: ["voxel_layer", "inflation_layer"]
@@ -216,9 +216,9 @@ local_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 3.0
+          raytrace_max_range: 0.3
           raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
+          obstacle_max_range: 0.25
           obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -240,15 +240,16 @@ global_costmap:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
         observation_sources: scan
+        clearing_observation_persistence: 0.0  # Clears old obstacles instantly
         scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 3.0
+          raytrace_max_range: 0.3
           raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
+          obstacle_max_range: 0.25
           obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
