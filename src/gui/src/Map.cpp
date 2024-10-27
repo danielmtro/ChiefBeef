@@ -141,14 +141,6 @@ void Map::item_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg)
 
     }
 
-    // print the data out
-    RCLCPP_INFO(this->get_logger(), "Received data: ");
-    for (auto value : msg->data)
-    {
-        std::cout << value << " ";
-    }
-    std::cout << std::endl;
-
 }
 
 /*
