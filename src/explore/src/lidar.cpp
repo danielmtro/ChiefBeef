@@ -72,7 +72,7 @@ void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
     scan_data_[3] = right_intensity;
 
     is_intense = false;
-    RCLCPP_INFO(this->get_logger(), "Left: Prev: %lf Curr: %lf Right: Prev: %lf Curr: %lf", scan_data_[0], scan_data_[2], scan_data_[1], scan_data_[3]);
+    // RCLCPP_INFO(this->get_logger(), "Left: Prev: %lf Curr: %lf Right: Prev: %lf Curr: %lf", scan_data_[0], scan_data_[2], scan_data_[1], scan_data_[3]);
     if((scan_data_[2] > scan_data_[0]*change_threshold && left_intensity > intensity_threshold) || (scan_data_[3] > scan_data_[1]*change_threshold && right_intensity > intensity_threshold)) {
         is_intense = true;
     }
