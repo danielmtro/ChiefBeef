@@ -1,3 +1,12 @@
+/*
+lidar.h
+
+This file holds the definition of the Lidar class.
+This class uses the lidar readings to detect spikes in
+intensity, which then triggers a stock take to occur.
+
+Written by William Ridley-Smith, 2024
+*/
 #ifndef _LIDAR_H_
 #define _LIDAR_H_
 
@@ -9,19 +18,24 @@
 #include <vector>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <rclcpp/rclcpp.hpp>
-
 #include <std_msgs/msg/bool.hpp>
+
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/float32_multi_array.hpp"
 
 
-//--CLidar Interface-----------------------------------------------------------
+/*
+Lidar
+
+This class gets the scan data from the lidar, and publishes the intensity
+as well as an instruction whether or not a stock take should take place.
+*/
 class Lidar : public rclcpp::Node{
     public:
         Lidar();
         ~Lidar();
 
-        // getter for the scan data
+        // getter the scan data
         std::vector<double> get_scan_data();
 
     private:
@@ -45,6 +59,7 @@ class Lidar : public rclcpp::Node{
         
         // scan_data_publisher
         rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr scan_data_pub_;
+        // stock_take publisher to indicate to state machine when to scan
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr stocktake_pub_; 
         rclcpp::TimerBase::SharedPtr update_timer_;
 
@@ -53,18 +68,26 @@ class Lidar : public rclcpp::Node{
         //store the current and previous LiDar scan information
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
+
+        // Boolean for whether or not the reading from the lidar indicates 
+        // a spike in intensity
         bool is_intense;
 
         const float DEG2RAD = 3.14159265359/180.0;
 
+        // This is the minimum amount of time between stocktakes in seconds
         const float stocktake_frequency = 20.0;
 
+        // In addition to the change threshold, the intensity reading must also be above this value
         const float intensity_threshold = 6500;
-        const float change_threshold = 1.50; // Intensity must be this number x greater to trigger a stock take
+        // Intensity must be this number x greater to trigger a stock take
+        const float change_threshold = 1.50;
 
+        // Range of angles for scanning the left and right side of the robot
         float scan_left[2] = {88*DEG2RAD, 92*DEG2RAD};
         float scan_right[2] = {268*DEG2RAD, 272*DEG2RAD};
 
+        // The exact left and right side of the robot
         float scan_angle[2] = {90*DEG2RAD, 270*DEG2RAD};
 
 

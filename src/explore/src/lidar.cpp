@@ -17,12 +17,12 @@ Lidar::Lidar() : Node ("lidar_node")
 
     prev_stocktake_time_ = this->now();
 
-    //resize scan data member variables
+    //resize scan data member variables to account for curr and prev intensities
     scan_data_.resize(4);
     prev_scan_data_.resize(4);   
 
 
-    // initialise publisher
+    // initialise publishers
     scan_data_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("lidar_intensity", 10);
     stocktake_pub_ = this->create_publisher<std_msgs::msg::Bool>("spin_now", 10);
     // create the timer that will cotrol how often a stock take can be started
@@ -45,17 +45,18 @@ void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
     //save previous scan data into member variable
     prev_scan_data_ = scan_data_;
 
+    // These will hold the sum of intensities within the angular range on each side
     long int left_sum = 0;
     long int right_sum = 0;
 
-    // Calculate index range corresponding to the specified angles
+    // Calculate index range corresponding to the specified angular ranges
     int left_index_min = static_cast<int>((scan_left[0] - msg->angle_min) / msg->angle_increment);
     int left_index_max = static_cast<int>((scan_left[1] - msg->angle_min) / msg->angle_increment);
     int right_index_min = static_cast<int>((scan_right[0] - msg->angle_min) / msg->angle_increment);
     int right_index_max = static_cast<int>((scan_right[1] - msg->angle_min) / msg->angle_increment);
 
 
-    // Calculate the average intensity
+    // Calculate the average intensity of each side
     for(int i = left_index_min; i < left_index_max; i++) {
         left_sum += msg->intensities[i];
     }
@@ -72,7 +73,8 @@ void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
     scan_data_[3] = right_intensity;
 
     is_intense = false;
-    // RCLCPP_INFO(this->get_logger(), "Left: Prev: %lf Curr: %lf Right: Prev: %lf Curr: %lf", scan_data_[0], scan_data_[2], scan_data_[1], scan_data_[3]);
+    // To trigger a stocktake, a spike must occur and the intensity should be high enough
+    // Respectively, these correspond to the new appearance of reflective tape and that this tape is close enough.
     if((scan_data_[2] > scan_data_[0]*change_threshold && left_intensity > intensity_threshold) || (scan_data_[3] > scan_data_[1]*change_threshold && right_intensity > intensity_threshold)) {
         is_intense = true;
     }
@@ -87,22 +89,18 @@ void Lidar::update_scan_data()
     intensity_message.data.insert(intensity_message.data.end(), scan_data_.begin(), scan_data_.end());
     scan_data_pub_->publish(intensity_message);
 
+    // Create the stocktake message and insert the data
     std_msgs::msg::Bool spin_message;
     spin_message.data = is_intense;
 
-    // REMOVE THIS REMOVE THIS REMOVE THIS REMOVE THIS
-    // Setting the lidar to always try push true, stock updates are limited by stocktake_frequency
-    // spin_message.data = true;
     rclcpp::Time time_now = this->now();
 
-    // if ((time_now - prev_stocktake_time_).nanoseconds() / 1e9 > stocktake_frequency && is_intense) {
-
-    // ALSO READD THIS LATER NEED TO CHECK IF INTENSE FIRST
-    // if ((time_now - prev_stocktake_time_).nanoseconds() / 1e9 > stocktake_frequency) {
-    if (is_intense) {
+    // Sufficient time must have passed, and the intensity conditions are passed
+    if ((time_now - prev_stocktake_time_).nanoseconds() / 1e9 > stocktake_frequency && is_intense) {
         prev_stocktake_time_ = this->now();
         stocktake_pub_->publish(spin_message);
     }
+    // Otherwise the message defaults to false
     else {
         spin_message.data = false;
         stocktake_pub_->publish(spin_message);
