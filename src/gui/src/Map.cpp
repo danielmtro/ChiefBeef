@@ -47,8 +47,8 @@ Map::Map() : Node("Map_Node")
     // create a logger to store recorded items
     item_logger_ = std::make_shared<ItemLogger>();
 
-    item_subscriber_ = this->create_subscription<std_msgs::msg::String>(
-        "items",
+    item_subscriber_ = this->create_subscription<std_msgs::msg::Int32MultiArray>(
+        "detections",
         qos_settings,
         std::bind(                  
         &Map::item_callback, /* bind the callback function */ \
@@ -92,11 +92,44 @@ void Map::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
 
 }
 
-void Map::item_callback(const std_msgs::msg::String::SharedPtr msg)
+void Map::item_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg)
 {
     // add the current item to the item logger
-    RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
-    item_logger_->add_item(msg->data.c_str());    
+    std::string item;
+
+    for(auto value: msg->data)
+    {
+        // if we've already processed this item then disregard it
+        if(codes_seen_.find(value) != codes_seen_.end())
+            continue;
+
+        // add the item
+        codes_seen_.insert(value);
+
+        // determine the equivalent string based on mapping and add it to the item
+        // logger
+        if(ID_CODES_TO_ITEM.find(value) != ID_CODES_TO_ITEM.end())
+        {
+            item = ID_CODES_TO_ITEM.at(value);
+            std::cout << "Adding one " << item << std::endl;
+            item_logger_->add_item(item);
+        }
+        else
+        {
+            std::cout << "Unknown Item! " << std::endl;
+            item_logger_->add_item("Unknown");
+        }
+
+    }
+
+    // print the data out
+    RCLCPP_INFO(this->get_logger(), "Received data: ");
+    for (auto value : msg->data)
+    {
+        std::cout << value << " ";
+    }
+    std::cout << std::endl;
+
 }
 
 /*
