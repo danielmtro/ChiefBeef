@@ -77,6 +77,10 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
     // position of the actual trolley
     trolley_ = std::make_shared<CharacterIcon>();
 
+    // battery based stuff
+    battery_percentage_ = 100.0f;
+    initialise_battery_textures();
+
 
     // background music variables
     std::string music_filename = "/Music/MapWindowMusic.ogg";
@@ -96,6 +100,73 @@ GameMap::~GameMap()
     delete home_button_;
     delete next_page_button_;
     std::cout << "Game Map no longer running" << std::endl;
+}
+
+void GameMap::initialise_battery_textures()
+{   
+    const int NUM_BATTERY_IMAGES = 3;
+    // initailise 3 possible battery photos
+    battery_textures_.resize(NUM_BATTERY_IMAGES);
+    for(int i = 0; i < NUM_BATTERY_IMAGES; ++i)
+        battery_textures_[i] = std::make_shared<sf::Texture>();
+
+    std::string tpath;
+    std::string fname;
+
+    fname = "/green_battery.png";
+    tpath = ament_index_cpp::get_package_share_directory("gui") + "/Textures" + fname;
+    if (!battery_textures_[0]->loadFromFile(tpath)) {
+        std::cerr << "Failed to load texture from " << tpath << std::endl;
+    }
+    fname = "/orange_battery.png";
+    tpath = ament_index_cpp::get_package_share_directory("gui") + "/Textures" + fname;
+    if (!battery_textures_[1]->loadFromFile(tpath)) {
+        std::cerr << "Failed to load texture from " << tpath << std::endl;
+    }
+
+    fname = "/red_battery.png";
+    tpath = ament_index_cpp::get_package_share_directory("gui") + "/Textures" + fname;
+    if (!battery_textures_[2]->loadFromFile(tpath)) {
+        std::cerr << "Failed to load texture from " << tpath << std::endl;
+    }
+
+    // set the default position and battery percentage to be full
+    battery_.setPosition(GmapWindow::SBUTTON_X, GmapWindow::ICON_Y - 40);
+    battery_.setTextureRect(sf::IntRect(0, 0, battery_textures_[0]->getSize().x, battery_textures_[0]->getSize().y));  // Show full texture
+    battery_.setTexture(*battery_textures_[0]);
+
+    // update the position of the text
+    battery_text_.setFont(font);
+    battery_text_.setCharacterSize(30);
+    battery_text_.setFillColor(sf::Color::Green);
+    battery_text_.setString("100.0 %");
+    battery_text_.setPosition(GmapWindow::SBUTTON_X, GmapWindow::ICON_Y- 40 + battery_textures_[0]->getSize().y);
+}
+
+void GameMap::update_battery_state()
+{
+    int bat_level;
+    battery_percentage_ = map_->get_battery_percentage();
+    if(battery_percentage_ > 70)
+    {
+        bat_level = 0;
+        battery_text_.setFillColor(sf::Color::Green);
+    }
+    else if(battery_percentage_ < 35)
+    {
+        bat_level = 2;
+        battery_text_.setFillColor(sf::Color::Red);
+    }
+    else
+    {
+        bat_level = 1;
+        battery_text_.setFillColor(sf::Color(255, 128, 0));
+    }
+
+    battery_.setTextureRect(sf::IntRect(0, 0, battery_textures_[bat_level]->getSize().x, battery_textures_[bat_level]->getSize().y));  // Show full texture
+    battery_.setTexture(*battery_textures_[bat_level]);
+    battery_text_.setString(std::to_string(static_cast<int>(battery_percentage_)) + " %");
+
 }
 
 void GameMap::play_button_sound(int button_num_)
@@ -272,6 +343,10 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
                               x_offset_, 
                               y_offset_,
                               map_->get_map_meta_data());
+
+    update_battery_state();
+    window.draw(battery_);
+    window.draw(battery_text_);
 
     // only draw the trolley on if there is a map to draw it on
     if(map_width_ > 0 && map_height_ > 0)
