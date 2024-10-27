@@ -16,13 +16,14 @@ Date: 12/10/2024
 #include <vector>
 #include <memory>
 #include <cmath>
+#include <unordered_set>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <std_msgs/msg/bool.hpp>
-#include <std_msgs/msg/string.hpp>
+#include <std_msgs/msg/int32_multi_array.hpp>
 #include <SFML/Graphics.hpp>
 #include "ItemLogger.hpp"
 #include "constants.hpp"
@@ -94,9 +95,9 @@ class Map : public rclcpp::Node{
         * @brief this function is called every time a message is received from
         * /map topic and it stores the map information
         *
-        * @param msg is string message that corresponds to an april tag 
+        * @param msg is a list of integer messages that corresponds to april tags in the current frame
         */
-        void item_callback(const std_msgs::msg::String::SharedPtr msg);
+        void item_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg);
 
         /**
         * @brief function takes in the robots odometry and stores the pose
@@ -132,7 +133,7 @@ class Map : public rclcpp::Node{
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr slam_publisher_;
 
         // items subscriber
-        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr item_subscriber_;
+        rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr item_subscriber_;
 
         // odometry subscriber
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
@@ -141,6 +142,8 @@ class Map : public rclcpp::Node{
         Pose current_pose_;
         Pose current_map_pose_;
 
+        // tracks the codes that have already been observed
+        std::unordered_set<int> codes_seen_;
 };
 
 #endif

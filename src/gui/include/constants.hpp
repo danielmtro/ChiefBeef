@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <unordered_map>
 
 // Namespace for defining the dimensions of the map that is spawned
 // for the actual turtlebot
@@ -10,6 +11,64 @@
 constexpr float RAD_TO_DEG = 180/M_PI;
 constexpr int DEG_PER_ROT = 360;
 constexpr int WHITE_UINT = 255;
+
+constexpr int ITEMS_IN_STORE = 11;
+
+// this hashmap maps April Tag codes to the corresponding item
+const std::unordered_map<int, std::string> ID_CODES_TO_ITEM = {
+    
+    {0, "Chocolate"},
+    {1, "Chocolate"},
+    {2, "Chocolate"},
+    {3, "Chips"},
+    {4, "Chips"},
+    {5, "Chips"},
+    {6, "Chips"},
+    {7, "Chips"},
+    {8, "Chicken"},
+    {9, "Beef"},
+    {10, "Chicken"},
+    {11, "Beef"},
+    {12, "Cheese"},
+    {13, "Milk"},
+    {14, "Milk"},
+    {15, "Milk"},
+    {16, "Eggplant"},
+    {17, "Carrot"},
+    {18, "Eggplant"},
+    {19, "Carrot"},
+    {20, "Eggplant"},
+    {21, "Carrot"},
+    {22, "Carrot"},
+    // 23 specifically not supported to demonstrate unknown logging
+    {24, "Apple"},
+    {25, "Apple"},
+    {26, "Orange"},
+    {27, "Apple"},
+    {28, "Peach"},
+    {29, "Peach"},
+    {30, "Apple"}, 
+    {31, "Orange"}
+    
+};
+
+
+// this hashmap maps items in the gui to the corresponding item
+const std::unordered_map<int, std::string> MENU_INDEX_TO_ITEM = {
+    {0, "Apple"},
+    {1, "Orange"},
+    {2, "Eggplant"},
+    {3, "Carrot"},
+    {4, "Chocolate"},
+    {5, "Chips"},
+    {6, "Beef"},
+    {7, "Chicken"},
+    {8, "Cheese"},
+    {9, "Milk"},
+    {10, "Unknown"},
+    {11, "Unknown"} // have two sets of unknowns to fill up every page
+};
+
 
 
 enum PixelValues
@@ -68,7 +127,7 @@ namespace GmapWindow
     constexpr int NUM_ICON_CHARSIZE = 30;
 
     // items numeric control
-    constexpr int NUM_ITEMS = 6;
+    constexpr int NUM_ITEMS = 12;
     constexpr int ITEMS_PER_PAGE = 2;
     constexpr int NUM_PAGES = NUM_ITEMS/ITEMS_PER_PAGE;
 }

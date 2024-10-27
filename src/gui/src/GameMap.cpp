@@ -209,41 +209,25 @@ void GameMap::initialise(sf::RenderWindow& window)
     bounding_box_.setFillColor(sf::Color::Transparent);  // Make the inside transparent
 
     // slide 1
-    items_in_store_[0]->initialise(window, "/apple.png");
-    items_in_store_[0]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
+    for(int i = 0; i < GmapWindow::NUM_ITEMS; ++i)
+    {
+        items_in_store_[i]->initialise(window, "/" + MENU_INDEX_TO_ITEM.at(i) + ".png");
+        
+        // set the vertical position of each item and its number of the screen
+        if(i%2 == 0)
+        {
+            items_in_store_[i]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
+            number_of_items_[i]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
+        }
+        else
+        {
+            items_in_store_[i]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
+            number_of_items_[i]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
+        }
+    }
 
-    items_in_store_[1]->initialise(window, "/orange.png");
-    items_in_store_[1]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
-
-    // slide 2
-    items_in_store_[2]->initialise(window, "/peach.png");
-    items_in_store_[2]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
-
-    items_in_store_[3]->initialise(window, "/eggplant.png");
-    items_in_store_[3]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
-    
-
-    // slide 3
-    items_in_store_[4]->initialise(window, "/question_mark.png");
-    items_in_store_[4]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y);
-
-
-    // placeholder on the final slide
-    items_in_store_[5]->initialise(window, "/question_mark.png");
-    items_in_store_[5]->set_position(GmapWindow::ICON_X, GmapWindow::ICON_Y + GmapWindow::ICON_SEP);
-    items_in_store_[5]->deactivate();
-
-
-    // set the positins of the item numbers
-    number_of_items_[0]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
-    number_of_items_[1]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
-
-    number_of_items_[2]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
-    number_of_items_[3]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
-
-    number_of_items_[4]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y - 15);
-    number_of_items_[5]->setPosition(GmapWindow::ICON_X + 60, GmapWindow::ICON_Y + GmapWindow::ICON_SEP - 15);
-    
+    // deactivate the last question mark (only display one on the window)
+    items_in_store_[GmapWindow::NUM_ITEMS - 1]->deactivate();
 
     // initialise the actual character
     trolley_->initialise(window, "/trolley_top_view.png");
@@ -269,7 +253,9 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
         items_in_store_[i]->update_position(deltaTime);
 
         // update the number of items based on the encoded index
-        number_of_items_[i]->setString(std::to_string(map_->get_item_logger()->get_num_items(i)));
+        std::string item = MENU_INDEX_TO_ITEM.at(i);
+        int item_num = map_->get_item_logger()->get_num_items(item);
+        number_of_items_[i]->setString(std::to_string(item_num));
 
         // don't draw inactive icons
         if(!items_in_store_[i]->get_active())
