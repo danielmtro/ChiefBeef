@@ -48,22 +48,41 @@ Map::Map() : Node("Map_Node")
     item_logger_ = std::make_shared<ItemLogger>();
 
     item_subscriber_ = this->create_subscription<std_msgs::msg::Int32MultiArray>(
-        "detections",
+        "id_detections",
         qos_settings,
         std::bind(                  
         &Map::item_callback, /* bind the callback function */ \
         this, \
         std::placeholders::_1));
 
+    // create a subscriber for the battery state
+    battery_sub_ = this->create_subscription<sensor_msgs::msg::BatteryState>(
+        "battery_state",
+        qos_settings,
+        std::bind(                  
+        &Map::battery_callback, /* bind the callback function */ \
+        this, \
+        std::placeholders::_1));
+
     // create the slam publisher
     slam_publisher_ = this->create_publisher<std_msgs::msg::Bool>("slam_request", 10);
 
+    battery_percentage_ = 100.0f;
 }
 
 Map::~Map()
 {
     RCLCPP_INFO(this->get_logger(), "Map Node has been terminated");
 } 
+
+void Map::battery_callback(const sensor_msgs::msg::BatteryState::SharedPtr msg)
+{
+    // set the battery percentage 
+    battery_percentage_ = msg->percentage;
+
+    // RCLCPP_INFO(this->get_logger(), "Battery Voltage: %.2fV, Percentage: %.2f%%", 
+    //             msg->voltage, msg->percentage);
+}
 
 
 void Map::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
@@ -122,14 +141,6 @@ void Map::item_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg)
 
     }
 
-    // print the data out
-    RCLCPP_INFO(this->get_logger(), "Received data: ");
-    for (auto value : msg->data)
-    {
-        std::cout << value << " ";
-    }
-    std::cout << std::endl;
-
 }
 
 /*
@@ -178,6 +189,11 @@ void Map::map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
                                                                         msg->info.origin.orientation.y,
                                                                         msg->info.origin.orientation.w);
 
+}
+
+float Map::get_battery_percentage() const
+{
+    return battery_percentage_;
 }
 
 void Map::transform_map_orientation()

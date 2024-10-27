@@ -57,7 +57,17 @@ class GameMap : public Window {
         std::vector<std::shared_ptr<Icon>> items_in_store_;
         std::vector<std::shared_ptr<sf::Text>> number_of_items_;
         int page_num_; // what sets of icons and text are we showing?
-        
+
+        // updates what the battery should display
+        void update_battery_state();
+        void initialise_battery_textures();
+
+        // create a sprite for the battery location
+        sf::Sprite battery_;
+        std::vector<std::shared_ptr<sf::Texture>> battery_textures_;
+        sf::Text battery_text_;
+        float battery_percentage_;
+
         // wndow variables
         float border_width_;
         

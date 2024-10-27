@@ -24,6 +24,7 @@ Date: 12/10/2024
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/int32_multi_array.hpp>
+#include <sensor_msgs/msg/battery_state.hpp>
 #include <SFML/Graphics.hpp>
 #include "ItemLogger.hpp"
 #include "constants.hpp"
@@ -70,6 +71,7 @@ class Map : public rclcpp::Node{
         Pose get_current_pose() const;
         MapMetaData get_map_meta_data() const;
         Pose get_map_pose() const;
+        float get_battery_percentage() const;
 
         /**
         * @brief transforms the input map data to a new array in the 
@@ -106,6 +108,12 @@ class Map : public rclcpp::Node{
         */        
         void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
 
+        /**
+        * @brief function takes in the robots battery and stores the percentage
+        * @param msg a sensor_msgs::msg::Batterystate::SharedPtr that contains info about the battery
+        */        
+        void battery_callback(const sensor_msgs::msg::BatteryState::SharedPtr msg);
+
         // subscriber for the current map that has been created
         rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
 
@@ -137,6 +145,9 @@ class Map : public rclcpp::Node{
 
         // odometry subscriber
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+
+        // battery state subscriber
+        rclcpp::Subscription<sensor_msgs::msg::BatteryState>::SharedPtr battery_sub_;
         
         // tracks the current pose of the robot
         Pose current_pose_;
@@ -144,6 +155,9 @@ class Map : public rclcpp::Node{
 
         // tracks the codes that have already been observed
         std::unordered_set<int> codes_seen_;
+
+        // battery
+        float battery_percentage_;
 };
 
 #endif
