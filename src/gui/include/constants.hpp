@@ -45,8 +45,8 @@ const std::unordered_map<int, std::string> ID_CODES_TO_ITEM = {
     {25, "Apple"},
     {26, "Orange"},
     {27, "Apple"},
-    {28, "Peach"},
-    {29, "Peach"},
+    {28, "Orange"},
+    {29, "Apple"},
     {30, "Apple"}, 
     {31, "Orange"}
     
