@@ -80,7 +80,7 @@ void State::change_explore(std::string to_change) {
 void State::rotate_robot(){
 
     // find the total time to turn 360 degrees with set ang_vel_
-    turn_time_ = 2 *  M_PI / ang_vel_;
+    turn_time_ = 2;
 
     // get the start time of rotation
     start_time_ = this->get_clock()->now();

@@ -216,9 +216,9 @@ local_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 0.3
+          raytrace_max_range: 3.0
           raytrace_min_range: 0.0
-          obstacle_max_range: 0.25
+          obstacle_max_range: 2.5
           obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -247,9 +247,9 @@ global_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 0.3
+          raytrace_max_range: 3.0
           raytrace_min_range: 0.0
-          obstacle_max_range: 0.25
+          obstacle_max_range: 2.5
           obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -431,17 +431,17 @@ loopback_simulator:
     scan_frame_id: "base_scan"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
     update_duration: 0.02
 
-explore_node:
-  ros__parameters:
-    robot_base_frame: base_link
-    costmap_topic: /global_costmap/costmap
-    costmap_updates_topic: /global_costmap/costmap_updates
-    visualize: true
-    use_sim_time: False
-    planner_frequency: 0.15
-    progress_timeout: 30.0
-    potential_scale: 3.0
-    orientation_scale: 0.0
-    gain_scale: 1.0
-    transform_tolerance: 0.3
-    min_frontier_size: 0.1
+# explore_node:
+#   ros__parameters:
+#     robot_base_frame: base_link
+#     costmap_topic: /global_costmap/costmap
+#     costmap_updates_topic: /global_costmap/costmap_updates
+#     visualize: true
+#     use_sim_time: False
+#     planner_frequency: 1.0
+#     progress_timeout: 30.0
+#     potential_scale: 3.0
+#     orientation_scale: 0.0
+#     gain_scale: 1.0
+#     transform_tolerance: 0.3
+#     min_frontier_size: 0.1

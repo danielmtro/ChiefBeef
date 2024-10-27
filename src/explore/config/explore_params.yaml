@@ -1,11 +1,11 @@
 explore_node:
   ros__parameters:
     robot_base_frame: base_link
-    costmap_topic: /global_costmap/costmap
-    costmap_updates_topic: /global_costmap/costmap_updates
+    costmap_topic: /map
+    costmap_updates_topic: /map_updates
     visualize: true
     use_sim_time: False
-    planner_frequency: 0.15
+    planner_frequency: 1.0
     progress_timeout: 30.0
     potential_scale: 3.0
     orientation_scale: 0.0
