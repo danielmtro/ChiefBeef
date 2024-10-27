@@ -10,7 +10,7 @@ def resize_image(input_path, output_path, new_width, new_height):
         resized_img.save(output_path)
         print(f"Image successfully resized to {new_width}x{new_height} and saved to {output_path}")
 
-new_width, new_height = 70, 70
+new_width, new_height = 90, 90
 
 # File paths and target resolution
 input_image_path = "green_battery.png"   # Replace with your input image path
@@ -19,14 +19,14 @@ output_image_path = "green_battery.png" # Replace with your desired output path
 resize_image(input_image_path, output_image_path, new_width, new_height)
 
 
-new_width, new_height = 45, 45
+new_width, new_height = 90, 90
 input_image_path = "orange_battery.png"   # Replace with your input image path
 output_image_path = "orange_battery.png" # Replace with your desired output path
 # Resize the imagepython3 
 resize_image(input_image_path, output_image_path, new_width, new_height)
 
 
-new_width, new_height = 60, 60
+new_width, new_height = 90, 90
 input_image_path = "red_battery.png"   # Replace with your input image path
 output_image_path = "red_battery.png" # Replace with your desired output path
 # Resize the imagepython3 

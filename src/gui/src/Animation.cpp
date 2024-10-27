@@ -229,7 +229,7 @@ void CharacterIcon::update_position(Map::Pose pose,
     y_off = y_offset + map_meta_data.o_y/map_meta_data.resolution;
 
     // scale the size of the sprite and set the position and orientation
-    sprite.setScale(scaling_factor/5, scaling_factor/5);
+    sprite.setScale(scaling_factor/6, scaling_factor/6);
     sprite.setPosition(x*scaling_factor + x_off, y*scaling_factor + y_off);
     sprite.setRotation(yaw * RAD_TO_DEG);
 

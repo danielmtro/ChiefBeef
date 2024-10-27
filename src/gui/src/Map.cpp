@@ -48,7 +48,7 @@ Map::Map() : Node("Map_Node")
     item_logger_ = std::make_shared<ItemLogger>();
 
     item_subscriber_ = this->create_subscription<std_msgs::msg::Int32MultiArray>(
-        "detections",
+        "id_detections",
         qos_settings,
         std::bind(                  
         &Map::item_callback, /* bind the callback function */ \
@@ -80,8 +80,8 @@ void Map::battery_callback(const sensor_msgs::msg::BatteryState::SharedPtr msg)
     // set the battery percentage 
     battery_percentage_ = msg->percentage;
 
-    RCLCPP_INFO(this->get_logger(), "Battery Voltage: %.2fV, Percentage: %.2f%%", 
-                msg->voltage, msg->percentage);
+    // RCLCPP_INFO(this->get_logger(), "Battery Voltage: %.2fV, Percentage: %.2f%%", 
+    //             msg->voltage, msg->percentage);
 }
 
 
