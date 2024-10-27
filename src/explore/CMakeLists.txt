@@ -42,7 +42,7 @@ find_package(nav_msgs REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
-#find_package(apriltag_ros REQUIRED)
+find_package(apriltag_ros REQUIRED)
 
 set(DEPENDENCIES
   rclcpp
@@ -161,6 +161,20 @@ ament_target_dependencies(state ${DEPENDENCIES})
 
 install(TARGETS state
   DESTINATION lib/${PROJECT_NAME})
+
+
+target_include_directories(teleop PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+target_compile_definitions(teleop PRIVATE TELEOP_MAIN)
+
+target_link_libraries(teleop ${rclcpp_LIBRARIES})
+ament_target_dependencies(teleop ${DEPENDENCIES})
+
+install(TARGETS teleop
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
