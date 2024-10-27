@@ -63,7 +63,7 @@ install(TARGETS
   Map
   DESTINATION lib/${PROJECT_NAME})
 
-# Install Fonts directeriory
+# Install Fonts directory
 install(DIRECTORY Fonts/
   DESTINATION share/${PROJECT_NAME}/Fonts
 )
