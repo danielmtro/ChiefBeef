@@ -76,7 +76,7 @@ class Lidar : public rclcpp::Node{
         const float DEG2RAD = 3.14159265359/180.0;
 
         // This is the minimum amount of time between stocktakes in seconds
-        const float stocktake_frequency = 20.0;
+        const float stocktake_frequency = 100.0;
 
         // In addition to the change threshold, the intensity reading must also be above this value
         const float intensity_threshold = 6500;

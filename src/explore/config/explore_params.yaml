@@ -6,7 +6,7 @@ explore_node:
     visualize: true
     use_sim_time: False
     planner_frequency: 1.0
-    progress_timeout: 30.0
+    progress_timeout: 200.0
     potential_scale: 3.0
     orientation_scale: 0.0
     gain_scale: 1.0
