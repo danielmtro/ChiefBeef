@@ -44,7 +44,7 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
     log_to_csv_button_ = new Button(
         GmapWindow::SBUTTON_X, GmapWindow::MAP_HEIGHT/2 - GmapWindow::SBUTTON_H/2,
         GmapWindow::SBUTTON_W, GmapWindow::SBUTTON_H,
-        sf::Color(102, 255, 178),   // fun colour
+        sf::Color(255, 102, 102),   // fun colour
         GmapWindow::SBUTTON_WORD,
         font
     );
