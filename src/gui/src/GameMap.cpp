@@ -9,7 +9,7 @@ Date: 18/10/2024
 #include "GameMap.hpp"
 
 GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr<Map> MapPtr)
-    : Window(name, width, height), map_(MapPtr)
+    : Window(name, width, height), ros_map_node_(MapPtr)
 {   
 
     // set the width of the border to match the buttons that are present
@@ -156,7 +156,7 @@ void GameMap::initialise_battery_textures()
 void GameMap::update_battery_state()
 {
     int bat_level;
-    battery_percentage_ = map_->get_battery_percentage();
+    battery_percentage_ = ros_map_node_->get_battery_percentage();
     if(battery_percentage_ > 70)
     {
         bat_level = 0;
@@ -209,10 +209,10 @@ void GameMap::play_button_sound(int button_num)
 void GameMap::DrawMapData(sf::RenderWindow& window)
 {
 
-    std::vector<int8_t> map_data = map_->get_map();
+    std::vector<int8_t> map_data = ros_map_node_->get_map();
 
-    uint32_t width = map_->get_width();
-    uint32_t height = map_->get_height();
+    uint32_t width = ros_map_node_->get_width();
+    uint32_t height = ros_map_node_->get_height();
 
     if( (!width) || (!height))
         return;
@@ -337,7 +337,7 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
 
         // update the number of items based on the encoded index
         std::string item = MENU_INDEX_TO_ITEM.at(i);
-        int item_num = map_->get_item_logger()->get_num_items(item);
+        int item_num = ros_map_node_->get_item_logger()->get_num_items(item);
         number_of_items_[i]->setString(std::to_string(item_num));
 
         // don't draw inactive icons
@@ -349,8 +349,8 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
     }
 
     // update the position of the character based on the current odom
-    Map::Pose pose = map_->get_current_pose();
-    trolley_->update_position(map_->get_current_pose(),
+    Map::Pose pose = ros_map_node_->get_current_pose();
+    trolley_->update_position(ros_map_node_->get_current_pose(),
                               scaling_factor_,
                               x_offset_, 
                               y_offset_,
@@ -441,14 +441,19 @@ void GameMap::RunMap()
                 {
                     page_num_++;
                 }
+                else if(log_to_csv_button_->buttonHover(mouse_pos))
+                {
+                    ros_map_node_->get_item_logger()->write_stock_to_csv();
+                }
             }
         }
 
-        // update the state of the slam request button
+        // update the state of the buttons if we are hovering them
         mouse_pos = sf::Mouse::getPosition(window);
         slam_request_button_->buttonHover(mouse_pos);
         home_button_->buttonHover(mouse_pos);
         next_page_button_->buttonHover(mouse_pos);
+        log_to_csv_button_->buttonHover(mouse_pos);
 
         // Clear the window with a black color
         window.clear(sf::Color::Black);

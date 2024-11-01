@@ -112,7 +112,7 @@ class GameMap : public Window {
         std::shared_ptr<CharacterIcon> trolley_;
 
         // map read variables
-        uint32_t ros_map_node_width_;
+        uint32_t map_width_;
         uint32_t map_height_;
 
         // scaling factor for map and characters
