@@ -16,12 +16,11 @@ For all of the above, any passwords asked is `turtlebot`
 # Discord 
 https://discord.gg/9uQkYcss
 
-
-# RUNNING THE BOT
-There are 3 Steps for this. Make sure to do it in order!!!!!
+# Running The Turtlebot
+There are 3 Steps for this. Make sure to do it in order!
 1) Run in the ssh terminal both `bringup` in one terminal and `camera` in another
 2) Once they are setup, run in your local terminal after colcon building and sourcing. Wait for a while 
-until you see blue text saying ...
+until you see blue text saying "Creating bond timer"
 ```bash
 ros2 run explore_lite explore
 ```
@@ -29,37 +28,28 @@ ros2 run explore_lite explore
 ``` bash
 ros2 run gui Map
 ```
+4) Optionally, to visualise the turtlebots state in RVIZ.
+```bash
+ros2 launch turtlebot3_bringup rviz2.launch.py
+```
 
 
 # Running Gazebo Simulations
 ```bash
 colcon build --packages-select turt3_gazebo --symlink-install && source install/setup.bash && . /usr/share/gazebo/setup.sh && ros2 launch turt3_gazebo launch.launch.py
-
-
-# Running RVIZ
-```bash
-ros2 launch turtlebot3_bringup rviz2.launch.py
 ```
 
 # Creating the SLAM from packages
+In one terminal
 ```bash
-// In one terminal
 ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
-
-// In the other terminal
+```
+In the other terminal
+```bash
 ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
 ```
 
-# Work for Will & James 23/10
-1) Merge each of our branches into main
-2) Integrate april tag detection into build
-3) Check launch of SLAM & camera simultaneously
-4) Check SLAM process while running camera
-5) Check camera FOV and april tag on angle detection
-5) Write stock take process
-6) Write lidar scanner for when to stock take
-
-# Install April Tag Packages
+# Installing April Tag Packages
 ```bash
 sudo apt-install ros-humble-apriltag
 sudo apt-install ros-humble-apriltag-msgs

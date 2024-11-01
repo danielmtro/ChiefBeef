@@ -35,7 +35,7 @@ class Lidar : public rclcpp::Node{
         Lidar();
         ~Lidar();
 
-        // getter the scan data
+        // getter for the scan data
         std::vector<double> get_scan_data();
 
     private:
@@ -50,46 +50,51 @@ class Lidar : public rclcpp::Node{
          */
         void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
 
-
-        // publisher callback function
+        /**
+         * @brief This is the publisher callback function
+         */
         void update_scan_data();
 
-        //lidar subscriber
+        // Lidar subscriber
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr lidar_sub_;
         
-        // scan_data_publisher
+        // Publisher for the scan data, for debugging
         rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr scan_data_pub_;
-        // stock_take publisher to indicate to state machine when to scan
+
+        // Stock take publisher to indicate when to scan for tags
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr stocktake_pub_; 
+
+        // Timer for getting the lidar data, as well as checking when a 
+        // stocktake can occur
         rclcpp::TimerBase::SharedPtr update_timer_;
 
+        // The previous time at which a stock take was triggered
         rclcpp::Time prev_stocktake_time_;
 
-        //store the current and previous LiDar scan information
+        // Vectors to store the current and previous lidar scan information
         std::vector<double> scan_data_;
         std::vector<double> prev_scan_data_;
 
         // Boolean for whether or not the reading from the lidar indicates 
-        // a spike in intensity
-        bool is_intense;
+        // a spike in intensity readings
+        bool is_intense_;
 
+        // Conversion for degrees to radians
         const float DEG2RAD = 3.14159265359/180.0;
 
         // This is the minimum amount of time between stocktakes in seconds
-        const float stocktake_frequency = 100.0;
+        const float stocktake_frequency_ = 100.0;
 
-        // In addition to the change threshold, the intensity reading must also be above this value
-        const float intensity_threshold = 6500;
-        // Intensity must be this number x greater to trigger a stock take
-        const float change_threshold = 1.50;
+        // To trigger a stocktake, the intensity value must be greater than this
+        const float intensity_threshold_ = 6500;
+        // Intensity must be this number times greater to trigger a stock take
+        const float change_threshold_ = 1.50;
 
         // Range of angles for scanning the left and right side of the robot
-        float scan_left[2] = {88*DEG2RAD, 92*DEG2RAD};
-        float scan_right[2] = {268*DEG2RAD, 272*DEG2RAD};
+        const float scan_left_[2] = {88*DEG2RAD, 92*DEG2RAD};
+        const float scan_right_[2] = {268*DEG2RAD, 272*DEG2RAD};
 
         // The exact left and right side of the robot
-        float scan_angle[2] = {90*DEG2RAD, 270*DEG2RAD};
-
-
+        const float scan_angle_[2] = {90*DEG2RAD, 270*DEG2RAD};
 };
 #endif
