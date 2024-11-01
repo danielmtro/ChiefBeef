@@ -18,7 +18,7 @@ Lidar::Lidar() : Node ("lidar_node")
         "scan", /* subscribe to topic /scan */ \
         rclcpp::SensorDataQoS(), /* use the qos number set by rclcpp */ \
         std::bind(                  
-        &Lidar::scanCallback, /* bind the callback function */ \
+        &Lidar::scan_callback, /* bind the callback function */ \
         this, \
         std::placeholders::_1)
         );
@@ -44,7 +44,7 @@ Lidar::Lidar() : Node ("lidar_node")
     // Create the timer that will control how often a stock take can be started
     // as well as how often the lidar is read
     update_timer_ = this->create_wall_timer(20ms, 
-                                    std::bind(&Lidar::updateScanData, this));
+                                    std::bind(&Lidar::update_scan_data, this));
 
     RCLCPP_INFO(this->get_logger(), 
                 "Lidar_node has been successfully initialised");
@@ -59,7 +59,7 @@ Lidar::~Lidar()
 }
 
 // Callback for when lidar data is received
-void Lidar::scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
+void Lidar::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
 
     //save previous scan data into member variable
     prev_scan_data_ = scan_data_;
@@ -118,7 +118,7 @@ void Lidar::scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg){
 }
 
 // Updates the previously stored scan data and publishes new data
-void Lidar::updateScanData()
+void Lidar::update_scan_data()
 {   
     // Create the message and insert the scan data into it
     auto intensity_message_ = std_msgs::msg::Float32MultiArray();
@@ -148,7 +148,7 @@ void Lidar::updateScanData()
 }
 
 // Create deep copy of scan data to not change original data
-std::vector<double> Lidar::getScanData()
+std::vector<double> Lidar::get_scan_data()
 {   
     std::vector<double> deep_copy_scan_data_ = scan_data_;
     return deep_copy_scan_data_;

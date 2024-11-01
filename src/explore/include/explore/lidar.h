@@ -36,7 +36,7 @@ class Lidar : public rclcpp::Node{
         ~Lidar();
 
         // getter for the scan data
-        std::vector<double> getScanData();
+        std::vector<double> get_scan_data();
 
     private:
         /**
@@ -48,12 +48,12 @@ class Lidar : public rclcpp::Node{
          * @param msg is the message received via the topic which lidar_sub
          * is subscribed to
          */
-        void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
+        void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
 
         /**
          * @brief This is the publisher callback function
          */
-        void updateScanData();
+        void update_scan_data();
 
         // Lidar subscriber
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr lidar_sub_;
