@@ -42,10 +42,10 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
 
     // create the write to csv button
     log_to_csv_button_ = new Button(
-        GmapWindow::CSVBUTTON_X, GmapWindow::CSVBUTTON_Y,
-        GmapWindow::CSVBUTTON_W, GmapWindow::CSVBUTTON_H,
-        sf::Color(102, 255, 178),   // fun colour
-        GmapWindow::CSVBUTTON_WORD,
+        GmapWindow::SBUTTON_X, GmapWindow::MAP_HEIGHT/2 - GmapWindow::SBUTTON_H/2,
+        GmapWindow::SBUTTON_W, GmapWindow::SBUTTON_H,
+        sf::Color(255, 102, 102),   // fun colour
+        GmapWindow::SBUTTON_WORD,
         font
     );
 
