@@ -79,12 +79,11 @@ install(DIRECTORY
 
 
 add_executable(explore
-  src/dummy.cpp
+  src/delay.cpp
   src/explore.cpp
   src/costmap_client.cpp
   src/state.cpp
   src/frontier_search.cpp
-  src/dummy.cpp
   src/lidar.cpp
   src/teleop.cpp
 )
@@ -94,7 +93,7 @@ add_executable(blank
   src/costmap_client.cpp
   src/state.cpp
   src/frontier_search.cpp
-  src/dummy.cpp
+  src/delay.cpp
   src/teleop.cpp
 )
 

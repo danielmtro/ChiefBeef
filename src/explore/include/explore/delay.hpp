@@ -1,6 +1,18 @@
+/*
+delay.hpp
 
-#ifndef WAITFORBUTTON_H
-#define WAITFORBUTTON_H
+This file defines the Delay class. This 
+is a class that waits for the user to 
+press begin on the GUI, and then starts 
+the explore and state nodes through 
+a launch file.
+
+By James Hocking, 2024
+*/
+
+
+#ifndef DELAY_H
+#define DELAY_H
 
 #include <rclcpp/rclcpp.hpp>
 #include "std_msgs/msg/bool.hpp"
@@ -10,10 +22,13 @@
 #include <memory>
 
 
-class WaitForButton : public rclcpp::Node {
+class Delay : public rclcpp::Node {
     public:
-        WaitForButton();
-        ~WaitForButton();
+        // constructor for the Delay class
+        Delay();
+
+        // deconstructor for the Delay class
+        ~Delay();
 
     private:
         // subscriber to the slam_request
