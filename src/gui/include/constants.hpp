@@ -5,18 +5,20 @@
 #include <cmath>
 #include <unordered_map>
 
-// Namespace for defining the dimensions of the map that is spawned
-// for the actual turtlebot
 
+// math based variables
 constexpr float RAD_TO_DEG = 180/M_PI;
 constexpr int DEG_PER_ROT = 360;
+
+// integer corresponding to all white i.e. (WHITE_UINT, WHITE_UINT, WHITE_UINT)
 constexpr int WHITE_UINT = 255;
 
+// global problem variable
 constexpr int ITEMS_IN_STORE = 11;
 
-// this hashmap maps April Tag codes to the corresponding item
-const std::unordered_map<int, std::string> ID_CODES_TO_ITEM = {
-    
+// this hashmap maps April Tag codes to the corresponding item (represents a catalogue)
+const std::unordered_map<int, std::string> ID_CODES_TO_ITEM = 
+{    
     {0, "Chocolate"},
     {1, "Chocolate"},
     {2, "Chocolate"},
@@ -40,7 +42,7 @@ const std::unordered_map<int, std::string> ID_CODES_TO_ITEM = {
     {20, "Eggplant"},
     {21, "Carrot"},
     {22, "Carrot"},
-    // 23 specifically not supported to demonstrate unknown logging
+    // 23 specifically not supported to demonstrate unknown item functionality when scanned
     {24, "Apple"},
     {25, "Apple"},
     {26, "Orange"},
@@ -49,11 +51,11 @@ const std::unordered_map<int, std::string> ID_CODES_TO_ITEM = {
     {29, "Apple"},
     {30, "Apple"}, 
     {31, "Orange"}
-    
 };
 
 
-// this hashmap maps items in the gui to the corresponding item
+// The gui stores menu items in a std::vector. This hashmap maps the index of the list
+// to the item in the store
 const std::unordered_map<int, std::string> MENU_INDEX_TO_ITEM = {
     {0, "Apple"},
     {1, "Orange"},
@@ -69,8 +71,7 @@ const std::unordered_map<int, std::string> MENU_INDEX_TO_ITEM = {
     {11, "Unknown"} // have two sets of unknowns to fill up every page
 };
 
-
-
+// Enum for the pixel values returned from a ROS2 occupancy grid
 enum PixelValues
 {
     UNKNOWN = -1,
@@ -78,6 +79,7 @@ enum PixelValues
     FULL
 };
 
+// Different options for the menu items in the GUI
 enum MeunItems
 {
     SHOPPING_TIME = 0,
@@ -85,6 +87,8 @@ enum MeunItems
     EXIT
 };
 
+// Namespace for variables pertaining to the main window that is running 
+// during operation of the program.
 namespace GmapWindow
 {
     constexpr int MAP_WIDTH = 1200;
@@ -97,6 +101,13 @@ namespace GmapWindow
     constexpr int SBUTTON_W = 150;
     constexpr int SBUTTON_H = 100;
     constexpr int SBUTTON_CHAR = 30;
+
+    // csv button
+    constexpr int CSVBUTTON_X = SBUTTON_X; // align
+    constexpr int CSVBUTTON_Y = GmapWindow::MAP_HEIGHT/2 - GmapWindow::SBUTTON_H/2;
+    constexpr int CSVBUTTON_W = SBUTTON_W;
+    constexpr int CSVBUTTON_H = SBUTTON_H;
+    constexpr int CSVBUTTON_CHAR = SBUTTON_CHAR;
 
     // the home button constants
     constexpr int HBUTTON_X = MAP_WIDTH - 200;
@@ -112,9 +123,11 @@ namespace GmapWindow
     constexpr int NBUTTON_H = 60;
     constexpr int NBUTTON_CHAR = 20;
 
+    // text for each of the buttons
     const std::string SBUTTON_WORD = "Stocktake";
     const std::string HBUTTON_WORD = "Home";
     const std::string NBUTTON_WORD = "Next";
+    const std::string CSVBUTTON_WORD = "Write CSV";
 
     // constants to control the icons in the gamewindow
     constexpr int ICON_ROTATION_SPEED = 40;
@@ -127,32 +140,39 @@ namespace GmapWindow
     constexpr int NUM_ICON_CHARSIZE = 30;
 
     // items numeric control
-    constexpr int NUM_ITEMS = 12;
+    // add an extra item to have the unknown symbol
+    constexpr int NUM_ITEMS = ITEMS_IN_STORE + 1;
     constexpr int ITEMS_PER_PAGE = 2;
     constexpr int NUM_PAGES = NUM_ITEMS/ITEMS_PER_PAGE;
 }
 
-
+// Namespace for variables pertaining to the menu that is initially brought up
+// when the gui is ran
 namespace MenuWindow
 {
+    // window dimensions
     constexpr int MENU_OPTIONS = 3;
     constexpr int MENU_WIDTH = 1200;
     constexpr int MENU_HEIGHT = 600;
     const std::string MENU_WINDOW_NAME = "Supermarket Menu";
 
+    // variables to control the trolley animation that goes across the screen in the main menu
     constexpr int CHARACTER_SIZE = 70;
     constexpr float TROLLEY_SPEED = 100.0f;
     constexpr float VERTICAL_SPEED = 0.2;
     constexpr float RNG_SCALING = 0.1;
     constexpr float TROLLEY_RELOAD_TIME = 100;
-
     constexpr int TROLLEY_START_Y = 503;
     constexpr int TROLLEY_START_X = 825;
+    
+    // remember at what pixel the road in the image ends at
     constexpr float ROAD_Y_LOCATION = 560;
 }
 
+// Namespace for variables pertaining to the meet the team window
 namespace CreditsWindow
 {
+    // window geometry
     constexpr int MAP_WIDTH = 1200;
     constexpr int MAP_HEIGHT = 600;
     const std::string MAP_NAME = "Meet The Team";
@@ -167,6 +187,7 @@ namespace CreditsWindow
     constexpr int ROT_LIMIT = 2;
 }
 
+// namespace for general button properties
 namespace Buttons
 {
     constexpr int CHARSIZE = 30;

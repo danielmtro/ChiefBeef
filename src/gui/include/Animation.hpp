@@ -100,9 +100,13 @@ class Trolley : public Animation
         */
         void update_position(sf::Time deltaTime);
 
+        /**
+        * @brief initialises the trolley's xand y position on screen
+        * also loads in the texture associated with a trolley
+        * 
+        * @param window The window that the trolley will be displayed on
+        */
         void initialise(sf::RenderWindow& window);
-
-    protected:
         
 };
 
@@ -146,13 +150,27 @@ class Icon : public Animation
         */
         void update_position(sf::Time deltaTime);
 
-        // booleans to control if the sprite should be active and showing
+        /**
+        * @brief deactivates the icon, setting an indication variable that 
+        * this icon should not be displayed on a window
+        */
         void deactivate();
+
+        /**
+        * @brief activates the icon, setting an indication variable that 
+        * this icon should be displayed on a window
+        */
         void activate();
+
+        /**
+        * @brief gets the variables determining if the icon should be displayed on
+        * the window
+        */
         bool get_active();
 
     protected:
 
+        // booleans to control the jiggling motion of the icons
         bool do_i_jiggle_;
         float time_since_last_jiggle_;
         float time_jiggled_;
@@ -165,7 +183,8 @@ class Icon : public Animation
 };
 
 /*
-Class for the character icon that will move around the map
+Class for the character icon that will move around the map.
+This wil be displayed as a top view trolley that traverses the map.
 */
 class CharacterIcon : public Icon
 {

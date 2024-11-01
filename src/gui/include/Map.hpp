@@ -29,7 +29,15 @@ Date: 12/10/2024
 #include "ItemLogger.hpp"
 #include "constants.hpp"
 
+
+/*
+This map is the main ROS2 interface node. It subscribes to all the relevant 
+topics that are published by the turtlebot itself. It can also publish 
+to topics such as a message request that gets the turtlebot to begin exploring
+a complex space.
+*/
 class Map : public rclcpp::Node{
+
     public:
 
         //  Struct to hold info about the robots
@@ -38,7 +46,7 @@ class Map : public rclcpp::Node{
             double roll, pitch, yaw;   // Orientation (RPY angles)
         };
 
-        // struct to hold informatino about the map data
+        // struct to hold information about the map data
         struct MapMetaData
         {
             float resolution, width, height;
@@ -48,15 +56,11 @@ class Map : public rclcpp::Node{
         Map();
         ~Map();
 
-        // Sets new_map_available_ to be false
+        /**
+        * @brief sets the private variable that we have read the current map
+        * and that there is no new map available.
+        */
         void read_map_data();
-
-        // getters
-        uint32_t get_width() const;
-        uint32_t get_height() const;
-        float get_resolution() const;
-        std::vector<int8_t> get_map() const;
-        bool get_map_available() const; 
 
         /**
         * @brief this function is called every time a message is received from
@@ -64,20 +68,27 @@ class Map : public rclcpp::Node{
         */
         void publish_slam_request();
 
-        // item logger should be accessible to everything
-        std::shared_ptr<ItemLogger>  get_item_logger();
-
-        // current pose retrieval
-        Pose get_current_pose() const;
-        MapMetaData get_map_meta_data() const;
-        Pose get_map_pose() const;
-        float get_battery_percentage() const;
-
         /**
         * @brief transforms the input map data to a new array in the 
         * original space based on the quaternion that the map is oriented at
         */
         void transform_map_orientation();
+
+        /**
+        * @brief The followingmethods are all getters for member variables of the class
+        */
+        uint32_t get_width() const;
+        uint32_t get_height() const;
+        float get_resolution() const;
+        std::vector<int8_t> get_map() const;
+        bool get_map_available() const; 
+        Pose get_current_pose() const;
+        MapMetaData get_map_meta_data() const;
+        Pose get_map_pose() const;
+        float get_battery_percentage() const;
+
+        // public access to the item logger
+        std::shared_ptr<ItemLogger>  get_item_logger();
 
     private:
 
@@ -87,15 +98,16 @@ class Map : public rclcpp::Node{
         
         /**
         * @brief this function is called every time a message is received from
-        * /map topic and it stores the map information
+        * /map topic and it stores the map information and the metadata.
         *
         * @param msg is an 32 bit integer which represents the current state 
         */
         void map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
         /**
-        * @brief this function is called every time a message is received from
-        * /map topic and it stores the map information
+        * @brief this function is called every time a message is received from /id_detections
+        * It loops through the list and for each code it check if the code already exists in the item
+        * logger. If it does exist, then it is ignored - otherwise it gets added to the stocktake.
         *
         * @param msg is a list of integer messages that corresponds to april tags in the current frame
         */

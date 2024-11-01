@@ -15,8 +15,16 @@ Date: 17/10/2024
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <ctime>
+#include <fstream>
 #include "constants.hpp"
 
+/*
+The itemlogger class is a macro class that abtrasts some specific
+functionality of a hashmap - in particular being able to have bi-directional
+O(1) key retrieval (i.e. mapping unique keys to unique values and thus being
+able to retrieve the key from the value itself)
+*/
 class ItemLogger
 {
     public:
@@ -74,7 +82,18 @@ class ItemLogger
         */
         void remove_item(int code);
 
+        /**
+        * @brief Outputs the stock stored as a csv. This will be the count of each item
+        * that was successfully detected in the store.
+        */
+        void write_stock_to_csv();
+
     private:
+        /**
+        * @brief Gets the current date and time returned as a string in the following format:
+        * "%Y-%m-%d %H:%M:%S"
+        */
+        std::string get_date_time();
 
         // keeps track of the number of each item
         std::unordered_map<std::string, int> item_map_count_;

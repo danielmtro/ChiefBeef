@@ -19,35 +19,66 @@ Date: 12/10/2024
 #include "Animation.hpp"
 #include "constants.hpp"
 
+/*
+Class for the main menu window that first appears when the user runs the 
+program.
+*/
 class MainMenu : public Window{
     
     public: 
 
-        // Main Menu
+        /**
+        * @brief Constructor when the menu is first called
+        * @param name the name of the window
+        * @param width the width of the window
+        * @param height the height of the window
+        */
         MainMenu(const std::string& name, int width, int height);
         ~MainMenu();
 
-        // Runs the current menu
+        /**
+        * @brief Contains the main loop where the menu frame is updated
+        */
         void RunMenu();
 
-        // functions to control selecting options inside of the menu
+        /**
+        * @brief method called when user presses an up arrow on the keyboard.
+        * Changes the highlighted text selection.
+        */
         void up_command();
+
+        /**
+        * @brief method called when user presses a down arrow on the keyboard.
+        * Changes the highlighted text selection.
+        */
         void down_command();
 
-        // gets the current selection for the mSHOenu
+        /**
+        * @brief Returns the option that the user has selected i.e. 
+        * the shoppingtime, credits or an exit request.
+        */
         int get_menu_selection();
 
     private: 
 
-        // draws everything on the frame
+        /**
+        * @brief Draws the current frame
+        * 
+        * @param window the window that eveyrthing will be displayed on
+        */
         void draw_frame(sf::RenderWindow& window);
 
-        // plays the sounds when each option is selected
+        /**
+        * @brief Plays the current msuic
+        */
         void play_sound_selection();
 
-        // increase text size when we want to select something
+        /**
+        * @brief method increases the size of the text based on the current selectino
+        */
         void increase_text_size();
         
+        // variables to store sounds when menu options are selected
         sf::Sound click_sound_;
         sf::SoundBuffer buffer_;        
 

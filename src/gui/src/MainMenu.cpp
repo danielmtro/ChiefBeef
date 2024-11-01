@@ -20,7 +20,6 @@ MainMenu::MainMenu(const std::string& name, int width, int height)
     if (!font.loadFromFile(font_path))
         std::cout << "Font file not found: " << font_path << std::endl;
 
-
     // set the shopping time button
     menu[0].setFont(font);
     menu[0].setString("Shopping Time");
@@ -79,7 +78,6 @@ void MainMenu::up_command()
     for(int selection = 0; selection < MenuWindow::MENU_OPTIONS; ++selection)
         menu[selection].setFillColor(FontColour);
 
-
     if(current_selection_ == 0 || current_selection_ == -1)
         current_selection_ = MenuWindow::MENU_OPTIONS - 1;
     else
@@ -98,7 +96,6 @@ void MainMenu::down_command()
     for(int selection = 0; selection < MenuWindow::MENU_OPTIONS; ++selection)
         menu[selection].setFillColor(FontColour);
 
-
     if(current_selection_ == MenuWindow::MENU_OPTIONS - 1 || current_selection_ == -1)
         current_selection_ = 0;
     else
@@ -110,7 +107,6 @@ void MainMenu::down_command()
     return;
 }
 
-
 int MainMenu::get_menu_selection()
 {
     return selection_;
@@ -118,7 +114,6 @@ int MainMenu::get_menu_selection()
 
 void MainMenu::play_sound_selection()
 {   
-
     std::string fname;
 
     // select which music to load
@@ -146,12 +141,10 @@ void MainMenu::play_sound_selection()
     }
 
     return;
-    
 }
 
 void MainMenu::draw_frame(sf::RenderWindow& window)
 {
-
     // clear the current window
     window.clear();
     window.draw(background);
@@ -189,7 +182,6 @@ void MainMenu::RunMenu()
     trolley_animation.initialise(window);
     trolley_animation.set_position(MenuWindow::TROLLEY_START_X, MenuWindow::TROLLEY_START_Y);
 
-
     // Track time for movement
     sf::Clock clock;
 
@@ -200,7 +192,6 @@ void MainMenu::RunMenu()
     // keep polling as long as we want
     while (window.isOpen())
     {
-        
         // Restart the clock every frame
         sf::Time deltaTime = clock.restart();
 
@@ -263,8 +254,10 @@ void MainMenu::RunMenu()
             }
         }
 
+        // update the position of the animation
         trolley_animation.update_position(deltaTime);
         
+        // draw everything on the window
         draw_frame(window);
 
         // Display the updated frame

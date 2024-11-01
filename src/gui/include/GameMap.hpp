@@ -20,11 +20,21 @@ Date: 12/10/2024
 #include "Button.hpp"
 #include "Animation.hpp"
 
-
+/*
+GameMap is the main class that is in operation during the programs function
+*/
 class GameMap : public Window {
 
     public:
 
+        /**
+        * @brief Constructor for the gamemap object this is the main window
+        *  
+        * @param name name of window to be shows
+        * @param width width of window in pixels
+        * @param height height of the window in pixels
+        * @param MapMtr a shared pointer to a Map object (This is the ROS Node)
+        */
         GameMap(const std::string& name, int width, int height, std::shared_ptr<Map> MapPtr);
         ~GameMap();
 
@@ -41,22 +51,31 @@ class GameMap : public Window {
         */
         void DrawMapData(sf::RenderWindow& window);
 
-
     private: 
 
-        // play button sounds
-        void play_button_sound(int button_num_);
+        /**
+        * @brief plays a sound byte
+        * 
+        * @param button_num an integer that selects which sound byte to play depending on
+        * what button is being interacted with
+        */
+        void play_button_sound(int button_num);
 
         // The ROS2 node that will read from /map and store relevant map data
-        std::shared_ptr<Map> map_;
+        std::shared_ptr<Map> ros_map_node_;
+
+        // variables for the buttons on the screen
         Button* slam_request_button_;
         Button* home_button_;
         Button* next_page_button_;
+        Button* log_to_csv_button_;
 
-        //containers
+        //containers to store the menu items
         std::vector<std::shared_ptr<Icon>> items_in_store_;
         std::vector<std::shared_ptr<sf::Text>> number_of_items_;
-        int page_num_; // what sets of icons and text are we showing?
+
+        // what sets of icons and text are we showing?
+        int page_num_;
 
         // updates what the battery should display
         void update_battery_state();
@@ -71,7 +90,6 @@ class GameMap : public Window {
         // wndow variables
         float border_width_;
         
-
         /**
         * @brief this function initialises the positions of each
         * item in the store, the numbers and the bounding box 
@@ -87,6 +105,7 @@ class GameMap : public Window {
         */
         void draw_frame(sf::RenderWindow& window, sf::Time deltaTime);
 
+        // box that surrounds the menu items
         sf::RectangleShape bounding_box_;
 
         // icon for the robot's position

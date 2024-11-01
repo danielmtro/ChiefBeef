@@ -15,6 +15,11 @@ Date: 12/10/2024
 #include <SFML/Audio.hpp>
 #include <iostream>
 
+
+/*
+This is the parent class to all windows. Contains all the 
+common functionality that windows possess.
+*/
 class Window 
 {
 
@@ -22,7 +27,10 @@ class Window
 
         Window(const std::string& name, int width, int height);
         ~Window();
-
+        
+        /**
+        * @brief returns the current status of the window.
+        */
         bool is_window_active() const;
 
         /**
@@ -39,8 +47,8 @@ class Window
 
     protected: 
 
+        // window geometry and naming properties
         std::string window_name_;
-        
         int window_width_;
         int window_height_;
         bool window_active_;

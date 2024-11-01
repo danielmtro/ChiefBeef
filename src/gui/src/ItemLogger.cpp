@@ -5,7 +5,7 @@ This is the Implementation for the ItemLogger class
 that will be used to save and store inventory from 
 the robot
 Written: Daniel Monteiro
-Date: 17/10/2024
+Date: 27/10/2024
 */
 
 #include "ItemLogger.hpp"
@@ -87,7 +87,6 @@ void ItemLogger::remove_item(std::string key)
     {
         std::cout << "You have none of this item to remove.";
     }
-    
 }
 
 void ItemLogger::remove_item(int code)
@@ -104,5 +103,53 @@ void ItemLogger::remove_item(int code)
     {
         std::cout << "You have none of this item to remove.";
     }
+}
 
+std::string ItemLogger::get_date_time()
+{   
+    // get the current time
+    std::time_t now = std::time(nullptr);
+
+    // convert to readable time
+    char buf[80];
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d_%H:%M:%S", std::localtime(&now));
+    
+    return std::string(buf);
+}
+
+void ItemLogger::write_stock_to_csv()
+{
+    // open a file
+    std::string datetime = get_date_time();
+    std::string filename = "Stocktake_" + datetime;
+    std::ofstream file(filename);
+
+    // check if file opened correctly
+    if(!file.is_open())
+        std::cerr << "Could not open file!" << std::endl;
+    
+    // write the header
+    file << "Item Name,Current Stock\n";
+
+    bool counted_unknowns = false;
+    // loop through the whole catalogue
+    for(const auto& pair : MENU_INDEX_TO_ITEM)
+    {
+        std::string item_name = pair.second;
+        int item_count = get_num_items(item_name);
+    
+        // handle multiple unknowns in map
+        if(item_name == "Unknown")
+        {
+            if(!counted_unknowns)
+                file << item_name << "," << item_count << "\n";
+            counted_unknowns = true;
+            continue;
+        }
+
+        // log the item and count
+        file << item_name << "," << item_count << "\n";    
+    }
+
+    file.close();
 }

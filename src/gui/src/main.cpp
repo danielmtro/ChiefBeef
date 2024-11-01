@@ -1,5 +1,9 @@
 #include <SFML/Graphics.hpp>
 
+
+/*
+Test code to verify that the SFML module has been correctly installed.
+*/
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");

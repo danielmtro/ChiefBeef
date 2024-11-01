@@ -45,7 +45,6 @@ void Animation::initialise_texture(sf::Sprite& sref, sf::Texture& tref, std::str
 
     // Set the texture to the sprite
     sref.setTexture(tref);
-
 }
 
 Trolley::Trolley()
@@ -113,7 +112,6 @@ void Icon::deactivate()
     active_ = false;
 }
 
-
 void Icon::activate()
 {
     active_ = true;
@@ -134,6 +132,7 @@ void Icon::update_position(sf::Time deltaTime)
         time_since_last_jiggle_ = 0;
         return;
     }
+    // stop jiggling if we've reached the allocated jiggle time
     else if(do_i_jiggle_ && time_jiggled_ > GmapWindow::TIME_JIGGLING)
     {
         do_i_jiggle_ = false;
@@ -166,11 +165,9 @@ void Icon::update_position(sf::Time deltaTime)
             rotation_direction_ = 1;
     }
 
-    // rotate
+    // intiate a rotation
     float rotation_amount = animation_speed_ * deltaTime.asSeconds() * rotation_direction_;
     sprite.rotate(rotation_amount);
-
-
 }
 
 void Icon::initialise(sf::RenderWindow& window)
@@ -186,8 +183,6 @@ void Icon::initialise(sf::RenderWindow& window)
     sf::Vector2f center(sprite_texture.getSize().x / 2.0f, sprite_texture.getSize().y / 2.0f);
     sprite.setOrigin(center);
 }
-
-
 
 void Icon::initialise(sf::RenderWindow& window, std::string fname)
 {
@@ -232,5 +227,4 @@ void CharacterIcon::update_position(Map::Pose pose,
     sprite.setScale(scaling_factor/6, scaling_factor/6);
     sprite.setPosition(x*scaling_factor + x_off, y*scaling_factor + y_off);
     sprite.setRotation(yaw * RAD_TO_DEG);
-
 }
