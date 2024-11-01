@@ -456,6 +456,7 @@ void GameMap::RunMap()
         // once we read the map, let the map know 
         ros_map_node_->read_map_data();
 
+        // draw everything on the current frame
         draw_frame(window, deltaTime);
 
         // Display the window content
