@@ -1,3 +1,11 @@
+"""
+explore.launch.py
+
+This file is written in order to launch the explore_lite node, the 
+state_machine node, as well as the lidar node. 
+
+"""
+
 import os
 
 from ament_index_python.packages import get_package_share_directory

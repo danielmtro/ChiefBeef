@@ -1,26 +1,24 @@
+"""
+
+"""
+
 #include "explore/dummy.hpp"
 #include "explore/explore.h"
 #include <thread>
 #include <chrono>
 #include <stdexcept>
 
-
-
-WaitForButton::WaitForButton() : Node("waiting_b") {
+Delay::Delay() : Node("delaying") {
     // subscribe to the topic "/slam_request" -> published by the GUI
     slam_request_sub_ = this->create_subscription<std_msgs::msg::Bool>(
         "/slam_request",
         rclcpp::SensorDataQoS(), 
-        std::bind(&WaitForButton::explore_subscriber_callback, this, std::placeholders::_1)
+        std::bind(&Delay::explore_subscriber_callback, this, std::placeholders::_1)
     );
 }
 
-WaitForButton::~WaitForButton(){
-    return;
-}
-
 // function that begins the explore node.
-void WaitForButton::explore_subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg){
+void Delay::explore_subscriber_callback(const std_msgs::msg::Bool::SharedPtr msg){
     try {
         // Launch ROS 2 state node in a separate thread
         std::thread ros_launch_thread([]() {
@@ -44,8 +42,7 @@ void WaitForButton::explore_subscriber_callback(const std_msgs::msg::Bool::Share
     }
 }
 
-#ifdef MAIN_MAIN
-#define MAIN_MAIN
+#ifdef DELAY_MAIN
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
@@ -65,7 +62,7 @@ int main(int argc, char** argv) {
           }
         });
       // Spin the ROS node while waiting for operations
-      rclcpp::spin(std::make_shared<WaitForButton>());
+      rclcpp::spin(std::make_shared<Delay>());
 
       // Ensure the thread joins properly
       ros_launch_thread.join();

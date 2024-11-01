@@ -1,6 +1,9 @@
+"""
 
-#ifndef WAITFORBUTTON_H
-#define WAITFORBUTTON_H
+"""
+
+#ifndef DELAY_H
+#define DELAY_H
 
 #include <rclcpp/rclcpp.hpp>
 #include "std_msgs/msg/bool.hpp"
@@ -10,10 +13,13 @@
 #include <memory>
 
 
-class WaitForButton : public rclcpp::Node {
+class Delay : public rclcpp::Node {
     public:
-        WaitForButton();
-        ~WaitForButton();
+        // constructor for the Delay class
+        Delay();
+
+        // deconstructor for the Delay class
+        ~Delay();
 
     private:
         // subscriber to the slam_request

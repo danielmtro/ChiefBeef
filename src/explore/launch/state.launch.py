@@ -1,9 +1,9 @@
 """
-node_launch.launch.py
+state.launch.py
 
-This file brings up all the nodes required to explore the maze and map it out
-
-It does JUST nav and slam_toolbox
+This file brings up slam_toolbox and the nav stack.
+The delay in between the launch ensures that the previous node is 
+running before it begins.
 
 James Hocking, 2024
 """

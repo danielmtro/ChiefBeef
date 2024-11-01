@@ -63,9 +63,6 @@ void Teleop::teleop_run()
     teleop_pub_->publish(vel);
 }
 
-
-
-
 #ifdef TELEOP_MAIN
 int main(int argc, char** argv)
 {
