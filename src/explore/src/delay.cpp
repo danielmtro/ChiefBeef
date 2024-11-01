@@ -1,6 +1,14 @@
-"""
+/*
+delay.cpp
 
-"""
+This file contains the implementation of 
+the Delay class. This is basically a node that 
+waits for the button to be pressed to begin the 
+exploration, and then launches the explore_lite 
+and state packages.
+
+By James Hocking, 2024
+*/
 
 #include "explore/dummy.hpp"
 #include "explore/explore.h"
