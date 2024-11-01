@@ -102,6 +102,13 @@ namespace GmapWindow
     constexpr int SBUTTON_H = 100;
     constexpr int SBUTTON_CHAR = 30;
 
+    // csv button
+    constexpr int CSVBUTTON_X = SBUTTON_X; // align
+    constexpr int CSVBUTTON_Y = GmapWindow::MAP_HEIGHT/2 - GmapWindow::SBUTTON_H/2;
+    constexpr int CSVBUTTON_W = SBUTTON_W;
+    constexpr int CSVBUTTON_H = SBUTTON_H;
+    constexpr int CSVBUTTON_CHAR = SBUTTON_CHAR;
+
     // the home button constants
     constexpr int HBUTTON_X = MAP_WIDTH - 200;
     constexpr int HBUTTON_Y = MAP_HEIGHT - 150;;
@@ -120,6 +127,7 @@ namespace GmapWindow
     const std::string SBUTTON_WORD = "Stocktake";
     const std::string HBUTTON_WORD = "Home";
     const std::string NBUTTON_WORD = "Next";
+    const std::string CSVBUTTON_WORD = "Write CSV";
 
     // constants to control the icons in the gamewindow
     constexpr int ICON_ROTATION_SPEED = 40;
