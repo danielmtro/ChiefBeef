@@ -450,7 +450,6 @@ void GameMap::RunMap()
         home_button_->buttonHover(mouse_pos);
         next_page_button_->buttonHover(mouse_pos);
 
-
         // Clear the window with a black color
         window.clear(sf::Color::Black);
 
