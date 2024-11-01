@@ -67,6 +67,7 @@ Map::Map() : Node("Map_Node")
     // create the slam publisher
     slam_publisher_ = this->create_publisher<std_msgs::msg::Bool>("slam_request", 10);
 
+    // default the code to display the battery at 100%
     battery_percentage_ = 100.0f;
 }
 
@@ -79,9 +80,6 @@ void Map::battery_callback(const sensor_msgs::msg::BatteryState::SharedPtr msg)
 {
     // set the battery percentage 
     battery_percentage_ = msg->percentage;
-
-    // RCLCPP_INFO(this->get_logger(), "Battery Voltage: %.2fV, Percentage: %.2f%%", 
-    //             msg->voltage, msg->percentage);
 }
 
 
@@ -104,10 +102,6 @@ void Map::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
   current_pose_.x = msg->pose.pose.position.x;
   current_pose_.y = msg->pose.pose.position.y;
   current_pose_.z = msg->pose.pose.position.z;
-
-//   RCLCPP_INFO(this->get_logger(), "Turtle: x: %f y: %f yaw: %f", current_pose_.x, 
-//                                                                  current_pose_.x,
-//                                                                  current_pose_.yaw);
 
 }
 
@@ -254,9 +248,9 @@ void Map::read_map_data()
 }
 
 /*
-
+-----------------------
 Getters available below
-
+------------------------
 */
 
 Map::Pose Map::get_current_pose() const
@@ -301,6 +295,13 @@ std::vector<int8_t> Map::get_map() const
     return map_data_;
 }
 
+/*
+-----------------------
+MAIN ROS EXECUTABLE
+LOCATED BELOW
+------------------------
+*/
+
 int main(int argc, char *argv[])
 {
     // Initialize ROS2
@@ -320,9 +321,14 @@ int main(int argc, char *argv[])
     // stay in the main menu until a selecion is ready
     int selection = 0;
 
+    // set up window generation in a for loop so that if the user exits the credits or shopping time
+    // windows, it takes them back to the main menu
     while(selection != EXIT)
     {
+        // run the menu
         mainMenu.RunMenu();
+
+        // once the menu has closed get the selection that was made
         selection = mainMenu.get_menu_selection();
         std::cout << "Selection was " << selection << std::endl;
 
@@ -334,6 +340,7 @@ int main(int argc, char *argv[])
         }
         else if(selection == MEET_THE_TEAM)
         {
+            // create the credits window if requested
             Credits credits(CreditsWindow::MAP_NAME, CreditsWindow::MAP_WIDTH, CreditsWindow::MAP_HEIGHT);
             credits.RunCredits();
         }

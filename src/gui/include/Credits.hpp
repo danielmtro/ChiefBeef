@@ -26,10 +26,19 @@ class Credits : public Window {
     
     public:
 
+        /**
+        * @brief credits window constructor to summon the window
+        * 
+        *@param name name of the window to be displayed
+        *@param width the width of a window
+        *@param height the height of window
+        */
         Credits(const std::string& name, int width, int height);
         ~Credits();
 
-
+        /**
+        * @brief Controls the main loop that runs the meet the team window
+        */
         void RunCredits();
 
     private:
@@ -41,8 +50,9 @@ class Credits : public Window {
         */
         void RotateSprites(sf::Time deltaTime);
         
-        std::vector<sf::Sprite> faces;
-        std::vector<sf::Texture> face_textures;
+        // objecst to store the faces of each team member and their photos
+        std::vector<sf::Sprite> faces_;
+        std::vector<sf::Texture> face_textures_;
         int rotation_direction_;
 };
 

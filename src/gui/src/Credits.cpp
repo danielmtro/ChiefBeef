@@ -37,13 +37,13 @@ Credits::Credits(const std::string& name, int width, int height)
     for(int i = 0; i < CreditsWindow::NUM_GROUP_MEMBERS; ++i)
     {
         std::shared_ptr<sf::Sprite> sprite = std::make_shared<sf::Sprite>();
-        faces.push_back(*sprite);
+        faces_.push_back(*sprite);
     }
 
     for(int i = 0; i < CreditsWindow::NUM_GROUP_MEMBERS; ++i)
     {
         std::shared_ptr<sf::Texture> face_texture = std::make_shared<sf::Texture>();
-        face_textures.push_back(*face_texture);
+        face_textures_.push_back(*face_texture);
     }
 
     // set the filenames for each face
@@ -55,31 +55,30 @@ Credits::Credits(const std::string& name, int width, int height)
     std::string f5 = texture_path + "/James_.jpg";
 
     // load in each face to the relevant texture
-    face_textures[0].loadFromFile(f0);
-    face_textures[1].loadFromFile(f1);
-    face_textures[2].loadFromFile(f2);
-    face_textures[3].loadFromFile(f3);
-    face_textures[4].loadFromFile(f4);
-    face_textures[5].loadFromFile(f5);
-
+    face_textures_[0].loadFromFile(f0);
+    face_textures_[1].loadFromFile(f1);
+    face_textures_[2].loadFromFile(f2);
+    face_textures_[3].loadFromFile(f3);
+    face_textures_[4].loadFromFile(f4);
+    face_textures_[5].loadFromFile(f5);
 
     // set each sprite with the corresponding texture
     for(int i = 0; i < CreditsWindow::NUM_GROUP_MEMBERS; ++i)
     {
-        faces[i].setTexture(face_textures[i]);
+        faces_[i].setTexture(face_textures_[i]);
     }
 
     rotation_direction_ = 1;
 
     // set the positions
 
-    faces[0].setPosition(CreditsWindow::BASE_X, CreditsWindow::BASE_Y);
-    faces[1].setPosition(CreditsWindow::BASE_X + CreditsWindow::X_SEP, CreditsWindow::BASE_Y);
-    faces[2].setPosition(CreditsWindow::BASE_X + 2 * CreditsWindow::X_SEP, CreditsWindow::BASE_Y);
+    faces_[0].setPosition(CreditsWindow::BASE_X, CreditsWindow::BASE_Y);
+    faces_[1].setPosition(CreditsWindow::BASE_X + CreditsWindow::X_SEP, CreditsWindow::BASE_Y);
+    faces_[2].setPosition(CreditsWindow::BASE_X + 2 * CreditsWindow::X_SEP, CreditsWindow::BASE_Y);
 
-    faces[3].setPosition(CreditsWindow::BASE_X, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
-    faces[4].setPosition(CreditsWindow::BASE_X + CreditsWindow::X_SEP, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
-    faces[5].setPosition(CreditsWindow::BASE_X + 2 * CreditsWindow::X_SEP, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
+    faces_[3].setPosition(CreditsWindow::BASE_X, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
+    faces_[4].setPosition(CreditsWindow::BASE_X + CreditsWindow::X_SEP, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
+    faces_[5].setPosition(CreditsWindow::BASE_X + 2 * CreditsWindow::X_SEP, CreditsWindow::BASE_Y + CreditsWindow::Y_SEP);
 
 }
 
@@ -92,7 +91,7 @@ void Credits::RotateSprites(sf::Time deltaTime)
 {
     float rot_limit = 0.3;
 
-    float current_rotation = faces[0].getRotation();
+    float current_rotation = faces_[0].getRotation();
     // std::cout << "RD" << rotation_direction_ << " rot: " << current_rotation << std::endl;
 
     // check if its rotating forward
@@ -115,7 +114,7 @@ void Credits::RotateSprites(sf::Time deltaTime)
 
     for(int i = 0; i < CreditsWindow::NUM_GROUP_MEMBERS; ++i)
     {
-        faces[i].rotate(rot_amount);
+        faces_[i].rotate(rot_amount);
     }
 }
 
@@ -180,7 +179,7 @@ void Credits::RunCredits()
 
         for(int i = 0; i < CreditsWindow::NUM_GROUP_MEMBERS; ++i)
         {
-            window.draw(faces[i]);
+            window.draw(faces_[i]);
         }
 
         // Display the updated frame

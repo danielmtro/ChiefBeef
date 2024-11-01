@@ -169,14 +169,14 @@ void GameMap::update_battery_state()
 
 }
 
-void GameMap::play_button_sound(int button_num_)
+void GameMap::play_button_sound(int button_num)
 {
     std::string fname;
 
     // select which music to load
-    if(button_num_ == 0)
+    if(button_num == 0)
         fname = "Zeev-stocktake.ogg";
-    else if(button_num_ == 1)
+    else if(button_num == 1)
         fname = "Zeev-goodbye.ogg";
     else
         fname = "Zeev-goodbye.ogg";
@@ -342,7 +342,7 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
                               scaling_factor_,
                               x_offset_, 
                               y_offset_,
-                              map_->get_map_meta_data());
+                              ros_map_node_->get_map_meta_data());
 
     update_battery_state();
     window.draw(battery_);
@@ -416,7 +416,7 @@ void GameMap::RunMap()
                 if(slam_request_button_->buttonHover(mouse_pos) && slam_request_button_->is_active())
                 {
                     play_button_sound(0);
-                    map_->publish_slam_request();
+                    ros_map_node_->publish_slam_request();
                     slam_request_button_->deactivate_button();
                 }
                 else if(home_button_->buttonHover(mouse_pos))
@@ -443,12 +443,11 @@ void GameMap::RunMap()
         window.clear(sf::Color::Black);
 
         // once we read the map, let the map know 
-        map_->read_map_data();
+        ros_map_node_->read_map_data();
 
         draw_frame(window, deltaTime);
 
         // Display the window content
         window.display();
     }
-
 }

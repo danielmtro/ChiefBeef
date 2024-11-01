@@ -15,7 +15,7 @@ Button::Button(float x,\
                float width,\
                float height,\
                const sf::Color& colour,\
-               const std::string& textString,\
+               const std::string& text_string,\
                sf::Font& font)
 {
 
@@ -32,20 +32,20 @@ Button::Button(float x,\
     y_ = y;
 
     // Set up the button's rectangle shape
-    buttonShape.setPosition(x, y);
-    buttonShape.setSize(sf::Vector2f(width, height));
-    buttonShape.setFillColor(colour);
+    button_shape_.setPosition(x, y);
+    button_shape_.setSize(sf::Vector2f(width, height));
+    button_shape_.setFillColor(colour);
 
     // Set up the button's text - defaults to white
-    buttonText.setFont(font);
-    buttonText.setString(textString);
-    buttonText.setCharacterSize(30);
-    buttonText.setFillColor(text_colour_);
+    button_text_.setFont(font);
+    button_text_.setString(text_string);
+    button_text_.setCharacterSize(30);
+    button_text_.setFillColor(text_colour_);
 
     // Center the text inside the button
-    sf::FloatRect textRect = buttonText.getLocalBounds();
-    buttonText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-    buttonText.setPosition(x + width / 2.0f, y + height / 2.0f);
+    sf::FloatRect textRect = button_text_.getLocalBounds();
+    button_text_.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+    button_text_.setPosition(x + width / 2.0f, y + height / 2.0f);
 }
 
 Button::~Button()
@@ -70,19 +70,19 @@ bool Button::is_active()
 
 void Button::draw(sf::RenderWindow& window)
 {
-    window.draw(buttonShape);
-    window.draw(buttonText);
+    window.draw(button_shape_);
+    window.draw(button_text_);
 }
 
 bool Button::buttonHover(sf::Vector2i mousePos)
 {
-    bool inside = buttonShape.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos));
+    bool inside = button_shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos));
 
     // early exit if the button isn't active
     if(!is_active_)
     {
         scale_button(x_, y_, width_, height_, Buttons::CHARSIZE);
-        buttonShape.setFillColor(sf::Color(160, 160, 160)); // grey colour
+        button_shape_.setFillColor(sf::Color(160, 160, 160)); // grey colour
         return inside;
     }
 
@@ -105,9 +105,9 @@ bool Button::buttonHover(sf::Vector2i mousePos)
 
     // update the colour if its being clicked
     if(inside && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        buttonShape.setFillColor(clicked_colour_);
+        button_shape_.setFillColor(clicked_colour_);
     else
-        buttonShape.setFillColor(button_colour_);
+        button_shape_.setFillColor(button_colour_);
 
     return inside;
 }
@@ -115,12 +115,12 @@ bool Button::buttonHover(sf::Vector2i mousePos)
 void Button::scale_button(float x, float y, float width, float height, int charsize)
 {
     // sets the button position size
-    buttonShape.setPosition(x, y);
-    buttonShape.setSize(sf::Vector2f(width, height));
+    button_shape_.setPosition(x, y);
+    button_shape_.setSize(sf::Vector2f(width, height));
 
     // rescale text back to normal
-    buttonText.setCharacterSize(charsize);
-    sf::FloatRect textRect = buttonText.getLocalBounds();
-    buttonText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-    buttonText.setPosition(x + width / 2.0f, y + height / 2.0f);
+    button_text_.setCharacterSize(charsize);
+    sf::FloatRect textRect = button_text_.getLocalBounds();
+    button_text_.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+    button_text_.setPosition(x + width / 2.0f, y + height / 2.0f);
 }

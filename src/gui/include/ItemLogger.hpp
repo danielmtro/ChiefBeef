@@ -17,6 +17,12 @@ Date: 17/10/2024
 #include <string>
 #include "constants.hpp"
 
+/*
+The itemlogger class is a macro class that abtrasts some specific
+functionality of a hashmap - in particular being able to have bi-directional
+O(1) key retrieval (i.e. mapping unique keys to unique values and thus being
+able to retrieve the key from the value itself)
+*/
 class ItemLogger
 {
     public:

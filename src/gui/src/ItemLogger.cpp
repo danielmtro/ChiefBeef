@@ -5,7 +5,7 @@ This is the Implementation for the ItemLogger class
 that will be used to save and store inventory from 
 the robot
 Written: Daniel Monteiro
-Date: 17/10/2024
+Date: 27/10/2024
 */
 
 #include "ItemLogger.hpp"
@@ -87,7 +87,6 @@ void ItemLogger::remove_item(std::string key)
     {
         std::cout << "You have none of this item to remove.";
     }
-    
 }
 
 void ItemLogger::remove_item(int code)
@@ -104,5 +103,4 @@ void ItemLogger::remove_item(int code)
     {
         std::cout << "You have none of this item to remove.";
     }
-
 }
