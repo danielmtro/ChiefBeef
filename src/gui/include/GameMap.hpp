@@ -68,6 +68,7 @@ class GameMap : public Window {
         Button* slam_request_button_;
         Button* home_button_;
         Button* next_page_button_;
+        Button* log_to_csv_button_;
 
         //containers to store the menu items
         std::vector<std::shared_ptr<Icon>> items_in_store_;

@@ -40,6 +40,15 @@ GameMap::GameMap(const std::string& name, int width, int height, std::shared_ptr
         font
     );
 
+    // create the write to csv button
+    log_to_csv_button_ = new Button(
+        GmapWindow::SBUTTON_X, GmapWindow::MAP_HEIGHT/2 - GmapWindow::SBUTTON_H/2,
+        GmapWindow::SBUTTON_W, GmapWindow::SBUTTON_H,
+        sf::Color(102, 255, 178),   // fun colour
+        GmapWindow::SBUTTON_WORD,
+        font
+    );
+
     // create the request button
     home_button_ = new Button(
         GmapWindow::HBUTTON_X, GmapWindow::HBUTTON_Y,
@@ -99,6 +108,7 @@ GameMap::~GameMap()
     delete slam_request_button_;
     delete home_button_;
     delete next_page_button_;
+    delete log_to_csv_button_;
     std::cout << "Game Map no longer running" << std::endl;
 }
 
@@ -311,10 +321,12 @@ void GameMap::draw_frame(sf::RenderWindow& window, sf::Time deltaTime)
 
     // draw on the map
     DrawMapData(window);
-
+    
+    // draw all the buttons
     slam_request_button_->draw(window);
     home_button_->draw(window);
     next_page_button_->draw(window);
+    log_to_csv_button_->draw(window);
 
     // draw on the store items
     int page_num = page_num_%GmapWindow::NUM_PAGES; // reduce the possible pages
